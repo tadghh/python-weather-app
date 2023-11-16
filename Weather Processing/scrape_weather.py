@@ -9,7 +9,8 @@ import urllib.request
 from urllib.error import URLError, HTTPError
 from datetime import datetime
 
-class WeatherScraper():
+
+class WeatherScraper:
     """Scrapes environment Canada."""
 
     def __init__(self):
@@ -17,53 +18,66 @@ class WeatherScraper():
 
         super().__init__()
         self.parser = self.MyHTMLParser()
-        self.start_year = 1996 # on the website the earliest year available is 1996
-        self.start_month = 0 # default value of zero will be changed to the eariest month
+        self.start_year = 1996  # on the website the earliest year available is 1996
+        self.start_month = (
+            0  # default value of zero will be changed to the eariest month
+        )
         self.current_year = ""
-        self.end_year = datetime.now().strftime('%Y')
+        self.end_year = datetime.now().strftime("%Y")
         self.month = ""
-        self.search_url = f'''https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&Day=1&Year={self.start_year}&Month={self.start_month}'''
+        self.url_sections = (
+            "https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&Day=1&Year=",
+            "&Month=",
+        )
+        self.search_url = self.update_url()
         self.weather = {}
+
+    def update_url(self):
+        """Updates the search url with the latest values"""
+        return f"""{self.url_sections[0]}{self.start_year}{self.url_sections[1]}{self.start_month}"""
 
     def scrape_weather(self):
         """Returns the weather data."""
         try:
             while self.start_year <= int(self.end_year):
                 # if the month is 0 which is our starting value,
-                #set it to 10 which is the earliest month available
-                #on the website the earliest month for 1996 is october (10th month)
+                # set it to 10 which is the earliest month available
+                # on the website the earliest month for 1996 is october (10th month)
                 if self.start_month == 0:
                     self.start_month = 10
-                elif self.start_month != 12:
-                # if the month isn't 12, increment the month by 1
-                    self.start_month += 1
-                else:
-                    # if the month is 12, increment the year by 1
-                    #and set the month to the start of the year (1)
+                elif self.start_month == 12:
+                    # if the month isn't 12, increment the month by 1
                     self.start_year += 1
                     self.start_month = 1
-                
-                self.search_url = f'''https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&Day=1&Year={self.start_year}&Month={self.start_month}'''
+
+                else:
+                    # if the month is 12, increment the year by 1
+                    # and set the month to the start of the year (1)
+                    self.start_month += 1
+
+                self.search_url = self.update_url()
                 print(self.search_url)
-                print(f"Current Year: {self.start_year}, current Month: {self.start_month}")
-                
+                print(
+                    f"Current Year: {self.start_year}, current Month: {self.start_month}"
+                )
+
                 with urllib.request.urlopen(self.search_url) as response:
                     HTML_DATA = str(response.read())
                     self.parser.feed(HTML_DATA)
-                    
+
                     # update our master dictionary with the newly returned data for the start year and month
                     self.weather.update(self.parser.return_weather_dict())
-            
-                    #print(self.parser.weather)
-            print('{')
+
+                # print(self.parser.weather)
+            print("{")
             for date, data in self.weather.items():
                 print(f"    '{date}': {data},")
-            print('}')
+            print("}")
         except HTTPError as e:
             print("HTTP Error:", e)
         except URLError as e:
             print("URL Error:", e)
-            
+
     class MyHTMLParser(HTMLParser):
         """The web scraper."""
 
@@ -82,11 +96,11 @@ class WeatherScraper():
 
             # master dictionary
             self.weather = {}
-            self.daily_temps = {} # dictionary stored inside of the master dictionary.
+            self.daily_temps = {}  # dictionary stored inside of the master dictionary.
 
             # dictionaries to be populated/accessed on each row iteration.
             self.temporary_daily_dict = {}
-            self.column_temperature_legend = {0:"Max", 1:"Min", 2:"Mean"}
+            self.column_temperature_legend = {0: "Max", 1: "Min", 2: "Mean"}
             # property to store the row date for each row iteration
             self.row_date = ""
 
@@ -106,7 +120,7 @@ class WeatherScraper():
             if tag == "th":
                 for attr, value in attrs:
                     # if its attribute is scope and the value is row
-                    if attr == "scope" and 'row' in value:
+                    if attr == "scope" and "row" in value:
                         # set the flag
                         self.in_row_header = True
 
@@ -139,12 +153,17 @@ class WeatherScraper():
                     # print('}')
 
             # if we're in a data-row (<td>) and our counter is less than 3
-            if (self.end_of_table is False and self.in_row_data is True and self.row_column_index <= 3):
+            if (
+                self.end_of_table is False
+                and self.in_row_data is True
+                and self.row_column_index <= 3
+            ):
                 if is_float(data) or data == "M":
                     # we are inside of a <td> element data-row
 
                     self.temporary_daily_dict[
-                        self.column_temperature_legend.get(self.row_column_index)] = data
+                        self.column_temperature_legend.get(self.row_column_index)
+                    ] = data
                     self.row_column_index += 1
 
             # we are only looking for min, max, and mean, which are the first 3 columns of the table.
@@ -159,23 +178,26 @@ class WeatherScraper():
             return self.weather
 
         def reset_flags(self):
-            """Resets the boolean flags indicating we are at a new row in the table."""    
+            """Resets the boolean flags indicating we are at a new row in the table."""
             self.in_row = False
             self.in_row_data = False
             self.in_row_header = False
+            self.end_of_table = False
             self.row_column_index = 0
+
 
 def is_valid_date(value):
     """Attempts to parse the value as a date in the 'YYYY-MM-DD' format."""
     try:
         # Parse the value as a date in the 'Month Day, Year' format
-        parsed_date = datetime.strptime(value, '%B %d, %Y')
+        parsed_date = datetime.strptime(value, "%B %d, %Y")
         # Convert the parsed date to 'YYYY-MM-DD' format
-        converted_date = parsed_date.strftime('%Y-%m-%d')
+        converted_date = parsed_date.strftime("%Y-%m-%d")
         return converted_date
     except ValueError:
         # Return None if the value is not in the expected date format
         return None
+
 
 def is_float(string):
     """Indicates if the passed string is a float."""
@@ -185,8 +207,8 @@ def is_float(string):
     except ValueError:
         return False
 
+
 if __name__ == "__main__":
-    #SEARCH_URL = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&Day=1&Year=2018&Month=5'
+    # SEARCH_URL = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&Day=1&Year=2018&Month=5'
     weatherScraper = WeatherScraper()
     weatherScraper.scrape_weather()
-    
