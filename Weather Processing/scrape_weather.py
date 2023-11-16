@@ -24,13 +24,28 @@ class MyHTMLParser(HTMLParser):
         self.in_row = False
         self.in_row_data = False
         self.row_column_index = 0
-        self.end_of_table = False
+        self.end_of_table = False\
+            
         
         #self.in_col = False
         #self.scraped = {}
         self.start_date = "2013-5-"
-        self.weather = []
-        self.daily_temps = []
+        
+        
+        
+        self.weather = {}
+        self.daily_temps = {}
+        self.temp_daily_temps = {}
+        self.daily_temps_keys = {0:"Max", 1:"Min", 2:"Mean"}
+        
+        self.row_date = ""
+        self.formatted_date = ""
+        
+        
+        
+        
+        
+        
 
     def handle_starttag(self, tag, attrs):
         """The tag to begin parsing at."""
@@ -64,7 +79,9 @@ class MyHTMLParser(HTMLParser):
                         converted_date = is_valid_date(value)
                         
                         if converted_date is not None:
-                            self.weather.append(converted_date)
+                            #self.weather.append(converted_date) for a list
+                            self.row_date = converted_date
+                            self.formatted_date = converted_date
 
     def handle_data(self, data):
         """Look for ip in the data of the element."""
@@ -78,8 +95,13 @@ class MyHTMLParser(HTMLParser):
         if self.end_of_table == False and self.in_row_data == True and self.row_column_index <= 3:
             if is_float(data) or data == 'M':
                 # we are inside of a <td> element datarow
-                self.row_column_index += 1
-                print(data)
+                
+                #if self.row_column_index == 1:
+                    
+                    self.row_column_index += 1
+                
+                #print(data)
+                    
                                 
         # we are only looking for min, max, and mean, which are the first 3 columns of the table.
         if self.in_row_data == True and self.row_column_index == 3:
