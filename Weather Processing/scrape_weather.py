@@ -1,4 +1,4 @@
-"""Scrapes the weather from enviroment canada """
+"""Scrapes the weather from environment canada """
 
 # Tadgh Henry
 # Oct 12, 2023
@@ -19,22 +19,17 @@ class WeatherScraper:
         super().__init__()
         self.parser = self.MyHTMLParser()
         self.start_year = 1996  # on the website the earliest year available is 1996
-        self.start_month = (
-            0  # default value of zero will be changed to the eariest month
-        )
-        self.current_year = ""
+        self.start_month = 0  # default value of zero will be changed to the earliest month
         self.end_year = datetime.now().strftime("%Y")
-        self.month = ""
         self.url_sections = (
-            "https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&Day=1&Year=",
-            "&Month=",
+            "https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&Day=1&Year=","&Month="
         )
         self.search_url = self.update_url()
         self.weather = {}
 
     def update_url(self):
         """Updates the search url with the latest values"""
-        return f"""{self.url_sections[0]}{self.start_year}{self.url_sections[1]}{self.start_month}"""
+        return f'{self.url_sections[0]}{self.start_year}{self.url_sections[1]}{self.start_month}'
 
     def scrape_weather(self):
         """Returns the weather data."""
@@ -57,18 +52,14 @@ class WeatherScraper:
 
                 self.search_url = self.update_url()
                 print(self.search_url)
-                print(
-                    f"Current Year: {self.start_year}, current Month: {self.start_month}"
-                )
+                print(f"Current Year: {self.start_year}, current Month: {self.start_month}")
 
                 with urllib.request.urlopen(self.search_url) as response:
                     HTML_DATA = str(response.read())
                     self.parser.feed(HTML_DATA)
-
-                    # update our master dictionary with the newly returned data for the start year and month
+                    
+                    # update our master dictionary with the newly returned data
                     self.weather.update(self.parser.return_weather_dict())
-
-                # print(self.parser.weather)
             print("{")
             for date, data in self.weather.items():
                 print(f"    '{date}': {data},")
@@ -162,8 +153,7 @@ class WeatherScraper:
                     # we are inside of a <td> element data-row
 
                     self.temporary_daily_dict[
-                        self.column_temperature_legend.get(self.row_column_index)
-                    ] = data
+                        self.column_temperature_legend.get(self.row_column_index)] = data
                     self.row_column_index += 1
 
             # we are only looking for min, max, and mean, which are the first 3 columns of the table.
