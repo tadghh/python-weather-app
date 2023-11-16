@@ -1,6 +1,6 @@
 import sqlite3
 from DBCM import DBCM
-#Cole was here
+
 
 class DBOperations:
     """The DB operations class."""
