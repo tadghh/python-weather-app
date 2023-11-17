@@ -130,15 +130,23 @@ class WeatherScraper:
             if self.end_of_table is False and self.in_row_header is True:
                 # and the element is abbr
                 if tag == "abbr":
-                    for attr, value in attrs:
-                        # if the attribute is title
-                        if attr == "title":
-                            # get the date value and append it to our daily_temps list
-                            converted_date = is_valid_date(value)
+                    title_attr = next(
+                        (value for attr, value in attrs if attr == "title"), None
+                    )
+                    title_attr = is_valid_date(title_attr)
+                    if title_attr is not None:
+                        self.row_date = title_attr
+                        self.in_row = True
 
-                            if converted_date is not None:
-                                self.row_date = converted_date
-                                self.in_row = True
+                    # for attr, value in attrs:
+                    #     # if the attribute is title
+                    #     if attr == "title":
+                    #         # get the date value and append it to our daily_temps list
+                    #         converted_date = is_valid_date(value)
+
+                    #         if converted_date is not None:
+                    #             self.row_date = converted_date
+                    #             self.in_row = True
 
         def handle_data(self, data):
             """Look for ip in the data of the element."""
