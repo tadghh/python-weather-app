@@ -127,7 +127,11 @@ class WeatherScraper:
                     self.in_row_header = True
 
             # if we're in the table row header
-            if self.end_of_table is False and self.in_row_header is True:
+            if (
+                self.in_table_body is True
+                and self.end_of_table is False
+                and self.in_row_header is True
+            ):
                 # and the element is abbr
                 if tag == "abbr":
                     # Check for title, break off when found
@@ -137,6 +141,7 @@ class WeatherScraper:
                     title_attr = is_valid_date(title_attr)
                     if title_attr is not None:
                         self.row_date = title_attr
+                        self.row_column_index = 0
                         self.in_row = True
 
                     # for attr, value in attrs:
@@ -151,6 +156,35 @@ class WeatherScraper:
 
         def handle_data(self, data):
             """Look for ip in the data of the element."""
+
+            # if we're in a data-row (<td>) and our counter is less than 3
+            if (
+                self.in_table_body is True
+                and self.end_of_table is False
+                and self.in_row_data is True
+                and self.row_column_index < 3
+            ):
+                if is_float(data) or data == "M":
+                    # we are inside of a <td> element data-row
+
+                    self.temporary_daily_dict[
+                        self.column_temperature_legend.get(self.row_column_index)
+                    ] = data
+                    self.row_column_index += 1
+                    self.in_row_data = False
+
+            # we are only looking for min, max, and mean, which are the first 3 columns of the table.
+            elif (
+                self.end_of_table is False
+                and self.in_row_data is True
+                and self.row_column_index == 3
+            ):
+                # if we've hit 3 columns we need to reset our flags to move to the next row element.
+
+                self.weather[self.row_date] = self.temporary_daily_dict
+                self.temporary_daily_dict = {}
+                self.reset_flags()
+
             if self.in_row_header is True:
                 if data == "Sum":
                     self.end_of_table = True
@@ -162,29 +196,6 @@ class WeatherScraper:
                     # for date, data in self.weather.items():
                     #     print(f"    '{date}': {data},")
                     # print('}')
-
-            # if we're in a data-row (<td>) and our counter is less than 3
-            if (
-                self.end_of_table is False
-                and self.in_row_data is True
-                and self.row_column_index <= 3
-            ):
-                if is_float(data) or data == "M":
-                    # we are inside of a <td> element data-row
-
-                    self.temporary_daily_dict[
-                        self.column_temperature_legend.get(self.row_column_index)
-                    ] = data
-                    self.row_column_index += 1
-
-            # we are only looking for min, max, and mean, which are the first 3 columns of the table.
-            if self.in_row_data is True and self.row_column_index == 3:
-                # if we've hit 3 columns we need to reset our flags to move to the next row element.
-                if self.row_date == "1996-10-31":
-                    print("we here yo")
-                self.weather[self.row_date] = self.temporary_daily_dict
-                self.temporary_daily_dict = {}
-                self.reset_flags()
 
         def return_weather_dict(self):
             """Returns the current dictionary."""
