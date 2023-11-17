@@ -71,12 +71,14 @@ class WeatherScraper:
                     # for date, data in self.weather.items():
                     #     print(f"    '{date}': {data},")
                     # print("}")
+                    print_dict(self.weather)
 
             # file_path = "test_output.txt"
             # with open(file_path, "w") as file:
             #     # Loop through the dictionary items and write them to the file
             #     for key, value in self.weather.items():
             #         file.write(f"{key}: {value}\n")
+            write_dict(self.weather)
         except HTTPError as e:
             print("HTTP Error:", e)
         except URLError as e:
