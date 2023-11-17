@@ -122,11 +122,9 @@ class WeatherScraper:
 
             # find the table row header
             elif tag == "th":
-                for attr, value in attrs:
-                    # if its attribute is scope and the value is row
-                    if attr == "scope" and "row" in value:
-                        # set the flag
-                        self.in_row_header = True
+                # any allows us to short circut on the first occurance of scope, prevents us from processing unneeded attribute "if they exist"
+                if any(attr == "scope" and "row" in value for attr, value in attrs):
+                    self.in_row_header = True
 
             # if we're in the table row header
             if self.end_of_table is False and self.in_row_header is True:
