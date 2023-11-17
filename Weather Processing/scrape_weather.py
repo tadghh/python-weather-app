@@ -127,11 +127,7 @@ class WeatherScraper:
                     self.in_row_header = True
 
             # if we're in the table row header
-            if (
-                self.in_table_body is True
-                and self.end_of_table is False
-                and self.in_row_header is True
-            ):
+            if self.in_row_header is True:
                 # and the element is abbr
                 if tag == "abbr":
                     # Check for title, break off when found
@@ -143,7 +139,7 @@ class WeatherScraper:
                         self.row_date = title_attr
                         self.row_column_index = 0
                         self.in_row = True
-
+                        self.in_row_header = False
                     # for attr, value in attrs:
                     #     # if the attribute is title
                     #     if attr == "title":
@@ -185,17 +181,12 @@ class WeatherScraper:
                 self.temporary_daily_dict = {}
                 self.reset_flags()
 
-            if self.in_row_header is True:
-                if data == "Sum":
-                    self.end_of_table = True
-                    self.reset_flags()
-
-                    # TODO: make function that accept a dict and prints it out.
-                    # uncomment to print the formatted dictionary
-                    # print('{')
-                    # for date, data in self.weather.items():
-                    #     print(f"    '{date}': {data},")
-                    # print('}')
+                # TODO: make function that accept a dict and prints it out.
+                # uncomment to print the formatted dictionary
+                # print('{')
+                # for date, data in self.weather.items():
+                #     print(f"    '{date}': {data},")
+                # print('}')
 
         def return_weather_dict(self):
             """Returns the current dictionary."""
