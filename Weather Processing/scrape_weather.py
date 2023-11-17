@@ -19,17 +19,20 @@ class WeatherScraper:
         super().__init__()
         self.parser = self.MyHTMLParser()
         self.start_year = 1996  # on the website the earliest year available is 1996
-        self.start_month = 0  # default value of zero will be changed to the earliest month
+        self.start_month = (
+            0  # default value of zero will be changed to the earliest month
+        )
         self.end_year = datetime.now().year
         self.url_sections = (
-            "https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&Day=1&Year=","&Month="
+            "https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&Day=1&Year=",
+            "&Month=",
         )
         self.search_url = self.update_url()
         self.weather = {}
 
     def update_url(self):
         """Updates the search url with the latest values"""
-        return f'{self.url_sections[0]}{self.start_year}{self.url_sections[1]}{self.start_month}'
+        return f"{self.url_sections[0]}{self.start_year}{self.url_sections[1]}{self.start_month}"
 
     def scrape_weather(self):
         """Returns the weather data."""
@@ -52,23 +55,25 @@ class WeatherScraper:
 
                 self.search_url = self.update_url()
                 print(self.search_url)
-                print(f"Current Year: {self.start_year}, current Month: {self.start_month}")
+                print(
+                    f"Current Year: {self.start_year}, current Month: {self.start_month}"
+                )
 
                 with urllib.request.urlopen(self.search_url) as response:
                     HTML_DATA = str(response.read())
-                    self.parser.feed(HTML_DATA)              
-            
+                    self.parser.feed(HTML_DATA)
+
                     # update our master dictionary with the newly returned data
                     self.weather.update(self.parser.return_weather_dict())
                     self.parser.end_of_table = False
-                    
+
                     # print("{")
                     # for date, data in self.weather.items():
                     #     print(f"    '{date}': {data},")
                     # print("}")
-                    
-            file_path = 'test_output.txt'
-            with open(file_path, 'w') as file:
+
+            file_path = "test_output.txt"
+            with open(file_path, "w") as file:
                 # Loop through the dictionary items and write them to the file
                 for key, value in self.weather.items():
                     file.write(f"{key}: {value}\n")
@@ -109,14 +114,14 @@ class WeatherScraper:
             if tag == "tbody":
                 self.in_table_body = True
 
-            if tag == "tr" and self.in_table_body:
+            elif tag == "tr" and self.in_table_body:
                 self.in_row = True
 
-            if self.in_row and tag == "td":
+            elif self.in_row and tag == "td":
                 self.in_row_data = True
 
             # find the table row header
-            if tag == "th":
+            elif tag == "th":
                 for attr, value in attrs:
                     # if its attribute is scope and the value is row
                     if attr == "scope" and "row" in value:
@@ -138,7 +143,7 @@ class WeatherScraper:
                                 self.in_row = True
 
         def handle_data(self, data):
-            """Look for ip in the data of the element."""                   
+            """Look for ip in the data of the element."""
             if self.in_row_header is True:
                 if data == "Sum":
                     self.end_of_table = True
@@ -158,15 +163,17 @@ class WeatherScraper:
                 and self.row_column_index <= 3
             ):
                 if is_float(data) or data == "M":
-                    # we are inside of a <td> element data-row                
+                    # we are inside of a <td> element data-row
 
-                    self.temporary_daily_dict[self.column_temperature_legend.get(self.row_column_index)] = data
+                    self.temporary_daily_dict[
+                        self.column_temperature_legend.get(self.row_column_index)
+                    ] = data
                     self.row_column_index += 1
 
             # we are only looking for min, max, and mean, which are the first 3 columns of the table.
             if self.in_row_data is True and self.row_column_index == 3:
                 # if we've hit 3 columns we need to reset our flags to move to the next row element.
-                if self.row_date == '1996-10-31':
+                if self.row_date == "1996-10-31":
                     print("we here yo")
                 self.weather[self.row_date] = self.temporary_daily_dict
                 self.temporary_daily_dict = {}
@@ -183,6 +190,7 @@ class WeatherScraper:
             self.in_row_header = False
             self.row_column_index = 0
 
+
 def is_valid_date(value):
     """Attempts to parse the value as a date in the 'YYYY-MM-DD' format."""
     try:
@@ -195,6 +203,7 @@ def is_valid_date(value):
         # Return None if the value is not in the expected date format
         return None
 
+
 def is_float(string):
     """Indicates if the passed string is a float."""
     try:
@@ -202,6 +211,7 @@ def is_float(string):
         return True
     except ValueError:
         return False
+
 
 if __name__ == "__main__":
     # SEARCH_URL = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&Day=1&Year=2018&Month=5'
