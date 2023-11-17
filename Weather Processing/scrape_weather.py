@@ -130,6 +130,7 @@ class WeatherScraper:
             if self.end_of_table is False and self.in_row_header is True:
                 # and the element is abbr
                 if tag == "abbr":
+                    # Check for title, break off when found
                     title_attr = next(
                         (value for attr, value in attrs if attr == "title"), None
                     )
