@@ -35,11 +35,12 @@ class DBOperations:
         with self.database_context as cursor:
             cursor.execute("SELECT * FROM weather")
             data = cursor.fetchall()
-            print(f"Current data:{data}")
+            # print(f"Current data:{data}")
+            for row in data:
+               print(row)
             
             return data
-            #for row in data:
-            #    print(row)
+
 
     def save_data(self, data_to_save):
         """Save new data to the database."""
@@ -73,4 +74,6 @@ if __name__ == "__main__":
     db = DBOperations()
     db.initialize_db()
     
-    db.save_data(weather)
+    # db.save_data(weather)
+    db.purge_data()
+    db.fetch_data()
