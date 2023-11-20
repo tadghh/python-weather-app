@@ -6,9 +6,10 @@ from db_operations import DBOperations
 
 class PlotOperations:
     def __init__(self):
-        self.start_year = None
-        self.end_year = None
-        while self.start_year.isdigit() and self.end_year.isdigit():
+        self.start_year = ''
+        self.end_year = ''
+
+        while self.start_year.isdigit() == False and self.end_year.isdigit() == False:
             self.start_year = input("Enter a starting year: ")
             self.end_year = input("Enter a ending year: ")
 

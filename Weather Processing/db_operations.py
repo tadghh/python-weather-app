@@ -41,20 +41,20 @@ class DBOperations:
                 else:
                     if start_year.isdigit() and end_year.isdigit():
                         cursor.execute(
-                            f"SELECT * FROM weather WHERE EXTRACT(YEAR FROM date) BETWEEN {start_year} AND {end_year}"
+                            f"SELECT * FROM weather WHERE strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}'"
                         )
                     else:
                         raise ValueError("Year values must be digits")
 
                 data = cursor.fetchall()
                 # print(f"Current data:{data}")
-                for row in data:
-                    print(row)
+                # for row in data:
+                #     print(row)
 
                 return data
         except ValueError as error:
             print(error)
-        
+
         return None
 
     def save_data(self, data_to_save):
