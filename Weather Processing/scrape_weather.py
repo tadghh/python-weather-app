@@ -67,17 +67,8 @@ class WeatherScraper:
                     self.weather.update(self.parser.return_weather_dict())
                     self.parser.end_of_table = False
 
-                    # print("{")
-                    # for date, data in self.weather.items():
-                    #     print(f"    '{date}': {data},")
-                    # print("}")
                     print_dict(self.weather)
 
-            # file_path = "test_output.txt"
-            # with open(file_path, "w") as file:
-            #     # Loop through the dictionary items and write them to the file
-            #     for key, value in self.weather.items():
-            #         file.write(f"{key}: {value}\n")
             write_dict(self.weather)
         except HTTPError as e:
             print("HTTP Error:", e)
@@ -142,15 +133,6 @@ class WeatherScraper:
                         self.row_column_index = 0
                         self.in_row = True
                         self.in_row_header = False
-                    # for attr, value in attrs:
-                    #     # if the attribute is title
-                    #     if attr == "title":
-                    #         # get the date value and append it to our daily_temps list
-                    #         converted_date = is_valid_date(value)
-
-                    #         if converted_date is not None:
-                    #             self.row_date = converted_date
-                    #             self.in_row = True
 
         def handle_data(self, data):
             """Look for ip in the data of the element."""
@@ -182,10 +164,6 @@ class WeatherScraper:
                 self.weather[self.row_date] = self.temporary_daily_dict
                 self.temporary_daily_dict = {}
                 self.reset_flags()
-
-                # TODO: make function that accept a dict and prints it out.
-                # uncomment to print the formatted dictionary
-
 
         def return_weather_dict(self):
             """Returns the current dictionary."""
@@ -219,12 +197,14 @@ def is_float(string):
         return True
     except ValueError:
         return False
-    
+
+
 def print_dict(dict):
-    print('{')
+    print("{")
     for date, data in dict.items():
         print(f"    '{date}': {data},")
-    print('}')
+    print("}")
+
 
 def write_dict(dict):
     file_path = "test_output.txt"
@@ -232,7 +212,6 @@ def write_dict(dict):
         # Loop through the dictionary items and write them to the file
         for key, value in dict.items():
             file.write(f"{key}: {value}\n")
-
 
 
 if __name__ == "__main__":
