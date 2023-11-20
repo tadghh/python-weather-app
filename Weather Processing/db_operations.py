@@ -85,11 +85,17 @@ if __name__ == "__main__":
         "2018-06-01": {"Max": 12.0, "Min": 5.6, "Mean": 7.1},
         "2018-06-02": {"Max": 22.2, "Min": 11.1, "Mean": 15.5},
         "2018-06-03": {"Max": 31.3, "Min": 29.9, "Mean": 30.0},
+        "2017-06-01": {"Max": 12.0, "Min": 5.6, "Mean": 7.1},
+        "2017-05-02": {"Max": 22.2, "Min": 11.1, "Mean": 15.5},
+        "2017-03-03": {"Max": 31.3, "Min": 29.9, "Mean": 30.0},
+        "2016-01-01": {"Max": 12.0, "Min": 5.6, "Mean": 7.1},
+        "2016-03-02": {"Max": 22.2, "Min": 11.1, "Mean": 15.5},
+        "2016-09-03": {"Max": 31.3, "Min": 29.9, "Mean": 30.0},
     }
 
     db = DBOperations()
     db.initialize_db()
 
-    # db.save_data(weather)
+    db.save_data(weather)
     # db.purge_data()
     db.fetch_data()
