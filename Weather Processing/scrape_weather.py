@@ -9,7 +9,6 @@ import urllib.request
 from urllib.error import URLError, HTTPError
 from datetime import datetime
 
-
 class WeatherScraper:
     """Scrapes environment Canada."""
 
@@ -60,20 +59,20 @@ class WeatherScraper:
                 )
 
                 with urllib.request.urlopen(self.search_url) as response:
-                    HTML_DATA = str(response.read())
-                    self.parser.feed(HTML_DATA)
+                    html_data = str(response.read())
+                    self.parser.feed(html_data)
 
                     # update our master dictionary with the newly returned data
                     self.weather.update(self.parser.return_weather_dict())
                     self.parser.end_of_table = False
 
-                    print_dict(self.weather)
+                    print_scraped_data(self.weather)
 
-            write_dict(self.weather)
-        except HTTPError as e:
-            print("HTTP Error:", e)
-        except URLError as e:
-            print("URL Error:", e)
+            #write_scraped_data(self.weather) - uncomment to view data print out in a .txt
+        except HTTPError as error:
+            print("HTTP Error:", error)
+        except URLError as error:
+            print("URL Error:", error)
 
     class MyHTMLParser(HTMLParser):
         """The web scraper."""
@@ -115,7 +114,7 @@ class WeatherScraper:
 
             # find the table row header
             elif tag == "th":
-                # any allows us to short circut on the first occurance of scope, prevents us from processing unneeded attribute "if they exist"
+                # any allows us to short circuit on the first occurrence of scope
                 if any(attr == "scope" and "row" in value for attr, value in attrs):
                     self.in_row_header = True
 
@@ -153,7 +152,7 @@ class WeatherScraper:
                     self.row_column_index += 1
                     self.in_row_data = False
 
-            # we are only looking for min, max, and mean, which are the first 3 columns of the table.
+            # we are only looking for min, max, and mean, which are the first 3 columns.
             elif (
                 self.end_of_table is False
                 and self.in_row_data is True
@@ -176,7 +175,6 @@ class WeatherScraper:
             self.in_row_header = False
             self.row_column_index = 0
 
-
 def is_valid_date(value):
     """Attempts to parse the value as a date in the 'YYYY-MM-DD' format."""
     try:
@@ -189,7 +187,6 @@ def is_valid_date(value):
         # Return None if the value is not in the expected date format
         return None
 
-
 def is_float(string):
     """Indicates if the passed string is a float."""
     try:
@@ -198,23 +195,20 @@ def is_float(string):
     except ValueError:
         return False
 
-
-def print_dict(dict):
+def print_scraped_data(scraped_data):
     print("{")
-    for date, data in dict.items():
-        print(f"    '{date}': {data},")
+    for date, weather in scraped_data.items():
+        print(f"    '{date}': {weather},")
     print("}")
 
-
-def write_dict(dict):
+def write_scraped_data(scraped_data):
     file_path = "test_output.txt"
-    with open(file_path, "w") as file:
+    with open(file_path, "w",  encoding='UTF-8') as file:
         # Loop through the dictionary items and write them to the file
-        for key, value in dict.items():
+        for key, value in scraped_data.items():
             file.write(f"{key}: {value}\n")
 
 
 if __name__ == "__main__":
-    # SEARCH_URL = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&Day=1&Year=2018&Month=5'
     weatherScraper = WeatherScraper()
     weatherScraper.scrape_weather()
