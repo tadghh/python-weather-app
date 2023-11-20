@@ -3,6 +3,7 @@
 import sqlite3
 from dbcm import DBCM
 
+
 class DBOperations:
     """The DB operations class."""
 
@@ -15,35 +16,36 @@ class DBOperations:
             self.cursor = None
         except sqlite3.DatabaseError as error:
             print("Error initializing DB: ", error)
-            
+
     def initialize_db(self):
         """Initialize the database."""
         with self.database_context as cursor:
             cursor.execute(
-                '''CREATE TABLE IF NOT EXISTS weather (
+                """CREATE TABLE IF NOT EXISTS weather (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 sample_date TEXT NOT NULL,
                 location TEXT NOT NULL,
                 min_temp REAL NOT NULL,
                 max_temp REAL NOT NULL,
                 avg_temp REAL NOT NULL
-                )'''
+                )"""
             )
 
     def fetch_data(self):
         """Fetch the current data in the database."""
+        # TODO: Scenario when there is no database
         with self.database_context as cursor:
             cursor.execute("SELECT * FROM weather")
             data = cursor.fetchall()
             # print(f"Current data:{data}")
             for row in data:
-               print(row)
-            
-            return data
+                print(row)
 
+            return data
 
     def save_data(self, data_to_save):
         """Save new data to the database."""
+        # TODO: Scenario when there is no db
         with self.database_context as cursor:
             for date, data in data_to_save.items():
                 min_temp = data.get("Min")
@@ -73,7 +75,7 @@ if __name__ == "__main__":
 
     db = DBOperations()
     db.initialize_db()
-    
+
     # db.save_data(weather)
     db.purge_data()
     db.fetch_data()
