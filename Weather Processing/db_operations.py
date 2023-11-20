@@ -31,21 +31,35 @@ class DBOperations:
                 )"""
             )
 
-    def fetch_data(self):
+    def fetch_data(self, start_year="", end_year=""):
         """Fetch the current data in the database."""
         # TODO: Scenario when there is no database
-        with self.database_context as cursor:
-            cursor.execute("SELECT * FROM weather")
-            data = cursor.fetchall()
-            # print(f"Current data:{data}")
-            for row in data:
-                print(row)
+        try:
+            with self.database_context as cursor:
+                if start_year == "" and end_year == "":
+                    cursor.execute("SELECT * FROM weather")
+                else:
+                    if start_year.isdigit() and end_year.isdigit():
+                        cursor.execute(
+                            f"SELECT * FROM weather WHERE EXTRACT(YEAR FROM date) BETWEEN {start_year} AND {end_year}"
+                        )
+                    else:
+                        raise ValueError("Year values must be digits")
 
-            return data
+                data = cursor.fetchall()
+                # print(f"Current data:{data}")
+                for row in data:
+                    print(row)
+
+                return data
+        except ValueError as error:
+            print(error)
+        
+        return None
 
     def save_data(self, data_to_save):
         """Save new data to the database."""
-        # TODO: Scenario when there is no db
+        # TODO: Scenario when there is no db, Secnario where data is duplicated
         with self.database_context as cursor:
             for date, data in data_to_save.items():
                 min_temp = data.get("Min")
@@ -76,6 +90,6 @@ if __name__ == "__main__":
     db = DBOperations()
     db.initialize_db()
 
-    #db.save_data(weather)
-    #db.purge_data()
+    # db.save_data(weather)
+    # db.purge_data()
     db.fetch_data()
