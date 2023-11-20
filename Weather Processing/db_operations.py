@@ -76,6 +76,6 @@ if __name__ == "__main__":
     db = DBOperations()
     db.initialize_db()
 
-    # db.save_data(weather)
-    db.purge_data()
+    #db.save_data(weather)
+    #db.purge_data()
     db.fetch_data()
