@@ -2,7 +2,6 @@
 
 import sqlite3
 
-
 class DBCM:
     """Class for enacting operations on SQLite database."""
 
@@ -13,7 +12,7 @@ class DBCM:
             self.conn = None
             self.cursor = None
         except sqlite3.DatabaseError as error:
-            print("Error initalizing DB: ", error)
+            print("Error initializing DB: ", error)
 
     def __enter__(self):
         """This runs after init and will return the DB cursor."""
@@ -22,7 +21,7 @@ class DBCM:
         return self.cursor
 
     def __exit__(self, exc_type, exc_value, traceback):
-        """Cleanup, closing the cursor and commiting and changes, then closing the connection."""
+        """Cleanup, closing the cursor and committing and changes, then closing the connection."""
         if self.cursor:
             self.cursor.close()
         if self.conn:
