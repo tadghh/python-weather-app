@@ -6,11 +6,20 @@ from db_operations import DBOperations
 
 class PlotOperations:
     def __init__(self):
-        self.year_from = input("Enter a starting year: ")
-        self.year_to = input("Enter a ending year: ")
+        self.start_year = None
+        self.end_year = None
+        while self.start_year.isdigit() and self.end_year.isdigit():
+            self.start_year = input("Enter a starting year: ")
+            self.end_year = input("Enter a ending year: ")
+
         self.db = DBOperations()
         self.db.initialize_db()
-        print(self.year_from, self.year_to)
+        self.weather_data = self.db.fetch_data(
+            start_year=self.start_year, end_year=self.end_year
+        )
+        print(self.start_year, self.end_year)
+        print(self.weather_data)
+
 
 if __name__ == "__main__":
     myPlot = PlotOperations()
