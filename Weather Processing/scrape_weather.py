@@ -8,6 +8,8 @@ from html.parser import HTMLParser
 import urllib.request
 from urllib.error import URLError, HTTPError
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
+from tqdm import tqdm
 
 class WeatherScraper:
     """Scrapes environment Canada."""
@@ -17,10 +19,13 @@ class WeatherScraper:
 
         super().__init__()
         self.parser = self.MyHTMLParser()
-        self.start_year = 1996  # on the website the earliest year available is 1996
-        self.start_month = (
-            0  # default value of zero will be changed to the earliest month
-        )
+
+        # on the website the earliest year available is 1996
+        self.start_year = 1996
+
+        # default value of zero will be changed to the earliest month
+        self.start_month = 0
+
         self.end_year = datetime.now().year
         self.url_sections = (
             "https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&Day=1&Year=",
@@ -36,43 +41,57 @@ class WeatherScraper:
     def scrape_weather(self):
         """Returns the weather data."""
         try:
-            while self.start_year <= self.end_year:
-                # if the month is 0 which is our starting value,
-                # set it to 10 which is the earliest month available
-                # on the website the earliest month for 1996 is october (10th month)
-                if self.start_month == 0:
-                    self.start_month = 10
-                elif self.start_month == 12:
-                    # if the month isn't 12, increment the month by 1
-                    self.start_year += 1
-                    self.start_month = 1
+            thread_count = 12
 
-                else:
-                    # if the month is 12, increment the year by 1
-                    # and set the month to the start of the year (1)
-                    self.start_month += 1
+            # Used to keeps track of the final amount of tasks for the progress bar.
+            total_tasks = (self.end_year - self.start_year + 1) * 12
 
-                self.search_url = self.update_url()
-                print(self.search_url)
-                print(
-                    f"Current Year: {self.start_year}, current Month: {self.start_month}"
-                )
+            # tqdm is used to provide a progress bad in the console.
+            with tqdm(total=total_tasks, desc="Scraping Weather") as pbar:
+                with ThreadPoolExecutor(max_workers=thread_count) as executor:
 
-                with urllib.request.urlopen(self.search_url) as response:
-                    html_data = str(response.read())
-                    self.parser.feed(html_data)
+                    # tells the thread what method to run and provides the parameters for it.
+                    # Range is used to get the month and year
+                    futures = [executor.submit(self.scrape_weather_thread, year, month, pbar)
+                               for year in range(self.start_year, self.end_year + 1)
+                               for month in range(1, 13)]
 
-                    # update our master dictionary with the newly returned data
-                    self.weather.update(self.parser.return_weather_dict())
-                    self.parser.end_of_table = False
+                    # Waits for all of the threads to complete
+                    for future in futures:
+                        future.result()
 
-                    print_scraped_data(self.weather)
-
-            #write_scraped_data(self.weather) - uncomment to view data print out in a .txt
         except HTTPError as error:
             print("HTTP Error:", error)
         except URLError as error:
             print("URL Error:", error)
+        finally:
+           print_scraped_data(self.weather)
+           write_scraped_data(self.weather)
+
+
+    def scrape_weather_thread(self, year, month, pbar):
+        """Thread function for scraping weather."""
+        try:
+
+            # Update URL for the current year and month
+            search_url = f"{self.url_sections[0]}{year}{self.url_sections[1]}{month}"
+
+            with urllib.request.urlopen(search_url) as response:
+                html_data = str(response.read())
+                parser = self.MyHTMLParser()
+                parser.feed(html_data)
+
+                # Update our master dictionary with the newly returned data
+                self.weather.update(parser.return_weather_dict())
+
+        except HTTPError as error:
+            print("HTTP Error:", error)
+        except URLError as error:
+            print("URL Error:", error)
+        finally:
+            # Update the progress bar
+            pbar.update(1)
+
 
     class MyHTMLParser(HTMLParser):
         """The web scraper."""
@@ -87,16 +106,20 @@ class WeatherScraper:
             self.in_row = False
             self.in_row_data = False
             self.end_of_table = False
+
             # row column counter
             self.row_column_index = 0
 
             # master dictionary
             self.weather = {}
-            self.daily_temps = {}  # dictionary stored inside of the master dictionary.
+
+            # dictionary stored inside of the master dictionary.
+            self.daily_temps = {}
 
             # dictionaries to be populated/accessed on each row iteration.
             self.temporary_daily_dict = {}
             self.column_temperature_legend = {0: "Max", 1: "Min", 2: "Mean"}
+
             # property to store the row date for each row iteration
             self.row_date = ""
 
@@ -112,21 +135,26 @@ class WeatherScraper:
             elif self.in_row and tag == "td":
                 self.in_row_data = True
 
-            # find the table row header
+            # Find the table row header.
             elif tag == "th":
-                # any allows us to short circuit on the first occurrence of scope
+
+                # Any allows us to short circuit on the first occurrence of scope.
                 if any(attr == "scope" and "row" in value for attr, value in attrs):
                     self.in_row_header = True
 
-            # if we're in the table row header
+            # If we're in the table row header.
             if self.in_row_header is True:
-                # and the element is abbr
+
+                # And the element is abbr.
                 if tag == "abbr":
-                    # Check for title, break off when found
+
+                    # Check for title, break off when found.
                     title_attr = next(
                         (value for attr, value in attrs if attr == "title"), None
                     )
+
                     title_attr = is_valid_date(title_attr)
+
                     if title_attr is not None:
                         self.row_date = title_attr
                         # TODO: test if col index is needed here
@@ -136,8 +164,11 @@ class WeatherScraper:
 
         def handle_data(self, data):
             """Look for ip in the data of the element."""
+            if(data == "Sum"):
+                self.end_of_table = True
+                self.reset_flags()
 
-            # if we're in a data-row (<td>) and our counter is less than 3
+            # If we're in a data-row (<td>) and our counter is less than 3.
             if (
                 self.in_table_body is True
                 and self.end_of_table is False
@@ -145,21 +176,23 @@ class WeatherScraper:
                 and self.row_column_index < 3
             ):
                 if is_float(data) or data == "M":
-                    # we are inside of a <td> element data-row
+                    # We are inside of a <td> element data-row.
 
+                    # Line up the data with the dictionary before adding it to the year.
                     self.temporary_daily_dict[
                         self.column_temperature_legend.get(self.row_column_index)
                     ] = data
+
                     self.row_column_index += 1
                     self.in_row_data = False
 
-            # we are only looking for min, max, and mean, which are the first 3 columns.
+            # We are only looking for min, max, and mean, which are the first 3 columns.
             elif (
                 self.end_of_table is False
                 and self.in_row_data is True
                 and self.row_column_index == 3
             ):
-                # if we've hit 3 columns we need to reset our flags to move to the next row element.
+                # If we've hit 3 columns we need to reset our flags to move to the next row element.
 
                 self.weather[self.row_date] = self.temporary_daily_dict
                 self.temporary_daily_dict = {}
