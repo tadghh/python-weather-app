@@ -129,6 +129,7 @@ class WeatherScraper:
                     title_attr = is_valid_date(title_attr)
                     if title_attr is not None:
                         self.row_date = title_attr
+                        # TODO: test if col index is needed here
                         self.row_column_index = 0
                         self.in_row = True
                         self.in_row_header = False
