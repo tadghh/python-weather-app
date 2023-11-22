@@ -31,20 +31,7 @@ class PlotOperations:
 
 
 if __name__ == "__main__":
-    myPlot = PlotOperations()
-    # Creating dataset
-    # np.random.seed(10)
-    # data = np.random.normal(100, 20, 200)
-
-    # fig = plt.figure(figsize=(10, 7))
-
-    # # Creating plot
-    # plt.boxplot(data)
-
-    # # show plot
-    # plt.show()
-
-    # Extracting temperatures for each month
+    myPlotNew = PlotOperations()
 
     def extract_monthly_temperatures(data):
         months = {
@@ -66,7 +53,8 @@ if __name__ == "__main__":
         return monthly_avg_temps
 
     #-# Extracting average temperatures for each month across all years
-    monthly_avg_temperatures = extract_monthly_temperatures(myPlot.weather_data)
+    # myPlot is not getting refreshed
+    monthly_avg_temperatures = extract_monthly_temperatures(myPlotNew.weather_data)
 
     #-# Organizing temperatures for plotting
     temps = [monthly_avg_temperatures[i] for i in range(1, 13)]
