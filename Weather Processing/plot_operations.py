@@ -33,6 +33,7 @@ class PlotOperations:
 if __name__ == "__main__":
     myPlotNew = PlotOperations()
 
+    # While extracting monthly tempratures, we should only be extracting the "Mean" temprature for each day of the month of each year
     def extract_monthly_temperatures(data):
         months = {
             i: [] for i in range(1, 13)
