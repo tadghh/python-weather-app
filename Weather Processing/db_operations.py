@@ -19,17 +19,21 @@ class DBOperations:
 
     def initialize_db(self):
         """Initialize the database."""
-        with self.database_context as cursor:
-            cursor.execute(
-                """CREATE TABLE IF NOT EXISTS weather (
-                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                sample_date TEXT NOT NULL,
-                location TEXT NOT NULL,
-                min_temp REAL NOT NULL,
-                max_temp REAL NOT NULL,
-                avg_temp REAL NOT NULL
-                )"""
-            )
+        try:
+            with self.database_context as cursor:
+                cursor.execute(
+                    """CREATE TABLE IF NOT EXISTS weather (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    sample_date TEXT NOT NULL,
+                    location TEXT NOT NULL,
+                    min_temp REAL NOT NULL,
+                    max_temp REAL NOT NULL,
+                    avg_temp REAL NOT NULL
+                    )"""
+                )
+        except sqlite3.OperationalError as error:
+            print(error)
+
 
     def fetch_data(self, start_year="", end_year=""):
         """Fetch the current data in the database."""
@@ -47,37 +51,85 @@ class DBOperations:
                         raise ValueError("Year values must be digits")
 
                 data = cursor.fetchall()
-                # print(f"Current data:{data}")
-                # for row in data:
-                #     print(row)
 
                 return data
         except ValueError as error:
             print(error)
-
+        except sqlite3.OperationalError as error:
+            # Table in db might not exist, trying to create value will be returned up from the recursive call
+            try:
+                print("Trying to make table.")
+                print(error)
+                self.initialize_db()
+                return self.fetch_data(self.start_year,self.end_year)
+            except sqlite3.OperationalError as error:
+                print("Table creation failed.")
+                print(error)
         return None
 
     def save_data(self, data_to_save):
         """Save new data to the database."""
         # TODO: Scenario when there is no db, Secnario where data is duplicated
-        with self.database_context as cursor:
-            for date, data in data_to_save.items():
-                min_temp = data.get("Min")
-                max_temp = data.get("Max")
-                avg_temp = data.get("Mean")
-                location = "Winnipeg, MB"
+        try:
+            with self.database_context as cursor:
+                for date, data in data_to_save.items():
+                    min_temp = data.get("Min")
+                    max_temp = data.get("Max")
+                    avg_temp = data.get("Mean")
+                    location = "Winnipeg, MB"
 
-                cursor.execute(
-                    "INSERT INTO weather (sample_date, location, min_temp, max_temp, avg_temp) VALUES (?, ?, ?, ?, ?)",
-                    (date, location, min_temp, max_temp, avg_temp),
-                )
-            print("Sample data inserted successfully.")
+                    cursor.execute(
+                        "INSERT INTO weather (sample_date, location, min_temp, max_temp, avg_temp) VALUES (?, ?, ?, ?, ?)",
+                        (date, location, min_temp, max_temp, avg_temp),
+                    )
+                print("Sample data inserted successfully.")
+        except sqlite3.OperationalError as error:
+            try:
+                print(error)
+                print("Error saving data, making sure table exists. Will try to re-save")
+                self.initialize_db()
+                self.save_date(self.data_to_save)
 
-    def purge_data(self):
-        """Remove all data from the database."""
-        with self.database_context as cursor:
-            cursor.execute("DELETE FROM weather")
-            print("Data deleted from weather table.")
+            except sqlite3.OperationalError as error:
+                print(error)
+                print("Could'nt create table.")
+        except sqlite3.IntegrityError as error:
+            print(error)
+            print("Error: Attempted to insert duplicate data. Handle accordingly.")
+
+
+
+    def purge_data(self, burn = False):
+        """
+        Remove all data from the 'weather' table, or drop all tables in the database.
+
+        Parameters:
+        - burn (bool): If True, all tables in the database will be dropped.
+                    If False (default), only data from the 'weather' table will be deleted.
+
+        Note:
+        - Be cautious when using burn=True, as it will permanently delete all tables and their data.
+
+        Usage:
+        Example 1: obj.purge_data()  # Deletes data from the 'weather' table.
+        Example 2: obj.purge_data(burn=True)  # Drops all tables in the database.
+        """
+        try:
+            with self.database_context as cursor:
+                cursor.execute("DELETE FROM weather")
+                print("Data deleted from weather table.")
+
+                if(self.burn is True):
+                    print("Dropping any remaining tables found in sqlite_master.")
+                    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+                    tables = cursor.fetchall()
+                    for table in tables:
+                        cursor.execute(f"DROP TABLE {table[0]};")
+                    print("All tables dropped.")
+        except sqlite3.OperationalError as error:
+            print(error)
+            print(f"An error occured while purging data. Burn state is {self.burn}")
+
 
 
 if __name__ == "__main__":
