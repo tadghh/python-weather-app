@@ -15,7 +15,8 @@ class DBOperations:
             self.conn = None
             self.cursor = None
         except sqlite3.DatabaseError as error:
-            print("Error initializing DB: ", error)
+            print(error)
+            print("Error: __init__ initializing DB")
 
     def initialize_db(self):
         """Initialize the database."""
@@ -33,6 +34,7 @@ class DBOperations:
                 )
         except sqlite3.OperationalError as error:
             print(error)
+            print("Error: Failed to initialize database.")
 
 
     def fetch_data(self, start_year="", end_year=""):
@@ -55,21 +57,29 @@ class DBOperations:
                 return data
         except ValueError as error:
             print(error)
+            print("Error: fetch_data provided values are invalid.")
         except sqlite3.OperationalError as error:
             # Table in db might not exist, trying to create value will be returned up from the recursive call
             try:
-                print("Trying to make table.")
                 print(error)
+                print("Error: Table might not exist trying to initialize.")
                 self.initialize_db()
                 return self.fetch_data(self.start_year,self.end_year)
             except sqlite3.OperationalError as error:
-                print("Table creation failed.")
                 print(error)
+                print("Error: Table creation failed.")
         return None
 
     def save_data(self, data_to_save):
-        """Save new data to the database."""
-        # TODO: Scenario when there is no db, Secnario where data is duplicated
+        """
+        Save new (non duplicate) data to the database.
+
+        Save new data to the 'weather' table in the database.
+
+        Parameters:
+        - data_to_save (dict): A dictionary containing data to be saved, where keys are dates and values are dictionaries
+                            with temperature information.
+        """
         try:
             with self.database_context as cursor:
                 for date, data in data_to_save.items():
@@ -79,14 +89,14 @@ class DBOperations:
                     location = "Winnipeg, MB"
 
                     cursor.execute(
-                        "INSERT INTO weather (sample_date, location, min_temp, max_temp, avg_temp) VALUES (?, ?, ?, ?, ?)",
+                        "INSERT OR IGNORE INTO weather (sample_date, location, min_temp, max_temp, avg_temp) VALUES (?, ?, ?, ?, ?)",
                         (date, location, min_temp, max_temp, avg_temp),
                     )
                 print("Sample data inserted successfully.")
         except sqlite3.OperationalError as error:
             try:
                 print(error)
-                print("Error saving data, making sure table exists. Will try to re-save")
+                print("Error: saving data, making sure table exists. Will try to re-save")
                 self.initialize_db()
                 self.save_date(data_to_save)
 
@@ -95,7 +105,7 @@ class DBOperations:
                 print("Could'nt create table.")
         except sqlite3.IntegrityError as error:
             print(error)
-            print("Error: Attempted to insert duplicate data. Handle accordingly.")
+            print("Error: Integrity Error with the save_data function")
 
 
 
