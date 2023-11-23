@@ -83,12 +83,12 @@ class DBOperations:
             # Table in db might not exist, trying to create value will be returned up from the recursive call
             try:
                 print(error)
-                print("Error: Table might not exist trying to initialize.")
+                print("Error: fetch_data Table might not exist trying to initialize.")
                 self.initialize_db()
                 return self.fetch_data(start_year,end_year)
             except sqlite3.OperationalError as error:
                 print(error)
-                print("Error: Table creation failed.")
+                print("Error: fetch_data Table creation failed.")
         return None
 
     def save_data(self, data_to_save):
@@ -117,16 +117,16 @@ class DBOperations:
         except sqlite3.OperationalError as error:
             try:
                 print(error)
-                print("Error: saving data, making sure table exists. Will try to re-save")
+                print("Error: save_data saving data, making sure table exists. Will try to re-save")
                 self.initialize_db()
                 self.save_date(data_to_save)
 
             except sqlite3.OperationalError as error:
                 print(error)
-                print("Could'nt create table.")
+                print("Error: save_data Could'nt initalize or save to table.")
         except sqlite3.IntegrityError as error:
             print(error)
-            print("Error: Integrity Error with the save_data function")
+            print("Error: save_data Integrity Error with the save_data function")
 
 
 
@@ -159,7 +159,7 @@ class DBOperations:
                     print("All tables dropped.")
         except sqlite3.OperationalError as error:
             print(error)
-            print(f"An error occured while purging data. Burn state is {self.burn}")
+            print(f" purge_data An error occured while purging data. Burn state is {self.burn}")
 
 
 
