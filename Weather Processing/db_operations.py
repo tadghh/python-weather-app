@@ -16,7 +16,7 @@ class DBOperations:
             self.cursor = None
         except sqlite3.DatabaseError as error:
             print(error)
-            print("Error: __init__ initializing DB")
+            print("Error: __init__ initializing DB.")
 
     def initialize_db(self):
         """Initialize the database."""
@@ -71,7 +71,7 @@ class DBOperations:
                             f"SELECT * FROM weather WHERE strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}'"
                         )
                     else:
-                        raise ValueError("Year values must be digits")
+                        raise ValueError("start_year or end_year must be digits.")
 
                 data = cursor.fetchall()
 
@@ -117,7 +117,7 @@ class DBOperations:
         except sqlite3.OperationalError as error:
             try:
                 print(error)
-                print("Error: save_data saving data, making sure table exists. Will try to re-save")
+                print("Error: save_data saving data, making sure table exists. Will try to re-save.")
                 self.initialize_db()
                 self.save_date(data_to_save)
 
@@ -126,7 +126,7 @@ class DBOperations:
                 print("Error: save_data Could'nt initalize or save to table.")
         except sqlite3.IntegrityError as error:
             print(error)
-            print("Error: save_data Integrity Error with the save_data function")
+            print("Error: save_data Integrity Error with the save_data function.")
 
 
 
@@ -159,7 +159,7 @@ class DBOperations:
                     print("All tables dropped.")
         except sqlite3.OperationalError as error:
             print(error)
-            print(f" purge_data An error occured while purging data. Burn state is {self.burn}")
+            print(f" purge_data An error occured while purging data. Burn state is {self.burn}.")
 
 
 

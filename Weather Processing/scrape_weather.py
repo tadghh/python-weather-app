@@ -217,8 +217,10 @@ def is_valid_date(value):
         # Convert the parsed date to 'YYYY-MM-DD' format
         converted_date = parsed_date.strftime("%Y-%m-%d")
         return converted_date
-    except ValueError:
+    except ValueError as error:
         # Return None if the value is not in the expected date format
+        print(error)
+        print("Error: is_valid_date an error occurred when parsing the date.")
         return None
 
 def is_float(string):
