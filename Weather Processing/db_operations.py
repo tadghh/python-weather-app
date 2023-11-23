@@ -88,7 +88,7 @@ class DBOperations:
                 print(error)
                 print("Error saving data, making sure table exists. Will try to re-save")
                 self.initialize_db()
-                self.save_date(self.data_to_save)
+                self.save_date(data_to_save)
 
             except sqlite3.OperationalError as error:
                 print(error)
