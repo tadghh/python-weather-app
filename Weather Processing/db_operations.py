@@ -38,8 +38,29 @@ class DBOperations:
 
 
     def fetch_data(self, start_year="", end_year=""):
-        """Fetch the current data in the database."""
-        # TODO: Scenario when there is no database
+        """
+        Fetch weather data from the database.
+
+        Retrieves weather data from the 'weather' table in the database based on optional filtering by date.
+
+        Parameters:
+        - start_year (str): Optional start year for filtering data. Default is an empty string, indicating no start year.
+        - end_year (str): Optional end year for filtering data. Default is an empty string, indicating no end year.
+
+        Returns:
+        - list of tuples: A list containing tuples representing weather data records. Each tuple includes columns
+                        such as 'sample_date', 'location', 'min_temp', 'max_temp', and 'avg_temp'.
+
+        Raises:
+        - ValueError: If start_year or end_year is provided and is not a digit.
+        - OperationalError: If there are issues with the database operation, such as table not existing.
+
+        Note:
+        - If start_year and end_year are provided, the method filters data based on the year part of 'sample_date'.
+        - If the table 'weather' does not exist in the database, the method attempts to create it.
+        - If table creation fails, returns None.
+
+        """
         try:
             with self.database_context as cursor:
                 if start_year == "" and end_year == "":
@@ -64,7 +85,7 @@ class DBOperations:
                 print(error)
                 print("Error: Table might not exist trying to initialize.")
                 self.initialize_db()
-                return self.fetch_data(self.start_year,self.end_year)
+                return self.fetch_data(start_year,end_year)
             except sqlite3.OperationalError as error:
                 print(error)
                 print("Error: Table creation failed.")
