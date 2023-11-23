@@ -52,9 +52,11 @@ class WeatherScraper:
 
                     # tells the thread what method to run and provides the parameters for it.
                     # Range is used to get the month and year
-                    futures = [executor.submit(self.scrape_weather_thread, year, month, pbar)
-                               for year in range(self.start_year, self.end_year + 1)
-                               for month in range(1, 13)]
+                    futures = [
+                        executor.submit(self.scrape_weather_thread, year, month, pbar)
+                        for year in range(self.start_year, self.end_year + 1)
+                        for month in range(1, 13)
+                        ]
 
                     # Waits for all of the threads to complete
                     for future in futures:
@@ -70,7 +72,15 @@ class WeatherScraper:
 
 
     def scrape_weather_thread(self, year, month, pbar):
-        """Thread function for scraping weather."""
+        """
+        Thread function for scraping weather.
+
+        Parameters:
+        - year: the year to be used for the search url.
+        - month: the month to be used for the search url.
+        - pbar: used for increase the state of the progress bar.
+
+        """
         try:
 
             # Update URL for the current year and month
@@ -93,23 +103,57 @@ class WeatherScraper:
             pbar.update(1)
 
     def print_scraped_data(scraped_data):
-        """print the data stored within scraped_data."""
-        print("{")
-        for date, weather in scraped_data.items():
-            print(f"    '{date}': {weather},")
-        print("}")
+        """
+        Prints the data stored within scraped_data in a formatted manner.
+
+        Parameters:
+        - scraped_data (dict): A dictionary containing the scraped data to be printed.
+
+        Returns:
+        None
+
+        Raises:
+        - AttributeError: If the input 'scraped_data' is not a dictionary and does not have the 'items()' method.
+
+        The function prints the key-value pairs from the input dictionary 'scraped_data' in a formatted manner.
+        Each pair is printed as "'date': weather," within curly braces. If 'scraped_data' is not a dictionary or
+        does not have the 'items()' method, an AttributeError is raised, and an error message is printed.
+        """
+        try:
+            print("{")
+            for date, weather in scraped_data.items():
+                print(f"    '{date}': {weather},")
+            print("}")
+        except AttributeError as error:
+            print(error)
+            print("Error: print_scraped_data - Input 'scraped_data' does not have the 'items()' method.")
 
     def write_scraped_data(scraped_data):
-        """Write out scraped_data to a file."""
-        file_path = "test_output.txt"
+        """
+        Writes the scraped data to a text file, formatted to be used for testing with the database.
+
+        Parameters:
+        - scraped_data (dict): A dictionary containing the scraped data to be written to the file.
+
+        Returns:
+        None
+
+        Raises:
+        - PermissionError: If the current user lacks permission.
+
+        The function opens a file at the path './test_output.txt' and writes the key-value pairs from the
+        input dictionary 'scraped_data' to the file, with each pair formatted as "key: value\n". The file
+        is encoded using UTF-8.
+        """
+        file_path = "./test_output.txt"
         try:
-            with open(file_path, "w",  encoding='UTF-8') as file:
+            with open(file_path, "w", encoding='UTF-8') as file:
                 # Loop through the dictionary items and write them to the file
                 for key, value in scraped_data.items():
-                    file.write(f"{key}: {value}\n")
-        except FileExistsError as error:
+                    file.write(f'"{key}": {value},\n')
+        except PermissionError as error:
             print(error)
-            print("Error: write_scraped_data an error occurred.")
+            print("Error: write_scraped_data - Permission error. Check if you have the necessary write permissions.")
 
     class MyHTMLParser(HTMLParser):
         """The web scraper."""
