@@ -65,8 +65,8 @@ class WeatherScraper:
         except URLError as error:
             print("URL Error:", error)
         finally:
-           print_scraped_data(self.weather)
-           write_scraped_data(self.weather)
+           self.print_scraped_data(self.weather)
+           self.write_scraped_data(self.weather)
 
 
     def scrape_weather_thread(self, year, month, pbar):
@@ -92,6 +92,24 @@ class WeatherScraper:
             # Update the progress bar
             pbar.update(1)
 
+    def print_scraped_data(scraped_data):
+        """print the data stored within scraped_data."""
+        print("{")
+        for date, weather in scraped_data.items():
+            print(f"    '{date}': {weather},")
+        print("}")
+
+    def write_scraped_data(scraped_data):
+        """Write out scraped_data to a file."""
+        file_path = "test_output.txt"
+        try:
+            with open(file_path, "w",  encoding='UTF-8') as file:
+                # Loop through the dictionary items and write them to the file
+                for key, value in scraped_data.items():
+                    file.write(f"{key}: {value}\n")
+        except FileExistsError as error:
+            print(error)
+            print("Error: write_scraped_data an error occurred.")
 
     class MyHTMLParser(HTMLParser):
         """The web scraper."""
@@ -153,7 +171,7 @@ class WeatherScraper:
                         (value for attr, value in attrs if attr == "title"), None
                     )
 
-                    title_attr = is_valid_date(title_attr)
+                    title_attr = self.convert_to_date(title_attr)
 
                     if title_attr is not None:
                         self.row_date = title_attr
@@ -175,7 +193,7 @@ class WeatherScraper:
                 and self.in_row_data is True
                 and self.row_column_index < 3
             ):
-                if is_float(data) or data == "M":
+                if self.is_float(data) or data == "M":
                     # We are inside of a <td> element data-row.
 
                     # Line up the data with the dictionary before adding it to the year.
@@ -209,40 +227,29 @@ class WeatherScraper:
             self.in_row_header = False
             self.row_column_index = 0
 
-def is_valid_date(value):
-    """Attempts to parse the value as a date in the 'YYYY-MM-DD' format."""
-    try:
-        # Parse the value as a date in the 'Month Day, Year' format
-        parsed_date = datetime.strptime(value, "%B %d, %Y")
-        # Convert the parsed date to 'YYYY-MM-DD' format
-        converted_date = parsed_date.strftime("%Y-%m-%d")
-        return converted_date
-    except ValueError as error:
-        # Return None if the value is not in the expected date format
-        print(error)
-        print("Error: is_valid_date an error occurred when parsing the date.")
-        return None
+        def convert_to_date(value):
+            """Attempts to parse the value as a date in the 'YYYY-MM-DD' format."""
+            try:
+                # Parse the value as a date in the 'Month Day, Year' format
+                parsed_date = datetime.strptime(value, "%B %d, %Y")
+                # Convert the parsed date to 'YYYY-MM-DD' format
+                converted_date = parsed_date.strftime("%Y-%m-%d")
+                return converted_date
+            except ValueError as error:
+                # Return None if the value is not in the expected date format
+                print(error)
+                print("Error: convert_to_date an error occurred when parsing the date.")
+            return None
 
-def is_float(string):
-    """Indicates if the passed string is a float."""
-    try:
-        float(string)
-        return True
-    except ValueError:
-        return False
+        def is_float(test_input):
+            """Indicates if the passed test_input is a float."""
+            try:
+                float(test_input)
+                return True
+            except ValueError:
+                return False
 
-def print_scraped_data(scraped_data):
-    print("{")
-    for date, weather in scraped_data.items():
-        print(f"    '{date}': {weather},")
-    print("}")
 
-def write_scraped_data(scraped_data):
-    file_path = "test_output.txt"
-    with open(file_path, "w",  encoding='UTF-8') as file:
-        # Loop through the dictionary items and write them to the file
-        for key, value in scraped_data.items():
-            file.write(f"{key}: {value}\n")
 
 
 if __name__ == "__main__":
