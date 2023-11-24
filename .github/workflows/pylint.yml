@@ -27,6 +27,6 @@ jobs:
 
     - name: Replace linting recommendations in README
       run: |
-        sed -i '/## Status/{N; /Here are the linting recommendations/c\\## Status\n\nHere are the linting recommendations\n\n```python\n'"$(cat pylint_recommendations.txt)"'\n```' README.md
+        sed -i '/## Status/{N; /Here are the linting recommendations/c\\## Status\n\nHere are the linting recommendations\n\n```python\n'"$(cat pylint_recommendations.txt)"'\n```' "README.md"
       working-directory: ${{ github.workspace }}
       continue-on-error: true
