@@ -4,7 +4,7 @@ import numpy as np
 from db_operations import DBOperations
 from datetime import datetime
 
-# We need to debug extract_monthly_temps to see why its not capturing entries for each monthd
+# We need to debug extract_monthly_temps to see why its not capturing entries for each month
 
 class PlotOperations:
     def __init__(self):
