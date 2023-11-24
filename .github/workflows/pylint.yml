@@ -21,6 +21,12 @@ jobs:
 
     - name: Run pylint
       run: |
-        pylint --fail-under=8.0 "Weather Processing/*.py"
+        pylint --fail-under=8.0 "Weather Processing/*.py" > pylint_recommendations.txt
+      working-directory: ${{ github.workspace }}
+      continue-on-error: true
+
+    - name: Replace linting recommendations in README
+      run: |
+        sed -i '/## Status/{N; /Here are the linting recommendations/c\\## Status\n\nHere are the linting recommendations\n\n```python\n'"$(cat pylint_recommendations.txt)"'\n```' README.md
       working-directory: ${{ github.workspace }}
       continue-on-error: true
