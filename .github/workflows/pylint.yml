@@ -1,6 +1,9 @@
 name: Pylint
 
-on: [push]
+on:
+  push:
+    paths:
+      - 'Weather Processing/**' 
 
 jobs:
   build:
@@ -36,3 +39,11 @@ jobs:
       run: cat README.md
       working-directory: ${{ github.workspace }}
       continue-on-error: true
+    - name: stage changed files
+      run: git add README.md
+    - name: commit changed files
+      run: git commit -m "Update README with linting recommendations"
+    - name: fetch from main
+      run: git fetch origin main
+    - name: push code to main
+      run: git push origin HEAD:main
