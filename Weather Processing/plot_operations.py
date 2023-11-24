@@ -6,7 +6,10 @@ from datetime import datetime
 
 # We need to debug extract_monthly_temps to see why its not capturing entries for each month
 
+
 class PlotOperations:
+    """Plots data onto a graph, visualization"""
+
     def __init__(self):
         self.start_year = ""
         self.end_year = ""
@@ -53,24 +56,38 @@ if __name__ == "__main__":
 
         return monthly_avg_temps
 
-    #-# Extracting average temperatures for each month across all years
+    # -# Extracting average temperatures for each month across all years
     # myPlot is not getting refreshed
     monthly_avg_temperatures = extract_monthly_temperatures(myPlotNew.weather_data)
 
-    #-# Organizing temperatures for plotting
+    # -# Organizing temperatures for plotting
     temps = [monthly_avg_temperatures[i] for i in range(1, 13)]
 
-    #-# Creating a box plot
+    # -# Creating a box plot
     plt.figure(figsize=(10, 6))
 
     plt.boxplot(temps)
-    plt.xlabel('Months')
-    plt.ylabel('Temperature (°C)')
-    plt.title('Average Temperature Distribution for Each Month Across Years')
-    plt.xticks(range(1, 13), [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ], rotation=45)
+    plt.xlabel("Months")
+    plt.ylabel("Temperature (°C)")
+    plt.title("Average Temperature Distribution for Each Month Across Years")
+    plt.xticks(
+        range(1, 13),
+        [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        ],
+        rotation=45,
+    )
     plt.tight_layout()
 
     plt.show()
