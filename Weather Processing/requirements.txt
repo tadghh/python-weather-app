@@ -1,0 +1,7 @@
+colorama
+matplotlib
+numpy
+sqlite
+html5lib
+tqdm
+pylint
