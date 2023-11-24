@@ -5,7 +5,7 @@
   - Can scrape weather data from 1996 to 2023 in under 55 seconds
 - Error handling
 - Data Visualization
-
+Bump
 # To-do
 - Check platform support
   - Add workflow to make installers
