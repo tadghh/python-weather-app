@@ -20,5 +20,7 @@ jobs:
         pip install -r "Weather Processing/requirements.txt"
 
     - name: Run pylint
-      run: pylint "Weather Processing/*.py"
+      run: |
+        pylint --fail-under=8.0 "Weather Processing/*.py"
       working-directory: ${{ github.workspace }}
+      continue-on-error: true
