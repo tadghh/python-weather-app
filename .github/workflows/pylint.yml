@@ -22,28 +22,24 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r "Weather Processing/requirements.txt"
 
-    - name: Run pylint
+    - name: Run pylint.
       run: |
         pylint --fail-under=8.0 "Weather Processing/*.py" > pylint_recommendations.txt
       working-directory: ${{ github.workspace }}
       continue-on-error: true
 
-    - name: Overwrite linting recommendations in README
+    - name: Overwrite linting recommendations in README.
       run: |
-        awk '/Here are the linting recommendations/{print; system("cat pylint_recommendations.txt"); exit} 1' README.md > README.md.tmp
+        awk '/Here are the linting recommendations/{print; print "```python"; system("cat pylint_recommendations.txt"); print "```"; next} 1' README.md > README.md.tmp
         mv README.md.tmp README.md
       working-directory: ${{ github.workspace }}
       continue-on-error: true
 
-    - name: Print final README
-      run: cat README.md
-      working-directory: ${{ github.workspace }}
-      continue-on-error: true
-    - name: Commit and push changes
+    - name: Commit and push pylint recommendations.
       run: |
         git config user.email "actions@github.com"
         git config user.name "GitHub Actions"
         git add README.md
-        git commit -m "Update README with linting recommendations"
+        git commit -m "Update README with latest linting recommendations"
         git push
       working-directory: ${{ github.workspace }}
