@@ -1,6 +1,5 @@
 # Import libraries
 import matplotlib.pyplot as plt
-import numpy as np
 from db_operations import DBOperations
 from datetime import datetime
 
