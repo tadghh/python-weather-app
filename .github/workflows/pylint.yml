@@ -27,6 +27,12 @@ jobs:
 
     - name: Overwrite linting recommendations in README
       run: |
-        awk '/Here are the linting recommendations/{print; system("cat pylint_recommendations.txt"); exit} 1' README.md > README.md.tmp && mv README.md.tmp README.md
+        awk '/Here are the linting recommendations/{print; system("cat pylint_recommendations.txt"); exit} 1' README.md > README.md.tmp
+        mv README.md.tmp README.md
+      working-directory: ${{ github.workspace }}
+      continue-on-error: true
+
+    - name: Print final README
+      run: cat README.md
       working-directory: ${{ github.workspace }}
       continue-on-error: true
