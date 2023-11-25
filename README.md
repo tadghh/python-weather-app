@@ -24,13 +24,12 @@ Here are the linting recommendations
 ************* Module scrape_weather
 Weather Processing/scrape_weather.py:151:4: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
 ************* Module plot_operations
-Weather Processing/plot_operations.py:39:0: C0301: Line too long (133/100) (line-too-long)
+Weather Processing/plot_operations.py:38:0: C0301: Line too long (133/100) (line-too-long)
 Weather Processing/plot_operations.py:1:0: C0114: Missing module docstring (missing-module-docstring)
-Weather Processing/plot_operations.py:10:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-Weather Processing/plot_operations.py:40:4: C0116: Missing function or method docstring (missing-function-docstring)
-Weather Processing/plot_operations.py:51:19: W0621: Redefining name 'temps' from outer scope (line 64) (redefined-outer-name)
-Weather Processing/plot_operations.py:5:0: C0411: standard import "from datetime import datetime" should be placed before "import matplotlib.pyplot as plt" (wrong-import-order)
-Weather Processing/plot_operations.py:3:0: W0611: Unused numpy imported as np (unused-import)
+Weather Processing/plot_operations.py:9:0: R0903: Too few public methods (0/2) (too-few-public-methods)
+Weather Processing/plot_operations.py:39:4: C0116: Missing function or method docstring (missing-function-docstring)
+Weather Processing/plot_operations.py:50:19: W0621: Redefining name 'temps' from outer scope (line 63) (redefined-outer-name)
+Weather Processing/plot_operations.py:4:0: C0411: standard import "from datetime import datetime" should be placed before "import matplotlib.pyplot as plt" (wrong-import-order)
 ************* Module db_operations
 Weather Processing/db_operations.py:44:0: C0301: Line too long (108/100) (line-too-long)
 Weather Processing/db_operations.py:47:0: C0301: Line too long (121/100) (line-too-long)
@@ -52,6 +51,6 @@ Weather Processing/db_operations.py:162:84: E1101: Instance of 'DBOperations' ha
 Weather Processing/db_operations.py:133:25: W0613: Unused argument 'burn' (unused-argument)
 
 -----------------------------------
-Your code has been rated at 8.59/10
+Your code has been rated at 8.62/10
 
 ```
