@@ -32,6 +32,8 @@ class WeatherScraper:
     def scrape_weather(self):
         """Returns the weather data."""
         # on the website the earliest year available is 1996
+
+        # No hard coding, there is a previous month button the page we can look for
         start_year = 1996
         end_year = datetime.now().year
 
