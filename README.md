@@ -22,7 +22,7 @@ Our code quality is currently...
 Here are the linting recommendations
 ```python
 ************* Module scrape_weather
-Weather Processing/scrape_weather.py:151:4: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
+Weather Processing/scrape_weather.py:153:4: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
 ************* Module plot_operations
 Weather Processing/plot_operations.py:38:0: C0301: Line too long (133/100) (line-too-long)
 Weather Processing/plot_operations.py:1:0: C0114: Missing module docstring (missing-module-docstring)
