@@ -23,7 +23,7 @@ class WeatherScraper:
 
         self.url_sections = (
             "https://climate.weather.gc.ca/climate_data",
-            "/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&Day=1&Year=",
+            "/daily_data_e.html?StationID=27174&StartYear=1840&Year=",
             "&Month=",
         )
 
