@@ -73,6 +73,7 @@ class DBOperations:
                         raise ValueError("start_year or end_year must be digits.")
 
                 data = cursor.fetchall()
+                print(data)
 
                 return data
         except ValueError as error:
@@ -258,6 +259,6 @@ if __name__ == "__main__":
     db = DBOperations()
     db.initialize_db()
 
-    db.save_data(weather)
-    # db.purge_data()
-    db.fetch_data()
+    #db.save_data(weather)
+    #db.purge_data(True)
+    #db.fetch_data()
