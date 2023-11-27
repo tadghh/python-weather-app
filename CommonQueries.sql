@@ -30,3 +30,27 @@ SELECT strftime('%m', sample_date) AS month,
 FROM weather
 GROUP BY month
 ORDER BY month;
+
+-- Select used in fetch_data (returns null instead of 'M')
+SELECT 
+    CASE 
+        WHEN min_temp LIKE '%M%' THEN NULL
+        ELSE min_temp
+    END AS min_temp,
+    CASE 
+        WHEN max_temp LIKE '%M%' THEN NULL
+        ELSE max_temp
+    END AS max_temp,
+    CASE 
+        WHEN avg_temp LIKE '%M%' THEN NULL
+        ELSE avg_temp
+    END AS avg_temp
+FROM 
+    weather
+WHERE 
+    strftime('%Y', sample_date) BETWEEN '1996' AND '2000'
+	 AND NOT (
+        (min_temp LIKE '%M%' OR min_temp IS null) 
+        AND (max_temp LIKE '%M%' OR max_temp IS null) 
+        AND (avg_temp LIKE '%M%' OR avg_temp IS null)
+    );
