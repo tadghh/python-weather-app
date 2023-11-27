@@ -37,6 +37,7 @@ if __name__ == "__main__":
 
     # While extracting monthly tempratures, we should only be extracting the "Mean" temprature for each day of the month of each year
     def extract_monthly_temperatures(data):
+        """Gets the average min, mean, max"""
         months = {
             i: [] for i in range(1, 13)
         }  # Dictionary to store temperatures for each month
