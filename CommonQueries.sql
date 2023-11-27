@@ -24,15 +24,20 @@ ORDER BY month;
 
 -- Calculate average for all months for min, max, and mean
 SELECT strftime('%m', sample_date) AS month,
-       ROUND(AVG(min_temp), 2) AS avg_min_temp,
-       ROUND(AVG(max_temp), 2) AS avg_max_temp,
-       ROUND(AVG(avg_temp), 2) AS avg_mean_temp
+       AVG(min_temp) AS avg_min_temp,
+       AVG(max_temp) AS avg_max_temp,
+       AVG(avg_temp) AS avg_mean_temp
 FROM weather
+WHERE NOT (
+        (min_temp LIKE '%M%' OR min_temp IS null) 
+        AND (max_temp LIKE '%M%' OR max_temp IS null) 
+        AND (avg_temp LIKE '%M%' OR avg_temp IS null)
+    )
 GROUP BY month
 ORDER BY month;
 
 -- Select used in fetch_data (returns null instead of 'M')
-SELECT 
+SELECT sample_date,
     CASE 
         WHEN min_temp LIKE '%M%' THEN NULL
         ELSE min_temp
