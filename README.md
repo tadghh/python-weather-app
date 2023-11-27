@@ -27,8 +27,7 @@ Weather Processing/scrape_weather.py:153:4: R0902: Too many instance attributes 
 Weather Processing/plot_operations.py:38:0: C0301: Line too long (133/100) (line-too-long)
 Weather Processing/plot_operations.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 Weather Processing/plot_operations.py:9:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-Weather Processing/plot_operations.py:39:4: C0116: Missing function or method docstring (missing-function-docstring)
-Weather Processing/plot_operations.py:50:19: W0621: Redefining name 'temps' from outer scope (line 63) (redefined-outer-name)
+Weather Processing/plot_operations.py:51:19: W0621: Redefining name 'temps' from outer scope (line 64) (redefined-outer-name)
 Weather Processing/plot_operations.py:4:0: C0411: standard import "from datetime import datetime" should be placed before "import matplotlib.pyplot as plt" (wrong-import-order)
 ************* Module db_operations
 Weather Processing/db_operations.py:43:0: C0301: Line too long (108/100) (line-too-long)
@@ -43,6 +42,6 @@ Weather Processing/db_operations.py:101:0: C0301: Line too long (121/100) (line-
 Weather Processing/db_operations.py:113:0: C0301: Line too long (133/100) (line-too-long)
 
 -----------------------------------
-Your code has been rated at 9.36/10
+Your code has been rated at 9.40/10
 
 ```
