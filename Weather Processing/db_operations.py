@@ -67,7 +67,7 @@ class DBOperations:
                 else:
                     if start_year.isdigit() and end_year.isdigit():
                         sql_query = f"""
-                        SELECT 
+                        SELECT sample_date,
                             CASE 
                                 WHEN min_temp LIKE '%M%' THEN NULL
                                 ELSE min_temp

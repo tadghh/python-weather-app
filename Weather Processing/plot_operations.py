@@ -42,16 +42,40 @@ if __name__ == "__main__":
             i: [] for i in range(1, 13)
         }  # Dictionary to store temperatures for each month
         for entry in data:
-            date = datetime.strptime(entry[1], "%Y-%m-%d")
+            # Assuming entry[1:] contains the temperature values
+            temperature_values = entry[1:]
+
+            # Check if any of the temperature values is NoneType
+            if any(value is None for value in temperature_values):
+                # Skip this entry if any value is None
+                continue
+
+            date = datetime.strptime(entry[0], "%Y-%m-%d")
             month = date.month
-            months[month].append(entry[3:])  # Extract temperatures
+
+            # Append the non-NoneType values to the list
+            months[month].append(temperature_values)
 
         monthly_avg_temps = {month: [] for month in months}
+
+        # for month, temps in months.items():
+        #     if temps:
+        #         num_days = len(temps)
+        #         avg_temp = [sum(temp) / num_days for temp in zip(*temps)]
+        #         monthly_avg_temps[month] = avg_temp
 
         for month, temps in months.items():
             if temps:
                 num_days = len(temps)
-                avg_temp = [sum(temp) / num_days for temp in zip(*temps)]
+                avg_temp = [0] * len(temps[0])  # Initialize a list to store the sum of temperatures for each day
+
+                # Manually add up temperatures for each day
+                for temp_set in temps:
+                    avg_temp = [avg_temp[i] + temp_set[i] for i in range(len(temp_set))]
+
+                # Calculate the average temperature for each day
+                avg_temp = [temp_sum / num_days for temp_sum in avg_temp]
+
                 monthly_avg_temps[month] = avg_temp
 
         return monthly_avg_temps
