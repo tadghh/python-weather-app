@@ -38,11 +38,11 @@ Weather Processing/db_operations.py:50:0: C0301: Line too long (113/100) (line-t
 Weather Processing/db_operations.py:55:0: C0301: Line too long (104/100) (line-too-long)
 Weather Processing/db_operations.py:58:0: C0301: Line too long (115/100) (line-too-long)
 Weather Processing/db_operations.py:70:0: C0301: Line too long (126/100) (line-too-long)
-Weather Processing/db_operations.py:82:0: C0301: Line too long (109/100) (line-too-long)
-Weather Processing/db_operations.py:100:0: C0301: Line too long (121/100) (line-too-long)
-Weather Processing/db_operations.py:112:0: C0301: Line too long (133/100) (line-too-long)
+Weather Processing/db_operations.py:83:0: C0301: Line too long (109/100) (line-too-long)
+Weather Processing/db_operations.py:101:0: C0301: Line too long (121/100) (line-too-long)
+Weather Processing/db_operations.py:113:0: C0301: Line too long (133/100) (line-too-long)
 
 -----------------------------------
-Your code has been rated at 9.37/10
+Your code has been rated at 9.36/10
 
 ```
