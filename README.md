@@ -25,9 +25,10 @@ Here are the linting recommendations
 Weather Processing/scrape_weather.py:36:9: W0511: TODO: No hard coding, there is a previous month button the page we can look for (fixme)
 Weather Processing/scrape_weather.py:155:4: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
 ************* Module db_operations
+Weather Processing/db_operations.py:1:0: C0302: Too many lines in module (10036/1000) (too-many-lines)
 Weather Processing/db_operations.py:68:17: W0511: TODO: Input error checking should be in respective functions. (fixme)
 
 -----------------------------------
-Your code has been rated at 9.88/10
+Your code has been rated at 9.84/10
 
 ```
