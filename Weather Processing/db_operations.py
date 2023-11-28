@@ -36,14 +36,14 @@ class DBOperations:
             print(error)
             print("Error: Failed to initialize database.")
 
-    def safely_get_data(self, sql_query, input_one="", input_two=""):
+    def safely_get_data(self, sql_query, start_year="", end_year=""):
         """
         TODO: use a tuple or list for paramters like in save_data
         Method template for fetching data.
 
         Parameters:
-        - input_one (str): Default is an empty string.
-        - input_two (str): Default is an empty string.
+        - start_year (str): Default is an empty string.
+        - end_year (str): Default is an empty string.
 
         Returns:
         - list of tuples: A list containing tuples representing weather data records.
@@ -67,10 +67,10 @@ class DBOperations:
             with self.database_context as cursor:
                 # TODO: Input error checking should be in respective functions.
                 # Error handling should handle issues for inputs here
-                if input_one == "" and input_two == "":
+                if start_year == "" and end_year == "":
                     cursor.execute("SELECT * FROM weather")
                 else:
-                    if input_one.isdigit() and input_two.isdigit():
+                    if start_year.isdigit() and end_year.isdigit():
                         cursor.execute(sql_query)
                     else:
                         raise ValueError("start_year or end_year must be digits.")
@@ -85,7 +85,7 @@ class DBOperations:
                 print(error)
                 print("Error: fetch_data Table might not exist trying to initialize.")
                 self.initialize_db()
-                return self.safely_get_data(sql_query, input_one, input_two)
+                return self.safely_get_data(sql_query, start_year, end_year)
             except sqlite3.OperationalError as error_two:
                 print(error_two)
                 print("Error: fetch_data Table creation failed.")
@@ -167,7 +167,7 @@ class DBOperations:
             "GROUP BY month "
             "ORDER BY month; "
         )
-        
+
         return self.safely_get_data(sql_query, start_year, end_year)
 
     def save_data(self, data_to_save):
