@@ -3,7 +3,6 @@
 import matplotlib.pyplot as plt
 from db_operations import DBOperations
 
-
 class PlotOperations:
     """Plots data onto a graph, visualization"""
 
@@ -48,10 +47,7 @@ class PlotOperations:
             rotation=45,
         )
         plt.tight_layout()
-
-        plt.show()
-
-        plt.pause(5000)
+        plt.show(block=True)
 
     def fetch_data(self):
         """Fetch the weather data."""
@@ -69,10 +65,6 @@ class PlotOperations:
         print(weather_data)
         self.create_year_boxplot_graph(graph_data=weather_data)
 
-
 if __name__ == "__main__":
     myPlotNew = PlotOperations()
-
     myPlotNew.create()
-    # Formats data?
-    # temps = [monthly_avg_temperatures[i] for i in range(1, 13)]
