@@ -22,12 +22,13 @@ class PlotOperations:
 
     def create_year_boxplot_graph(self, graph_data):
         """Creates the box plot."""
-        plt.figure(figsize=(10, 6))
+        temp_data = [temp[1:] for temp in graph_data]
 
-        plt.boxplot(graph_data)
+        plt.figure(figsize=(10, 6))
+        plt.boxplot(temp_data)
         plt.xlabel("Months")
         plt.ylabel("Temperature (°C)")
-        plt.title("Average Temperature Distribution for Each Month Across Years")
+        plt.title(f"Monthly Temperature Distribution for: {self.start_year} to {self.end_year}")
         plt.xticks(
             range(1, 13),
             [

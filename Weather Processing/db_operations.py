@@ -91,57 +91,57 @@ class DBOperations:
                 print("Error: fetch_data Table creation failed.")
         return None
 
-    def fetch_data(self, start_year="", end_year=""):
-        """
-        Fetch weather data from the database with a given range, years.
+    # def fetch_data(self, start_year="", end_year=""):
+    #     """
+    #     Fetch weather data from the database with a given range, years.
 
-        Parameters:
-        - start_year (str): Optional start year for filtering data. Default is an empty string.
-        - end_year (str): Optional end year for filtering data. Default is an empty string.
+    #     Parameters:
+    #     - start_year (str): Optional start year for filtering data. Default is an empty string.
+    #     - end_year (str): Optional end year for filtering data. Default is an empty string.
 
-        Returns:
-        - list of tuples: A list containing tuples representing weather data records.
-         'sample_date', 'location', 'min_temp', 'max_temp', and 'avg_temp'.
+    #     Returns:
+    #     - list of tuples: A list containing tuples representing weather data records.
+    #      'sample_date', 'location', 'min_temp', 'max_temp', and 'avg_temp'.
 
-        Raises:
-        - ValueError: If start_year or end_year is provided and is not a digit.
-        - OperationalError: If there are issues with the database operation,
-         such as table not existing.
+    #     Raises:
+    #     - ValueError: If start_year or end_year is provided and is not a digit.
+    #     - OperationalError: If there are issues with the database operation,
+    #      such as table not existing.
 
-        Note:
-        - If start_year and end_year are provided,
-         the method filters data based on the year part of 'sample_date'.
+    #     Note:
+    #     - If start_year and end_year are provided,
+    #      the method filters data based on the year part of 'sample_date'.
 
-        - If the table 'weather' does not exist in the database,
-         the method attempts to create it.
-        - If table creation fails, returns None.
+    #     - If the table 'weather' does not exist in the database,
+    #      the method attempts to create it.
+    #     - If table creation fails, returns None.
 
-        """
-        sql_query = f"""
-        SELECT sample_date,
-            CASE
-                WHEN min_temp LIKE '%M%' THEN NULL
-                ELSE min_temp
-            END AS min_temp,
-            CASE
-                WHEN max_temp LIKE '%M%' THEN NULL
-                ELSE max_temp
-            END AS max_temp,
-            CASE
-                WHEN avg_temp LIKE '%M%' THEN NULL
-                ELSE avg_temp
-            END AS avg_temp
-        FROM
-            weather
-        WHERE
-            strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}'
-            AND NOT (
-                (min_temp LIKE '%M%' OR min_temp IS null)
-                AND (max_temp LIKE '%M%' OR max_temp IS null)
-                AND (avg_temp LIKE '%M%' OR avg_temp IS null)
-            );
-        """
-        return self.safely_get_data(sql_query, start_year, end_year)
+    #     """
+    #     sql_query = f'''
+    #     SELECT sample_date,
+    #         CASE
+    #             WHEN min_temp LIKE '%M%' THEN NULL
+    #             ELSE min_temp
+    #         END AS min_temp,
+    #         CASE
+    #             WHEN max_temp LIKE '%M%' THEN NULL
+    #             ELSE max_temp
+    #         END AS max_temp,
+    #         CASE
+    #             WHEN avg_temp LIKE '%M%' THEN NULL
+    #             ELSE avg_temp
+    #         END AS avg_temp
+    #     FROM
+    #         weather
+    #     WHERE
+    #         strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}'
+    #         AND NOT (
+    #             (min_temp LIKE '%M%' OR min_temp IS null)
+    #             AND (max_temp LIKE '%M%' OR max_temp IS null)
+    #             AND (avg_temp LIKE '%M%' OR avg_temp IS null)
+    #         );
+    #     '''
+    #     return self.safely_get_data(sql_query, start_year, end_year)
 
     def fetch_monthy_averages(self, start_year="", end_year=""):
         """
@@ -152,22 +152,22 @@ class DBOperations:
         Raises:
 
         """
-        sql_query = f"""
-        SELECT strftime('%m', sample_date) AS month,
-            AVG(min_temp) AS avg_min_temp,
-            AVG(max_temp) AS avg_max_temp,
-            AVG(avg_temp) AS avg_mean_temp
-        FROM weather
-        WHERE
-            strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}'
-            AND NOT (
-                (min_temp LIKE '%M%' OR min_temp IS null)
-                AND (max_temp LIKE '%M%' OR max_temp IS null)
-                AND (avg_temp LIKE '%M%' OR avg_temp IS null)
-            );
-        GROUP BY month
-        ORDER BY month;
-        """
+        sql_query = (
+            "SELECT strftime('%m', sample_date) AS month, "
+            "AVG(min_temp) AS avg_min_temp, "
+            "AVG(max_temp) AS avg_max_temp, "
+            "AVG(avg_temp) AS avg_mean_temp "
+            "FROM weather "
+            f"WHERE strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}' "
+            "AND NOT ( "
+            "(min_temp LIKE '%M%' OR min_temp IS null) "
+            "AND (max_temp LIKE '%M%' OR max_temp IS null) "
+            "AND (avg_temp LIKE '%M%' OR avg_temp IS null) "
+            ") "
+            "GROUP BY month "
+            "ORDER BY month; "
+        )
+        
         return self.safely_get_data(sql_query, start_year, end_year)
 
     def save_data(self, data_to_save):
