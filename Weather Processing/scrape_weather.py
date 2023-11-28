@@ -33,7 +33,9 @@ class WeatherScraper:
         """Returns the weather data."""
         # on the website the earliest year available is 1996
 
-        # No hard coding, there is a previous month button the page we can look for
+        # TODO: No hard coding, there is a previous month button the page we can look for
+        # We should parse with the date as 1840
+        # we will get the first year and month in the title of the page
         start_year = 1996
         end_year = datetime.now().year
 

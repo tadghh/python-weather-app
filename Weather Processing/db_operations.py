@@ -38,6 +38,7 @@ class DBOperations:
 
     def safely_get_data(self, sql_query, input_one="", input_two=""):
         """
+        TODO: use a tuple or list for paramters like in save_data
         Method template for fetching data.
 
         Parameters:
@@ -64,6 +65,8 @@ class DBOperations:
         """
         try:
             with self.database_context as cursor:
+                # TODO: Input error checking should be in respective functions.
+                # Error handling should handle issues for inputs here
                 if input_one == "" and input_two == "":
                     cursor.execute("SELECT * FROM weather")
                 else:
