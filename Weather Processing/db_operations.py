@@ -276,8 +276,8 @@ if __name__ == "__main__":
     #     "1996-10-05": {'Max': '23.2', 'Min': '9.3', 'Mean': '16.3'},
     #     }
 
-    # db = DBOperations()
-    # db.initialize_db()
+    db = DBOperations()
+    db.initialize_db()
 
     #db.save_data(weather)
     #db.purge_data()
