@@ -165,7 +165,6 @@ class DBOperations:
                         min_temp, max_temp, avg_temp) VALUES (?, ?, ?, ?, ?)""",
                         (date, location, min_temp, max_temp, avg_temp),
                     )
-                print("Sample data inserted successfully.")
         except sqlite3.OperationalError as error:
             try:
                 print(error)
