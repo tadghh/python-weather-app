@@ -36,14 +36,14 @@ class DBOperations:
             print(error)
             print("Error: Failed to initialize database.")
 
-    def safely_get_data(self, sql_query, start_year="", end_year=""):
+    # this function can be passed any query, but validate the query before-hand.
+    def get_query_data(self, sql_query):
         """
         TODO: use a tuple or list for paramters like in save_data
         Method template for fetching data.
 
         Parameters:
-        - start_year (str): Default is an empty string.
-        - end_year (str): Default is an empty string.
+        TODO: FIX DOCUMENTATION
 
         Returns:
         - list of tuples: A list containing tuples representing weather data records.
@@ -64,132 +64,83 @@ class DBOperations:
 
         """
         try:
+            # TODO: Maybe add extra validation just in-case someone forgets to validate before calling this function.
             with self.database_context as cursor:
-                # TODO: Input error checking should be in respective functions.
-                # Error handling should handle issues for inputs here
-                if start_year == "" and end_year == "":
-                    cursor.execute("SELECT * FROM weather")
-                else:
-                    if start_year.isdigit() and end_year.isdigit():
-                        cursor.execute(sql_query)
-                    else:
-                        raise ValueError("start_year or end_year must be digits.")
-
+                cursor.execute(sql_query)
                 return cursor.fetchall()
-        except ValueError as error:
-            print(error)
-            print("Error: fetch_data provided values are invalid.")
         except sqlite3.OperationalError as error:
             # Table in db might not exist, value will be returned up from the recursive call
             try:
                 print(error)
                 print("Error: fetch_data Table might not exist trying to initialize.")
                 self.initialize_db()
-                return self.safely_get_data(sql_query, start_year, end_year)
+                return self.get_query_data(sql_query)
             except sqlite3.OperationalError as error_two:
                 print(error_two)
                 print("Error: fetch_data Table creation failed.")
         return None
 
-    # def fetch_data(self, start_year="", end_year=""):
-    #     """
-    #     Fetch weather data from the database with a given range, years.
-
-    #     Parameters:
-    #     - start_year (str): Optional start year for filtering data. Default is an empty string.
-    #     - end_year (str): Optional end year for filtering data. Default is an empty string.
-
-    #     Returns:
-    #     - list of tuples: A list containing tuples representing weather data records.
-    #      'sample_date', 'location', 'min_temp', 'max_temp', and 'avg_temp'.
-
-    #     Raises:
-    #     - ValueError: If start_year or end_year is provided and is not a digit.
-    #     - OperationalError: If there are issues with the database operation,
-    #      such as table not existing.
-
-    #     Note:
-    #     - If start_year and end_year are provided,
-    #      the method filters data based on the year part of 'sample_date'.
-
-    #     - If the table 'weather' does not exist in the database,
-    #      the method attempts to create it.
-    #     - If table creation fails, returns None.
-
-    #     """
-    #     sql_query = f'''
-    #     SELECT sample_date,
-    #         CASE
-    #             WHEN min_temp LIKE '%M%' THEN NULL
-    #             ELSE min_temp
-    #         END AS min_temp,
-    #         CASE
-    #             WHEN max_temp LIKE '%M%' THEN NULL
-    #             ELSE max_temp
-    #         END AS max_temp,
-    #         CASE
-    #             WHEN avg_temp LIKE '%M%' THEN NULL
-    #             ELSE avg_temp
-    #         END AS avg_temp
-    #     FROM
-    #         weather
-    #     WHERE
-    #         strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}'
-    #         AND NOT (
-    #             (min_temp LIKE '%M%' OR min_temp IS null)
-    #             AND (max_temp LIKE '%M%' OR max_temp IS null)
-    #             AND (avg_temp LIKE '%M%' OR avg_temp IS null)
-    #         );
-    #     '''
-    #     return self.safely_get_data(sql_query, start_year, end_year)
-
-    def fetch_monthy_averages(self, start_year="", end_year=""):
+    # this function is used for the box plot
+    def fetch_monthy_averages(self, start_year="", end_year="", debug=False):
         """
         Fetch min, mean, max averages from all months in the database.
+        # TODO: FIX DOCUMENTATION HERE
+        Parameters:
 
         Returns:
         -
         Raises:
 
         """
-        sql_query = (
-            "SELECT strftime('%m', sample_date) AS month, "
-            "AVG(min_temp) AS avg_min_temp, "
-            "AVG(max_temp) AS avg_max_temp, "
-            "AVG(avg_temp) AS avg_mean_temp "
-            "FROM weather "
-            f"WHERE strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}' "
-            "AND NOT ( "
-            "(min_temp LIKE '%M%' OR min_temp IS null) "
-            "AND (max_temp LIKE '%M%' OR max_temp IS null) "
-            "AND (avg_temp LIKE '%M%' OR avg_temp IS null) "
-            ") "
-            "GROUP BY month "
-            "ORDER BY month; "
-        )
 
-        return self.safely_get_data(sql_query, start_year, end_year)
+        if debug == True:
+            sql_query = "SELECT * FROM weather"
+        else:
+            if start_year.isdigit() and end_year.isdigit():
+                sql_query = (
+                "SELECT strftime('%m', sample_date) AS month, "
+                "AVG(min_temp) AS avg_min_temp, "
+                "AVG(max_temp) AS avg_max_temp, "
+                "AVG(avg_temp) AS avg_mean_temp "
+                "FROM weather "
+                f"WHERE strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}' "
+                "AND NOT ( "
+                "(min_temp LIKE '%M%' OR min_temp IS null) "
+                "AND (max_temp LIKE '%M%' OR max_temp IS null) "
+                "AND (avg_temp LIKE '%M%' OR avg_temp IS null) "
+                ") "
+                "GROUP BY month "
+                "ORDER BY month; "
+                )
+            else:
+                raise ValueError("start_year and end_year must both be digits.")
+        
+        return self.get_query_data(sql_query)
 
+    # this function is used for the line chart
     def fetch_year_month_average(self, year="", month=""):
         """
         Fetch min, mean, max averages for specified year and month from the database.
-
+        # TODO: FIX DOCUMENTATION HERE
         Returns:
         -
         Raises:
 
         """
-        sql_query = (
-            "SELECT strftime('%Y-%m-%d', sample_date) AS day,  "
-            "AVG(avg_temp) AS mean_daily_temp "
-            "FROM weather "
-            f"WHERE strftime('%Y', sample_date) = '{year}' "
-            f"AND strftime('%m', sample_date) = '{month}' "
-            "GROUP BY day "
-            "ORDER BY day; "
-        )
+        if year.isdigit() and month.isdigit():
+            sql_query = (
+                "SELECT strftime('%Y-%m-%d', sample_date) AS day,  "
+                "AVG(avg_temp) AS mean_daily_temp "
+                "FROM weather "
+                f"WHERE strftime('%Y', sample_date) = '{year}' "
+                f"AND strftime('%m', sample_date) = '{month}' "
+                "GROUP BY day "
+                "ORDER BY day; "
+            )
+        else:
+            raise ValueError("year and month must both be digits.")
 
-        return self.safely_get_data(sql_query, year, month)
+        return self.get_query_data(sql_query)
 
     def save_data(self, data_to_save):
         """
