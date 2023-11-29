@@ -232,4 +232,4 @@ if __name__ == "__main__":
 
     #db.save_data(weather)
     #db.purge_data()
-    # db.fetch_data()
+    print(db.fetch_monthy_averages(debug=True))
