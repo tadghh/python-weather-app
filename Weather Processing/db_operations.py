@@ -81,7 +81,7 @@ class DBOperations:
         return None
 
     # this function is used for the box plot
-    def fetch_monthy_averages(self, start_year="", end_year="", debug=False):
+    def fetch_monthy_averages(self, start_year="", end_year=""):
         """
         Fetch min, mean, max averages from all months in the database.
         # TODO: FIX DOCUMENTATION HERE
@@ -92,28 +92,24 @@ class DBOperations:
         Raises:
 
         """
-
-        if debug == True:
-            sql_query = "SELECT * FROM weather"
+        if start_year.isdigit() and end_year.isdigit():
+            sql_query = (
+            "SELECT strftime('%m', sample_date) AS month, "
+            "AVG(min_temp) AS avg_min_temp, "
+            "AVG(max_temp) AS avg_max_temp, "
+            "AVG(avg_temp) AS avg_mean_temp "
+            "FROM weather "
+            f"WHERE strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}' "
+            "AND NOT ( "
+            "(min_temp LIKE '%M%' OR min_temp IS null) "
+            "AND (max_temp LIKE '%M%' OR max_temp IS null) "
+            "AND (avg_temp LIKE '%M%' OR avg_temp IS null) "
+            ") "
+            "GROUP BY month "
+            "ORDER BY month; "
+            )
         else:
-            if start_year.isdigit() and end_year.isdigit():
-                sql_query = (
-                "SELECT strftime('%m', sample_date) AS month, "
-                "AVG(min_temp) AS avg_min_temp, "
-                "AVG(max_temp) AS avg_max_temp, "
-                "AVG(avg_temp) AS avg_mean_temp "
-                "FROM weather "
-                f"WHERE strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}' "
-                "AND NOT ( "
-                "(min_temp LIKE '%M%' OR min_temp IS null) "
-                "AND (max_temp LIKE '%M%' OR max_temp IS null) "
-                "AND (avg_temp LIKE '%M%' OR avg_temp IS null) "
-                ") "
-                "GROUP BY month "
-                "ORDER BY month; "
-                )
-            else:
-                raise ValueError("start_year and end_year must both be digits.")
+            raise ValueError("start_year and end_year must both be digits.")
         
         return self.get_query_data(sql_query)
 
@@ -231,4 +227,4 @@ if __name__ == "__main__":
 
     #db.save_data(weather)
     #db.purge_data()
-    print(db.fetch_monthy_averages(debug=True))
+    print(db.get_query_data(sql_query="SELECT * FROM weather"))
