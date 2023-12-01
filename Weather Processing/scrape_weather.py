@@ -220,11 +220,13 @@ class WeatherScraper:
         """The web scraper."""
 
         def __init__(self):
-            """Instantiates the class and creates the ip found flag"""
+            """Prepares the class to scrape data,
+            booleans are used to keep track of the current element"""
 
             super().__init__()
             # flag properties
             self.in_table_body = False
+
             self.in_row_header = False
             self.in_row = False
             self.in_row_data = False

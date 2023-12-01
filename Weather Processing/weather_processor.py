@@ -3,6 +3,7 @@ from menu import Menu
 from db_operations import DBOperations
 from scrape_weather import WeatherScraper
 
+
 class WeatherProcessor:
     """The main class, handling interaction and general flow."""
 
@@ -10,6 +11,7 @@ class WeatherProcessor:
         """Initializes the Weather Processor"""
         self.g = 12
         self.weather_db = DBOperations()
+        self.weather_db.initialize_db()
         self.weather_scraper = WeatherScraper()
 
     def start_main(self):
@@ -97,6 +99,7 @@ class WeatherProcessor:
         db_data_menu.set_message("Select an item")
         db_data_menu.set_prompt(">:")
         db_data_menu.open()
+
 
 if __name__ == "__main__":
     weatherProcessor = WeatherProcessor()

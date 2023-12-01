@@ -66,7 +66,6 @@ class DBOperations:
 
         """
         try:
-            # TODO: Maybe add extra validation just in-case someone forgets to validate before calling this function.
             with self.database_context as cursor:
                 cursor.execute(sql_query)
                 return cursor.fetchall()
@@ -84,9 +83,10 @@ class DBOperations:
 
     # this function is used for the box plot
     def fetch_monthy_averages(self, start_year="", end_year=""):
+        # TODO: FIX DOCUMENTATION HERE fetch_monthy_averages
+
         """
         Fetch min, mean, max averages from all months in the database.
-        # TODO: FIX DOCUMENTATION HERE
         Parameters:
 
         Returns:
@@ -117,9 +117,10 @@ class DBOperations:
 
     # this function is used for the line chart
     def fetch_year_month_average(self, year="", month=""):
+        # TODO: FIX DOCUMENTATION HERE fetch_year_month_average
+
         """
         Fetch min, mean, max averages for specified year and month from the database.
-        # TODO: FIX DOCUMENTATION HERE
         Returns:
         -
         Raises:
