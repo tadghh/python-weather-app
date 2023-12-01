@@ -10,7 +10,7 @@ class DBOperations:
     def __init__(self):
         """Setup the context manager, taking a parameter for the name."""
         try:
-            self.db_name = "weather_data"
+            self.db_name = "weather_data.sqlite"
             self.database_context = DBCM(self.db_name)
             self.conn = None
             self.cursor = None
@@ -37,6 +37,8 @@ class DBOperations:
             print("Error: Failed to initialize database.")
 
     # this function can be passed any query, but validate the query before-hand.
+    # TODO: Need a query to get the most recent date in the data base
+    # Needed for updating the users database using todays date and most recent in DB
     def get_query_data(self, sql_query):
         """
         TODO: use a tuple or list for paramters like in save_data
@@ -94,23 +96,23 @@ class DBOperations:
         """
         if start_year.isdigit() and end_year.isdigit():
             sql_query = (
-            "SELECT strftime('%m', sample_date) AS month, "
-            "AVG(min_temp) AS avg_min_temp, "
-            "AVG(max_temp) AS avg_max_temp, "
-            "AVG(avg_temp) AS avg_mean_temp "
-            "FROM weather "
-            f"WHERE strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}' "
-            "AND NOT ( "
-            "(min_temp LIKE '%M%' OR min_temp IS null) "
-            "AND (max_temp LIKE '%M%' OR max_temp IS null) "
-            "AND (avg_temp LIKE '%M%' OR avg_temp IS null) "
-            ") "
-            "GROUP BY month "
-            "ORDER BY month; "
+                "SELECT strftime('%m', sample_date) AS month, "
+                "AVG(min_temp) AS avg_min_temp, "
+                "AVG(max_temp) AS avg_max_temp, "
+                "AVG(avg_temp) AS avg_mean_temp "
+                "FROM weather "
+                f"WHERE strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}' "
+                "AND NOT ( "
+                "(min_temp LIKE '%M%' OR min_temp IS null) "
+                "AND (max_temp LIKE '%M%' OR max_temp IS null) "
+                "AND (avg_temp LIKE '%M%' OR avg_temp IS null) "
+                ") "
+                "GROUP BY month "
+                "ORDER BY month; "
             )
         else:
             raise ValueError("start_year and end_year must both be digits.")
-        
+
         return self.get_query_data(sql_query)
 
     # this function is used for the line chart
@@ -212,19 +214,19 @@ class DBOperations:
 
 
 # debugging only
-if __name__ == "__main__":
-    # test data
-    # weather = {
-    #     "1996-10-01": {'Max': '6.2', 'Min': '0.4', 'Mean': '3.3'},
-    #     "1996-10-02": {'Max': '9.4', 'Min': '-1.4', 'Mean': '4.0'},
-    #     "1996-10-03": {'Max': '9.8', 'Min': '-3.9', 'Mean': '3.0'},
-    #     "1996-10-04": {'Max': '16.9', 'Min': '3.8', 'Mean': '10.4'},
-    #     "1996-10-05": {'Max': '23.2', 'Min': '9.3', 'Mean': '16.3'},
-    #     }
+# if __name__ == "__main__":
+#     # test data
+#     # weather = {
+#     #     "1996-10-01": {'Max': '6.2', 'Min': '0.4', 'Mean': '3.3'},
+#     #     "1996-10-02": {'Max': '9.4', 'Min': '-1.4', 'Mean': '4.0'},
+#     #     "1996-10-03": {'Max': '9.8', 'Min': '-3.9', 'Mean': '3.0'},
+#     #     "1996-10-04": {'Max': '16.9', 'Min': '3.8', 'Mean': '10.4'},
+#     #     "1996-10-05": {'Max': '23.2', 'Min': '9.3', 'Mean': '16.3'},
+#     #     }
 
-    db = DBOperations()
-    db.initialize_db()
+#     db = DBOperations()
+#     db.initialize_db()
 
-    #db.save_data(weather)
-    #db.purge_data()
-    print(db.get_query_data(sql_query="SELECT * FROM weather"))
+#     # db.save_data(weather)
+#     # db.purge_data()
+#     print(db.get_query_data(sql_query="SELECT * FROM weather"))

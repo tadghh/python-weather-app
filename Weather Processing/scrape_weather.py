@@ -128,6 +128,7 @@ class WeatherScraper:
 
         self.print_scraped_data(self.weather)
         self.write_scraped_data(self.weather)
+        return self.weather
 
     def scrape_weather_thread(self, year, month):
         """
@@ -333,6 +334,6 @@ class WeatherScraper:
                 return False
 
 
-if __name__ == "__main__":
-    weatherScraper = WeatherScraper()
-    weatherScraper.scrape_weather()
+# if __name__ == "__main__":
+#     weatherScraper = WeatherScraper()
+#     weatherScraper.scrape_weather()

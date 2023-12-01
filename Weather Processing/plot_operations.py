@@ -3,6 +3,7 @@
 import matplotlib.pyplot as plt
 from db_operations import DBOperations
 
+
 class PlotOperations:
     """Plots data onto a graph, visualization"""
 
@@ -11,6 +12,7 @@ class PlotOperations:
         self.end_year = ""
         self.db = DBOperations()
 
+    # TODO: Cant take input in this way, must be given from weather_processor.
     def user_year_input(self):
         """Wait for user to input years."""
         while self.start_year.isdigit() is False or self.end_year.isdigit() is False:
@@ -27,7 +29,9 @@ class PlotOperations:
         plt.boxplot(temp_data)
         plt.xlabel("Months")
         plt.ylabel("Temperature (°C)")
-        plt.title(f"Monthly Temperature Distribution for: {self.start_year} to {self.end_year}")
+        plt.title(
+            f"Monthly Temperature Distribution for: {self.start_year} to {self.end_year}"
+        )
         plt.xticks(
             range(1, 13),
             [
@@ -64,6 +68,7 @@ class PlotOperations:
         weather_data = self.fetch_data()
         print(weather_data)
         self.create_year_boxplot_graph(graph_data=weather_data)
+
 
 if __name__ == "__main__":
     myPlotNew = PlotOperations()
