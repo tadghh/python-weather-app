@@ -22,13 +22,15 @@ Our code quality is currently...
 Here are the linting recommendations
 ```python
 ************* Module scrape_weather
-Weather Processing/scrape_weather.py:218:4: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
+Weather Processing/scrape_weather.py:219:4: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
+************* Module plot_operations
+Weather Processing/plot_operations.py:15:5: W0511: TODO: Cant take input in this way, must be given from weather_processor. (fixme)
 ************* Module db_operations
-Weather Processing/db_operations.py:67:0: C0301: Line too long (117/100) (line-too-long)
-Weather Processing/db_operations.py:113:0: C0303: Trailing whitespace (trailing-whitespace)
-Weather Processing/db_operations.py:67:13: W0511: TODO: Maybe add extra validation just in-case someone forgets to validate before calling this function. (fixme)
+Weather Processing/db_operations.py:69:0: C0301: Line too long (117/100) (line-too-long)
+Weather Processing/db_operations.py:40:5: W0511: TODO: Need a query to get the most recent date in the data base (fixme)
+Weather Processing/db_operations.py:69:13: W0511: TODO: Maybe add extra validation just in-case someone forgets to validate before calling this function. (fixme)
 
 -----------------------------------
-Your code has been rated at 9.86/10
+Your code has been rated at 9.85/10
 
 ```
