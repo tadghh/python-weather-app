@@ -6,7 +6,7 @@
 - Error handling
 - Data Visualization
 
-### Mark: 61
+### Mark: 76
 ### Weather Scraper
 
 - [x] **Name / 6**
@@ -30,12 +30,12 @@
 - [x] **Name / 4**
     - A class named DBOperations has been created inside a db_operations module.
 
-- [ ] **Context Manager / 4**
+- [x] **Context Manager / 4**
     - Code uses a database context manager named DBCM correctly.
     - DBCM returns a cursor object in __enter__.
     - DBCM commits changes and closes all connection objects in __exit__.
 
-- [ ] **Initialise / 4**
+- [x] **Initialise / 4**
     - Code successfully initializes the database and creates the necessary tables/fields if they don't already exist, every time the program starts.
 
 - [x] **Store / 4**
@@ -49,13 +49,13 @@
 - [x] **Name / 3**
     - A class named PlotOperations has been created inside a plot_operations module.
 
-- [ ] **Box Plot / 3**
+- [x] **Box Plot / 3**
     - Code successfully uses Python matplotlib to create a basic boxplot of mean temperature data with the same labels/design given in the example.
 
 - [ ] **Line Plot / 3**
     - Code successfully uses Python matplotlib to create a line plot of mean temperature data for a particular month.
 
-- [ ] **Process / 3**
+- [x] **Process / 3**
     - PlotOperations receives & processes the data to be used in the plots. Data is processed in PlotOperations not DBOperations.
 
 - [x] **Format / 3**
