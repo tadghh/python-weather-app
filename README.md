@@ -22,7 +22,7 @@ Our code quality is currently...
 Here are the linting recommendations
 ```python
 ************* Module scrape_weather
-Weather Processing/scrape_weather.py:221:4: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
+Weather Processing/scrape_weather.py:218:4: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
 ************* Module db_operations
 Weather Processing/db_operations.py:67:0: C0301: Line too long (117/100) (line-too-long)
 Weather Processing/db_operations.py:113:0: C0303: Trailing whitespace (trailing-whitespace)
