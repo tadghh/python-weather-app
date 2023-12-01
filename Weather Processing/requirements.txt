@@ -4,3 +4,4 @@ numpy
 html5lib
 tqdm
 pylint
+lxml

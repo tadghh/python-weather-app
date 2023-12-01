@@ -1,16 +1,16 @@
 """Scrapes the weather from environment canada """
 
-# Tadgh Henry
-# Oct 12, 2023
-# ADEV-3005 241066
-
-from html.parser import HTMLParser
-import urllib.request
-from contextlib import closing
-
-from urllib.error import URLError
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
+from html.parser import HTMLParser
+import urllib.request
+from urllib.error import URLError
+
+import re
+
+from contextlib import closing
+from lxml.html import parse
+
 from tqdm import tqdm
 
 
@@ -20,23 +20,89 @@ class WeatherScraper:
     def __init__(self):
         """Instantiates the class and creates the ip found flag"""
         super().__init__()
-
+        self.weather_station_id = 27174
         self.url_sections = (
             "https://climate.weather.gc.ca/climate_data",
-            "/daily_data_e.html?StationID=27174&StartYear=1840&Year=",
+            f"/daily_data_e.html?StationID={self.weather_station_id}&StartYear=1840&Year=",
             "&Month=",
         )
 
         self.weather = {}
 
+    def change_weather_station(self, new_station_id):
+        """
+        Allows input to change what station is used.
+
+        -Note: No idea how to handle error handling,
+        to be used for future features.
+
+        Input: An interger representing a station id.
+
+        """
+        self.weather_station_id = new_station_id
+        self.url_sections = (
+            "https://climate.weather.gc.ca/climate_data",
+            f"/daily_data_e.html?StationID={self.weather_station_id}&StartYear=1840&Year=",
+            "&Month=",
+        )
+
+    def get_earliest_date(self):
+        """Gets the earliest year and month for the current weather station.
+
+        Returns: A dict with intergers of the month, year
+            Type: dict<int>
+            None is returned otherwise
+
+        """
+
+        def extract_month_and_date(text):
+            """Extracts the month and year to a dict.
+
+            Returns: A dict with intergers of the month, year
+            Type: dict<int>
+
+            """
+
+            # Underscore to shutup pylint.
+            _ = """
+            Regex used against the site title.
+
+            Groups are made by using parenthises.
+
+            1st group:(month search string)
+            2nd group:(look for 4 digits)
+            """
+            pattern = r"""(\b(?:January|February|March|April|May|June|July
+            |August|September|October|November|December)\b) (\d{4})"""
+
+            # check if we can find a pattern.
+            match = re.search(pattern, text)
+
+            if match:
+                month = datetime.strptime(match.group(1), "%B").month
+                year = int(match.group(2))
+                return {"Month": month, "Year": year}
+
+            return None
+
+        try:
+            with urllib.request.urlopen(
+                self.url_sections[0] + self.url_sections[1] + "1840"
+            ) as page:
+                p = parse(page)
+        except URLError as error:
+            print("URL Error:", error)
+
+        # A None value can bubble up from this method
+        return extract_month_and_date((p.find(".//title").text))
+
     def scrape_weather(self):
         """Returns the weather data."""
-        # on the website the earliest year available is 1996
 
-        # TODO: No hard coding, there is a previous month button the page we can look for
-        # We should parse with the date as 1840
-        # we will get the first year and month in the title of the page
-        start_year = 1996
+        month_and_year = self.get_earliest_date()
+        print(month_and_year)
+        start_year = month_and_year.get("Year")
+        start_month = month_and_year.get("Month")
         end_year = datetime.now().year
 
         thread_count = 12
@@ -47,12 +113,12 @@ class WeatherScraper:
         # tqdm is used to provide a progress bad in the console.
         with tqdm(total=total_tasks, desc="Scraping Weather") as pbar:
             with ThreadPoolExecutor(max_workers=thread_count) as executor:
-                # tells the thread what method to run and provides the parameters for it.
-                # Range is used to get the month and year
+                # An array for all our threads of months for all years.
                 futures = [
+                    # Tells the thread what method to run and provides the parameters for it.
                     executor.submit(self.scrape_weather_thread, year, month, pbar)
                     for year in range(start_year, end_year + 1)
-                    for month in range(1, 13)
+                    for month in range(start_month if year == start_year else 1, 13)
                 ]
 
                 # Waits for all of the threads to complete
