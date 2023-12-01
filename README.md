@@ -132,9 +132,9 @@ Weather Processing/scrape_weather.py:219:4: R0902: Too many instance attributes 
 ************* Module plot_operations
 Weather Processing/plot_operations.py:15:5: W0511: TODO: Cant take input in this way, must be given from weather_processor. (fixme)
 ************* Module db_operations
-Weather Processing/db_operations.py:69:0: C0301: Line too long (117/100) (line-too-long)
 Weather Processing/db_operations.py:40:5: W0511: TODO: Need a query to get the most recent date in the data base (fixme)
-Weather Processing/db_operations.py:69:13: W0511: TODO: Maybe add extra validation just in-case someone forgets to validate before calling this function. (fixme)
+Weather Processing/db_operations.py:86:9: W0511: TODO: FIX DOCUMENTATION HERE fetch_monthy_averages (fixme)
+Weather Processing/db_operations.py:120:9: W0511: TODO: FIX DOCUMENTATION HERE fetch_year_month_average (fixme)
 
 -----------------------------------
 Your code has been rated at 9.85/10
