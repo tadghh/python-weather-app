@@ -126,8 +126,8 @@ class WeatherScraper:
                     # results.append(result)
                     pbar.update(1)
 
-        self.print_scraped_data(self.weather)
-        self.write_scraped_data(self.weather)
+        # self.print_scraped_data(self.weather)
+        # self.write_scraped_data(self.weather)
         return self.weather
 
     def scrape_weather_thread(self, year, month):
