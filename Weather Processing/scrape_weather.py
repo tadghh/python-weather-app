@@ -96,13 +96,17 @@ class WeatherScraper:
         # A None value can bubble up from this method
         return extract_month_and_date((p.find(".//title").text))
 
-    def scrape_weather(self):
+    def scrape_weather(
+        self,
+        start_year_override=None,
+        start_month_override=None,
+    ):
         """Returns the weather data."""
 
         month_and_year = self.get_earliest_date()
         print(month_and_year)
-        start_year = month_and_year.get("Year")
-        start_month = month_and_year.get("Month")
+        start_year = start_year_override or month_and_year.get("Year")
+        start_month = start_month_override or month_and_year.get("Month")
         end_year = datetime.now().year
 
         total_tasks = (end_year - start_year + 1) * 12
@@ -120,7 +124,7 @@ class WeatherScraper:
                     for month in range(start_month if year == start_year else 1, 13)
                 ]
 
-                # Gets threads as they complete, 52 seconds total runtime.
+                # Gets threads as they cpomplete, 52 seconds total runtime.
                 for future in as_completed(futures):
                     future.result()
                     # results.append(result)

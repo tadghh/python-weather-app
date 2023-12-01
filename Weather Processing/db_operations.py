@@ -37,7 +37,6 @@ class DBOperations:
             print("Error: Failed to initialize database.")
 
     # this function can be passed any query, but validate the query before-hand.
-    # TODO: Need a query to get the most recent date in the data base
     # Needed for updating the users database using todays date and most recent in DB
     def get_query_data(self, sql_query):
         """
@@ -52,13 +51,8 @@ class DBOperations:
          'sample_date', 'location', 'min_temp', 'max_temp', and 'avg_temp'.
 
         Raises:
-        - ValueError: If start_year or end_year is provided and is not a digit.
         - OperationalError: If there are issues with the database operation,
          such as table not existing.
-
-        Note:
-        - If start_year and end_year are provided,
-         the method filters data based on the year part of 'sample_date'.
 
         - If the table 'weather' does not exist in the database,
          the method attempts to create it.
@@ -141,8 +135,14 @@ class DBOperations:
 
         return self.get_query_data(sql_query)
 
-    def verify_data(self):
+    def get_new_data(self):
+        "Get the most recent data, without overwriting existing."
         print("dds")
+        recent_date_query = "SELECT MAX(sample_date) AS latest_date FROM weather;"
+        last_date_aval = self.get_query_data(recent_date_query)
+        print(last_date_aval)
+
+        return last_date_aval
 
     def save_data(self, data_to_save):
         """

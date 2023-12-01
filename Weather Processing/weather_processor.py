@@ -81,7 +81,16 @@ class WeatherProcessor:
         # Check last date in database
         # Give the last data to weather scraper as the start_date
         print("tbd")
-        self.data_menu().open()
+        last_date = self.weather_db.get_new_data()
+        year, month = last_date.split("-")
+        current_weather = self.weather_scraper.scrape_weather(
+            start_year_override=year, start_month_override=month
+        )
+        self.weather_db.save_data(current_weather)
+
+        print(last_date)
+
+    #  self.data_menu().open()
 
     def data_menu(self):
         """Handles database actions."""
