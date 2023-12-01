@@ -3,17 +3,17 @@ from menu import Menu
 from db_operations import DBOperations
 from scrape_weather import WeatherScraper
 
-
 class WeatherProcessor:
     """The main class, handling interaction and general flow."""
 
     def __init__(self):
+        """Initializes the Weather Processor"""
         self.g = 12
         self.weather_db = DBOperations()
         self.weather_scraper = WeatherScraper()
 
     def start_main(self):
-        "The main menu."
+        """The main menu."""
         main_menu = Menu(title="Main Menu")
         main_menu.set_options(
             [
@@ -27,7 +27,7 @@ class WeatherProcessor:
         main_menu.open()
 
     def box_plot(self):
-        "Take in the year inputs."
+        """Take in the year inputs."""
         print("-Box Plot-")
         start_year = 0
         end_year = 0
@@ -37,14 +37,14 @@ class WeatherProcessor:
         return {"Start": start_year, "End": end_year}
 
     def line_plot(self):
-        "Take in the year inputs."
+        """Take in the year inputs."""
         print("-Line Plot-")
         selected_year = input("Enter Year: ")
         selected_month = input("Enter Month: ")
         print(selected_month + selected_year)
 
     def plot_data_menu(self):
-        "Handle menu plotting logic."
+        """Handle menu plotting logic."""
 
         plot_menu = Menu(title="Plotting options")
         plot_menu.set_options(
@@ -60,14 +60,13 @@ class WeatherProcessor:
         plot_menu.open()
 
     def database_fetch(self):
-        "Setup the database"
+        """Setup the database"""
 
         # Setup database
         self.weather_db.initialize_db()
 
         # scrape weather
         current_weather = self.weather_scraper.scrape_weather()
-
         self.weather_db.save_data(current_weather)
 
         print("Data should be saved ig")
@@ -76,14 +75,14 @@ class WeatherProcessor:
         self.data_menu().open()
 
     def database_update(self):
-        "Updates the database, without overwriting"
+        """Updates the database, without overwriting"""
         # Check last date in database
         # Give the last data to weather scraper as the start_date
         print("tbd")
         self.data_menu().open()
 
     def data_menu(self):
-        "Handles database actions."
+        """Handles database actions."""
 
         db_data_menu = Menu(title="Database options")
         db_data_menu.set_options(
@@ -98,7 +97,6 @@ class WeatherProcessor:
         db_data_menu.set_message("Select an item")
         db_data_menu.set_prompt(">:")
         db_data_menu.open()
-
 
 if __name__ == "__main__":
     weatherProcessor = WeatherProcessor()
