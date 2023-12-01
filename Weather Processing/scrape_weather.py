@@ -1,11 +1,10 @@
 """Scrapes the weather from environment canada """
 
 from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from html.parser import HTMLParser
 import urllib.request
 from urllib.error import URLError
-
 import re
 
 from contextlib import closing
@@ -21,6 +20,7 @@ class WeatherScraper:
         """Instantiates the class and creates the ip found flag"""
         super().__init__()
         self.weather_station_id = 27174
+        self.thread_count = 12
         self.url_sections = (
             "https://climate.weather.gc.ca/climate_data",
             f"/daily_data_e.html?StationID={self.weather_station_id}&StartYear=1840&Year=",
@@ -105,30 +105,31 @@ class WeatherScraper:
         start_month = month_and_year.get("Month")
         end_year = datetime.now().year
 
-        thread_count = 12
-
-        # Used to keeps track of the final amount of tasks for the progress bar.
         total_tasks = (end_year - start_year + 1) * 12
 
         # tqdm is used to provide a progress bad in the console.
-        with tqdm(total=total_tasks, desc="Scraping Weather") as pbar:
-            with ThreadPoolExecutor(max_workers=thread_count) as executor:
+        with tqdm(
+            total=total_tasks, desc="Scraping: ", smoothing=0.1, miniters=1
+        ) as pbar:
+            with ThreadPoolExecutor(max_workers=self.thread_count) as executor:
                 # An array for all our threads of months for all years.
                 futures = [
                     # Tells the thread what method to run and provides the parameters for it.
-                    executor.submit(self.scrape_weather_thread, year, month, pbar)
+                    executor.submit(self.scrape_weather_thread, year, month)
                     for year in range(start_year, end_year + 1)
                     for month in range(start_month if year == start_year else 1, 13)
                 ]
 
-                # Waits for all of the threads to complete
-                for future in futures:
+                # Gets threads as they complete, 52 seconds total runtime.
+                for future in as_completed(futures):
                     future.result()
+                    # results.append(result)
+                    pbar.update(1)
 
         self.print_scraped_data(self.weather)
         self.write_scraped_data(self.weather)
 
-    def scrape_weather_thread(self, year, month, pbar):
+    def scrape_weather_thread(self, year, month):
         """
         Thread function for scraping weather.
 
@@ -144,17 +145,13 @@ class WeatherScraper:
 
             # Update URL for the current year and month and open the url
             with closing(urllib.request.urlopen(url)) as response:
-                html_data = str(response.read())
+                html_data = response.read().decode("utf-8")
                 parser.feed(html_data)
 
                 # Update our master dictionary with the newly returned data
                 self.weather.update(parser.return_weather_dict())
-
         except URLError as error:
             print("URL Error:", error)
-        finally:
-            # Update the progress bar
-            pbar.update(1)
 
     def print_scraped_data(self, scraped_data):
         """
