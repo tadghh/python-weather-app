@@ -141,6 +141,9 @@ class DBOperations:
 
         return self.get_query_data(sql_query)
 
+    def verify_data(self):
+        print("dds")
+
     def save_data(self, data_to_save):
         """
         Save new (non duplicate) data to the database.

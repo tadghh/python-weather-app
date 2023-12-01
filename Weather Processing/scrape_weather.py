@@ -225,12 +225,9 @@ class WeatherScraper:
 
             super().__init__()
             # flag properties
-            self.in_table_body = False
+            self.table_bounds = {"start": False, "end": False}
 
-            self.in_row_header = False
-            self.in_row = False
-            self.in_row_data = False
-            self.end_of_table = False
+            self.row_status = {"row": False, "header": False, "data": False}
 
             # row column counter
             self.row_column_index = 0
@@ -249,23 +246,23 @@ class WeatherScraper:
             """The tag to begin parsing at."""
 
             if tag == "tbody":
-                self.in_table_body = True
+                self.table_bounds["start"] = True
 
-            elif self.in_table_body and tag == "tr":
-                self.in_row = True
+            elif self.table_bounds["start"] is True and tag == "tr":
+                self.row_status["row"] = True
 
-            elif self.in_row and tag == "td":
-                self.in_row_data = True
+            elif self.row_status["row"] is True and tag == "td":
+                self.row_status["data"] = True
 
             # Find the table row header.
-            elif self.in_row_data is False and tag == "th":
+            elif self.row_status["data"] is False and tag == "th":
                 # Any allows us to short circuit on the first occurrence of scope.
                 if any(attr == "scope" and "row" in value for attr, value in attrs):
-                    self.in_row_header = True
+                    self.row_status["header"] = True
 
             # If we're in the table row header.
             # And the element is abbr.
-            elif self.in_row_header is True and tag == "abbr":
+            elif self.row_status["header"] is True and tag == "abbr":
                 # Check for title, break off when found.
                 title_attr = next(
                     (value for attr, value in attrs if attr == "title"), None
@@ -275,31 +272,27 @@ class WeatherScraper:
 
                 if title_attr is not None:
                     self.row_date = title_attr
-                self.in_row_header = False
+                self.row_status["header"] = False
 
         def handle_data(self, data):
             """Look through the data of the current element."""
-            if data == "Sum":
-                self.end_of_table = True
-                self.reset_flags()
 
             # If we're in a data-row (<td>) and our counter is less than 3.
-            elif self.end_of_table is False and self.in_row_data is True:
-                if self.row_column_index < 3:
-                    if self.is_float(data) or data == "M":
-                        # Line up the data with the dictionary before adding it to the year.
-                        self.temporary_daily_dict[
-                            self.column_temperature_legend.get(self.row_column_index)
-                        ] = data
+            if data != "Sum" and self.row_status["data"] is True:
+                if self.row_column_index < 3 and self.is_float(data) or data == "M":
+                    # Line up the data with the dictionary before adding it to the year.
+                    self.temporary_daily_dict[
+                        self.column_temperature_legend.get(self.row_column_index)
+                    ] = data
 
-                        self.row_column_index += 1
-                        self.in_row_data = False
+                    self.row_column_index += 1
+                    self.row_status["data"] = False
 
                 # We are only looking for min, max, and mean, which are the first 3 columns.
                 # If we've hit 3 columns we need to reset our flags to move to the next row element.
                 elif self.row_column_index == 3:
                     self.weather[self.row_date] = self.temporary_daily_dict
-                    self.temporary_daily_dict = {}
+
                     self.reset_flags()
 
         def return_weather_dict(self):
@@ -308,9 +301,10 @@ class WeatherScraper:
 
         def reset_flags(self):
             """Resets the boolean flags indicating we are at a new row in the table."""
-            self.in_row = False
-            self.in_row_data = False
-            self.in_row_header = False
+            self.row_status["row"] = False
+            self.row_status["data"] = False
+            self.row_status["header"] = False
+            self.temporary_daily_dict = {}
             self.row_column_index = 0
 
         def convert_to_date(self, value):
