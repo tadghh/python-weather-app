@@ -32,6 +32,10 @@ class DBOperations:
                     avg_temp REAL NOT NULL
                     )"""
                 )
+                cursor.execute(
+                    "CREATE INDEX IF NOT EXISTS idx_sample_date ON weather (sample_date)"
+                )
+
         except sqlite3.OperationalError as error:
             print(error)
             print("Error: Failed to initialize database.")
@@ -164,8 +168,12 @@ class DBOperations:
 
                     cursor.execute(
                         """INSERT OR IGNORE INTO weather (sample_date, location,
-                        min_temp, max_temp, avg_temp) VALUES (?, ?, ?, ?, ?)""",
-                        (date, location, min_temp, max_temp, avg_temp),
+                    min_temp, max_temp, avg_temp)
+                    SELECT ?, ?, ?, ?, ?
+                    WHERE NOT EXISTS (
+                        SELECT 1 FROM weather WHERE sample_date = ?
+                    )""",
+                        (date, location, min_temp, max_temp, avg_temp, date),
                     )
         except sqlite3.OperationalError as error:
             try:
@@ -205,7 +213,7 @@ class DBOperations:
 
                 if burn is True:
                     print("Dropping any remaining tables found in sqlite_master.")
-                    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+                    cursor.execute("SELECT name FROM * WHERE type='table';")
                     tables = cursor.fetchall()
                     for table in tables:
                         cursor.execute(f"DROP TABLE {table[0]};")
