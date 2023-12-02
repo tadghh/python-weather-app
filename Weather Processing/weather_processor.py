@@ -91,6 +91,9 @@ class WeatherProcessor:
         print(last_date)
 
     #  self.data_menu().open()
+    def database_reset(self):
+        """empty db"""
+        self.weather_db.purge_data()
 
     def data_menu(self):
         """Handles database actions."""
@@ -100,7 +103,7 @@ class WeatherProcessor:
             [
                 ("Fetch data", self.database_fetch),
                 ("Update current data", self.database_update),
-                ("Reset data", self.line_plot),
+                ("Reset data", self.database_reset),
                 ("Main menu", self.start_main),
                 ("Exit", exit),
             ]
