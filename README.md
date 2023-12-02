@@ -127,12 +127,12 @@ Our code quality is currently...
 
 Here are the linting recommendations
 ```python
-************* Module plot_operations
-Weather Processing/plot_operations.py:13:4: C0116: Missing function or method docstring (missing-function-docstring)
 ************* Module db_operations
 Weather Processing/db_operations.py:49:9: W0511: TODO: FIX DOCUMENTATION (fixme)
 Weather Processing/db_operations.py:87:9: W0511: TODO: FIX DOCUMENTATION HERE fetch_monthy_averages (fixme)
 Weather Processing/db_operations.py:120:9: W0511: TODO: FIX DOCUMENTATION HERE fetch_year_month_average (fixme)
+************* Module weather_processor
+Weather Processing/weather_processor.py:72:9: W0511: TODO: handle when there is no data (fixme)
 
 -----------------------------------
 Your code has been rated at 9.88/10
