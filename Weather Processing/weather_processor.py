@@ -30,33 +30,46 @@ class WeatherProcessor:
         main_menu.set_prompt(">:")
         main_menu.open()
 
+    def get_input(self, line_plot=False):
+        """Get input for the graphs."""
+        second_input_prompt = (
+            "Enter End Year: " if line_plot is False else "Enter a month ex 02: "
+        )
+        first_input_prompt = "Enter Starting Year ex 2002: "
+        start_year = None
+        end_year = None
+        start_year = input(first_input_prompt)
+        end_year = input(second_input_prompt)
+        while (
+            start_year is None
+            or start_year.isdigit() is False
+            and end_year is None
+            or end_year.isdigit() is False
+        ):
+            if start_year.isdigit() is True:
+                end_year = input(second_input_prompt)
+            else:
+                start_year = input(first_input_prompt)
+
+        # User was lazy and only entered one number, well help them
+        if line_plot is True:
+            if len(end_year) < 2:
+                end_year = "0" + end_year
+        return (start_year, end_year)
+
     def box_plot(self):
         """Take in the year inputs."""
-        print("-Box Plot-")
-        start_year = 0
-        end_year = 0
-        start_year = input("Enter Starting Year: ")
-        end_year = input("Enter End year: ")
-        while start_year.isdigit() is False or end_year.isdigit() is False:
-            if start_year.isdigit() is True:
-                end_year = input("Enter End year: ")
-            else:
-                start_year = input("Enter Starting Year: ")
-
-        print(start_year + end_year)
-        PlotOperations().create(start_year, end_year)
-        return {"Start": start_year, "End": end_year}
+        # the astrisk makes the tuple puke up its values in order regardless of the variable names.
+        PlotOperations().create(*self.get_input())
 
     def line_plot(self):
         """Take in the year inputs."""
-        print("-Line Plot-")
-        selected_year = input("Enter Year: ")
-        selected_month = input("Enter Month: ")
-        print(selected_month + selected_year)
+        start_year, month = self.get_input(True)
+        PlotOperations().create(start_year, month=month)
 
     def plot_data_menu(self):
         """Handle menu plotting logic."""
-
+        # TODO: handle when there is no data
         plot_menu = Menu(title="Plotting options")
         plot_menu.set_options(
             [

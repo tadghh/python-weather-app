@@ -10,8 +10,22 @@ class PlotOperations:
     def __init__(self):
         self.db = DBOperations()
 
-    def create_line_plot(self):
+    def create_line_plot(self, data, year, month):
+        """Makes a line plot (omg!)"""
         print("poof a graph!")
+        days = [row[0] for row in data]
+        mean_temps = [row[1] for row in data]
+
+        # Plot the line graph
+        plt.plot(days, mean_temps, marker="o", linestyle="-", color="b")
+        plt.title(f"Mean Daily Temperature for {year}-{month}")
+        plt.xlabel("Day")
+        plt.ylabel("Mean Daily Temperature")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        # Show the plot
+        plt.show(block=True)
 
     def create_year_boxplot_graph(self, graph_data, start_year, end_year):
         """Creates the box plot."""
@@ -54,7 +68,7 @@ class PlotOperations:
 
         weather_data = self.fetch_data(start_year, end_year, month)
         if month is not None and month.isdigit() is True:
-            self.create_line_plot()
+            self.create_line_plot(weather_data, start_year, month)
         else:
             self.create_year_boxplot_graph(
                 graph_data=weather_data, start_year=start_year, end_year=end_year
