@@ -22,6 +22,7 @@ class DBOperations:
         """Initialize the database."""
         try:
             with self.database_context as cursor:
+                # Make table
                 cursor.execute(
                     """CREATE TABLE IF NOT EXISTS weather (
                     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -32,6 +33,8 @@ class DBOperations:
                     avg_temp REAL NOT NULL
                     )"""
                 )
+
+                # Make index on sample_date for faster access
                 cursor.execute(
                     "CREATE INDEX IF NOT EXISTS idx_sample_date ON weather (sample_date)"
                 )
@@ -43,12 +46,12 @@ class DBOperations:
     # this function can be passed any query, but validate the query before-hand.
     # Needed for updating the users database using todays date and most recent in DB
     def get_query_data(self, sql_query):
+        # TODO: FIX DOCUMENTATION
         """
-        TODO: use a tuple or list for paramters like in save_data
         Method template for fetching data.
 
         Parameters:
-        TODO: FIX DOCUMENTATION
+
 
         Returns:
         - list of tuples: A list containing tuples representing weather data records.
@@ -80,9 +83,8 @@ class DBOperations:
         return None
 
     # this function is used for the box plot
-    def fetch_monthy_averages(self, start_year="", end_year=""):
+    def fetch_monthy_averages(self, start_year=None, end_year=None):
         # TODO: FIX DOCUMENTATION HERE fetch_monthy_averages
-
         """
         Fetch min, mean, max averages from all months in the database.
         Parameters:
@@ -114,7 +116,7 @@ class DBOperations:
         return self.get_query_data(sql_query)
 
     # this function is used for the line chart
-    def fetch_year_month_average(self, year="", month=""):
+    def fetch_year_month_average(self, year=None, month=None):
         # TODO: FIX DOCUMENTATION HERE fetch_year_month_average
 
         """
@@ -140,11 +142,9 @@ class DBOperations:
         return self.get_query_data(sql_query)
 
     def get_new_data(self):
-        "Get the most recent data, without overwriting existing."
-        print("dds")
-        recent_date_query = "SELECT MAX(sample_date) AS latest_date FROM weather;"
+        "Get the most recent date."
+        recent_date_query = "SELECT MAX(sample_date) AS latest_date FROM weather"
         last_date_aval = self.get_query_data(recent_date_query)
-        print(last_date_aval)
 
         return last_date_aval
 
@@ -171,7 +171,7 @@ class DBOperations:
                     min_temp, max_temp, avg_temp)
                     SELECT ?, ?, ?, ?, ?
                     WHERE NOT EXISTS (
-                        SELECT 1 FROM weather WHERE sample_date = ?
+                    SELECT 1 FROM weather WHERE sample_date = ?
                     )""",
                         (date, location, min_temp, max_temp, avg_temp, date),
                     )
@@ -208,37 +208,26 @@ class DBOperations:
         """
         try:
             with self.database_context as cursor:
+                # Delete data, then auto-increment values, so new inserts start at 0
                 cursor.execute("DELETE FROM weather")
+                cursor.execute("DELETE FROM sqlite_sequence")
+
                 print("Data deleted from weather table.")
 
+                # If true does these too
                 if burn is True:
-                    print("Dropping any remaining tables found in sqlite_master.")
-                    cursor.execute("SELECT name FROM * WHERE type='table';")
-                    tables = cursor.fetchall()
-                    for table in tables:
-                        cursor.execute(f"DROP TABLE {table[0]};")
-                    print("All tables dropped.")
+                    print("Dropping any views, index's found in sqlite_master.")
+
+                    cursor.execute("SELECT name FROM sqlite_master WHERE type='view'")
+                    views = cursor.fetchall()
+                    for view in views:
+                        cursor.execute(f"DROP VIEW IF EXISTS {view[0]}")
+                    cursor.execute("SELECT name FROM sqlite_master WHERE type='index'")
+                    indexes = cursor.fetchall()
+                    for index in indexes:
+                        cursor.execute(f"DROP INDEX IF EXISTS {index[0]}")
         except sqlite3.OperationalError as error:
             print(error)
             print(
-                f" purge_data An error occured while purging data. Burn state is {burn}."
+                f"purge_data An error occured while purging data. Burn state is {burn}."
             )
-
-
-# debugging only
-# if __name__ == "__main__":
-#     # test data
-#     # weather = {
-#     #     "1996-10-01": {'Max': '6.2', 'Min': '0.4', 'Mean': '3.3'},
-#     #     "1996-10-02": {'Max': '9.4', 'Min': '-1.4', 'Mean': '4.0'},
-#     #     "1996-10-03": {'Max': '9.8', 'Min': '-3.9', 'Mean': '3.0'},
-#     #     "1996-10-04": {'Max': '16.9', 'Min': '3.8', 'Mean': '10.4'},
-#     #     "1996-10-05": {'Max': '23.2', 'Min': '9.3', 'Mean': '16.3'},
-#     #     }
-
-#     db = DBOperations()
-#     db.initialize_db()
-
-#     # db.save_data(weather)
-#     # db.purge_data()
-#     print(db.get_query_data(sql_query="SELECT * FROM weather"))

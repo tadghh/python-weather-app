@@ -2,6 +2,7 @@
 from menu import Menu
 from db_operations import DBOperations
 from scrape_weather import WeatherScraper
+from plot_operations import PlotOperations
 
 
 class WeatherProcessor:
@@ -13,6 +14,7 @@ class WeatherProcessor:
         self.weather_db = DBOperations()
         self.weather_db.initialize_db()
         self.weather_scraper = WeatherScraper()
+        self.plot_ops = PlotOperations()
 
     def start_main(self):
         """The main menu."""
@@ -35,7 +37,14 @@ class WeatherProcessor:
         end_year = 0
         start_year = input("Enter Starting Year: ")
         end_year = input("Enter End year: ")
+        while start_year.isdigit() is False or end_year.isdigit() is False:
+            if start_year.isdigit() is True:
+                end_year = input("Enter End year: ")
+            else:
+                start_year = input("Enter Starting Year: ")
+
         print(start_year + end_year)
+        PlotOperations().create(start_year, end_year)
         return {"Start": start_year, "End": end_year}
 
     def line_plot(self):
@@ -71,8 +80,6 @@ class WeatherProcessor:
         current_weather = self.weather_scraper.scrape_weather()
         self.weather_db.save_data(current_weather)
 
-        print("Data should be saved ig")
-
         # Open menu again
         self.data_menu().open()
 
@@ -80,7 +87,7 @@ class WeatherProcessor:
         """Updates the database, without overwriting"""
         # Check last date in database
         # Give the last data to weather scraper as the start_date
-        print("tbd")
+
         last_date = self.weather_db.get_new_data()
         year, month = last_date.split("-")
         current_weather = self.weather_scraper.scrape_weather(
@@ -88,12 +95,9 @@ class WeatherProcessor:
         )
         self.weather_db.save_data(current_weather)
 
-        print(last_date)
-
-    #  self.data_menu().open()
-    def database_reset(self):
+    def database_reset(self, burn=False):
         """empty db"""
-        self.weather_db.purge_data()
+        self.weather_db.purge_data(burn)
 
     def data_menu(self):
         """Handles database actions."""
@@ -104,6 +108,7 @@ class WeatherProcessor:
                 ("Fetch data", self.database_fetch),
                 ("Update current data", self.database_update),
                 ("Reset data", self.database_reset),
+                ("Reset hard", lambda: self.database_reset(burn=True)),
                 ("Main menu", self.start_main),
                 ("Exit", exit),
             ]
