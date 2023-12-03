@@ -127,14 +127,21 @@ Our code quality is currently...
 
 Here are the linting recommendations
 ```python
+************* Module scrape_weather
+Weather Processing/scrape_weather.py:120:0: C0301: Line too long (101/100) (line-too-long)
+************* Module plot_operations
+Weather Processing/plot_operations.py:44:24: R1735: Consider using '{"color": 'dodgerblue', "linewidth": 1.5}' instead of a call to 'dict'. (use-dict-literal)
 ************* Module db_operations
 Weather Processing/db_operations.py:49:9: W0511: TODO: FIX DOCUMENTATION (fixme)
 Weather Processing/db_operations.py:87:9: W0511: TODO: FIX DOCUMENTATION HERE fetch_monthy_averages (fixme)
 Weather Processing/db_operations.py:120:9: W0511: TODO: FIX DOCUMENTATION HERE fetch_year_month_average (fixme)
 ************* Module weather_processor
-Weather Processing/weather_processor.py:72:9: W0511: TODO: handle when there is no data (fixme)
+Weather Processing/weather_processor.py:41:19: R1716: Simplify chained comparison between the operands (chained-comparison)
+Weather Processing/weather_processor.py:44:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+Weather Processing/weather_processor.py:109:18: R1714: Consider merging these comparisons with 'in' by using 'user_response not in ('c', 'r')'. Use a set instead if elements are hashable. (consider-using-in)
+Weather Processing/weather_processor.py:52:4: R0912: Too many branches (13/12) (too-many-branches)
 
 -----------------------------------
-Your code has been rated at 9.88/10
+Your code has been rated at 9.77/10
 
 ```
