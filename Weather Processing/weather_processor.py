@@ -37,7 +37,13 @@ class WeatherProcessor:
             "Enter End Year: " if line_plot is False else "Enter a month ex 02: "
         )
         first_input_prompt = "Enter Starting Year ex 2002: "
+        lower_date_bound = self.weather_db.get_earliest_date()
+        last_date = self.weather_db.get_new_data()
+        (year, month) = last_date
 
+        upper_year_bound = year
+        print(lower_date_bound)
+        print(upper_year_bound)
         start_year = input(first_input_prompt)
         end_year = input(second_input_prompt)
         while (
@@ -46,7 +52,11 @@ class WeatherProcessor:
             and end_year is None
             or end_year.isdigit() is False
         ):
-            if start_year.isdigit() and start_year < 1840 or start_year > 3000:
+            if (
+                start_year.isdigit()
+                and start_year < lower_date_bound
+                or start_year > upper_year_bound
+            ):
                 print("Invalid start year\n")
                 start_year = input(first_input_prompt)
             if start_year.isdigit() is True:
@@ -127,7 +137,8 @@ class WeatherProcessor:
         # Give the last data to weather scraper as the start_date
 
         last_date = self.weather_db.get_new_data()
-        year, month = last_date.split("-")
+
+        (year, month) = last_date
         current_weather = self.weather_scraper.scrape_weather(
             start_year_override=year, start_month_override=month
         )

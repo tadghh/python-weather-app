@@ -141,12 +141,23 @@ class DBOperations:
 
         return self.get_query_data(sql_query)
 
+    def get_earliest_date(self):
+        """Gets earliest date in dataset."""
+        earliest_date_query = """SELECT MIN(strftime('%Y-%m', sample_date)) AS
+        earliest_year FROM weather"""
+        earliest_year = self.get_query_data(earliest_date_query)
+
+        return earliest_year[0][0].split("-")
+
     def get_new_data(self):
-        "Get the most recent date."
-        recent_date_query = "SELECT MAX(sample_date) AS latest_date FROM weather"
+        """Get the most recent date.
+        Returns 2 string that hold the interger of the year and month"""
+        recent_date_query = (
+            "SELECT MAX(strftime('%Y-%m', sample_date)) AS latest_date FROM weather"
+        )
         last_date_aval = self.get_query_data(recent_date_query)
 
-        return last_date_aval
+        return last_date_aval[0][0].split("-")
 
     def save_data(self, data_to_save):
         """
