@@ -1,5 +1,19 @@
 {
     "cSpell.words": [
         "DBCM"
+    ],
+    "cSpell.ignoreWords": [
+        "boxplot",
+        "dodgerblue",
+        "figsize",
+        "linestyle",
+        "linewidth",
+        "lxml",
+        "medianprops",
+        "miniters",
+        "tqdm",
+        "xlabel",
+        "xticks",
+        "ylabel"
     ]
 }

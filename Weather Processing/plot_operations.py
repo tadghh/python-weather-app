@@ -69,7 +69,7 @@ class PlotOperations:
             medianprops=dict(color="dodgerblue", linewidth=1.5),
         )
         plt.xlabel("Months")
-        plt.ylabel("Temperature (Celcius)")
+        plt.ylabel("Temperature (Celsius)")
         plt.title(f"Monthly Temperature Distribution for: {start_year} to {end_year}")
 
         plt.show(block=True)
@@ -118,4 +118,4 @@ class PlotOperations:
         """
         if month is not None and month.isdigit() is True:
             return self.db.fetch_year_month_average(start_year, month)
-        return self.db.fetch_monthy_averages(start_year, end_year)
+        return self.db.fetch_monthly_averages(start_year, end_year)

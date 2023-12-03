@@ -57,7 +57,7 @@ class WeatherScraper:
         # tqdm is used to provide a progress bad in the console.
         with tqdm(
             total=total_tasks, desc="Scraping: ", smoothing=0.1, miniters=1
-        ) as pbar:
+        ) as progress_bar:
             with ThreadPoolExecutor() as executor:
                 # An array for all our threads of months for all years.
                 futures = [
@@ -67,9 +67,9 @@ class WeatherScraper:
                     for month in range(start_month if year == start_year else 1, 13)
                 ]
 
-                # Gets threads as they cpomplete, 30 seconds total runtime.
+                # Gets threads as they complete, 30 seconds total runtime.
                 for _ in as_completed(futures):
-                    pbar.update(1)
+                    progress_bar.update(1)
 
         return self.weather
 
@@ -234,7 +234,7 @@ class WeatherScraper:
             - Resets flags when the three columns (min, max, mean) are processed for a row.
             """
             # If we're in a data-row (<td>) and our counter is less than 3.
-            # Sum check to make sure we havent run off the table.
+            # Sum check to make sure we haven't run off the table.
             if data != "Sum" and self.row_status["data"] is True:
                 if (
                     self.row_column_temperature_index < 3

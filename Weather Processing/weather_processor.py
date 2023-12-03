@@ -65,7 +65,7 @@ class WeatherProcessor:
             else:
                 errors.append("not in range.")
         else:
-            errors.append("must be interger.")
+            errors.append("must be integer.")
         return False
 
     def get_input(self, line_plot=False):
@@ -133,11 +133,11 @@ class WeatherProcessor:
             print(
                 "Start year is after end year.\nWould you like us to correct this or reset?"
             )
-            user_response = input("Enter (c)orrect or (r)eset: ")
+            user_response = input("Enter (c)correct or (r)reset: ")
 
             while user_response != "c" and user_response != "r":
                 print("Invalid input, try again.\n")
-                user_response = input("Enter (c)orrect or (r)eset: ")
+                user_response = input("Enter (c)correct or (r)reset: ")
             if user_response == "c":
                 (start_year, end_year) = (end_year, start_year)
             else:
@@ -173,7 +173,7 @@ class WeatherProcessor:
 
         Initiates the creation of a box plot for weather data based on user input.
         """
-        # the astrisk makes the tuple puke up its values in order regardless of the variable names.
+        # the asterisk makes the tuple puke up its values in order regardless of the variable names.
         PlotOperations().create(*self.get_input())
 
     def line_plot(self):

@@ -110,7 +110,7 @@ class DBOperations:
         return None
 
     # this function is used for the box plot
-    def fetch_monthy_averages(self, start_year=None, end_year=None):
+    def fetch_monthly_averages(self, start_year=None, end_year=None):
         """
         Fetches minimum, mean, and maximum averages for each month within the specified
         range of years.
@@ -259,10 +259,10 @@ class DBOperations:
         recent_date_query = (
             "SELECT MAX(strftime('%Y-%m', sample_date)) AS latest_date FROM weather"
         )
-        last_date_aval = self.get_query_data(recent_date_query)[0][0]
-        if last_date_aval is not None:
-            print(last_date_aval[0][0])
-            return last_date_aval.split("-")
+        last_date_available = self.get_query_data(recent_date_query)[0][0]
+        if last_date_available is not None:
+            print(last_date_available[0][0])
+            return last_date_available.split("-")
         return None
 
     def save_data(self, data_to_save):
@@ -317,7 +317,7 @@ class DBOperations:
 
             except sqlite3.OperationalError as error_two:
                 print(error_two)
-                print("Error: save_data Could'nt initalize or save to table.")
+                print("Error: save_data Could'nt initialize or save to table.")
         except sqlite3.IntegrityError as error:
             print(error)
             print("Error: save_data Integrity Error with the save_data function.")
@@ -359,5 +359,5 @@ class DBOperations:
         except sqlite3.OperationalError as error:
             print(error)
             print(
-                f"purge_data An error occured while purging data. Burn state is {burn}."
+                f"purge_data An error occurred while purging data. Burn state is {burn}."
             )
