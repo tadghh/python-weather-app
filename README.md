@@ -127,15 +127,11 @@ Our code quality is currently...
 
 Here are the linting recommendations
 ```python
-************* Module plot_operations
-Weather Processing/plot_operations.py:69:24: R1735: Consider using '{"color": 'dodgerblue', "linewidth": 1.5}' instead of a call to 'dict'. (use-dict-literal)
 ************* Module weather_processor
-Weather Processing/weather_processor.py:60:19: R1716: Simplify chained comparison between the operands (chained-comparison)
-Weather Processing/weather_processor.py:63:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
-Weather Processing/weather_processor.py:138:18: R1714: Consider merging these comparisons with 'in' by using 'user_response not in ('c', 'r')'. Use a set instead if elements are hashable. (consider-using-in)
-Weather Processing/weather_processor.py:71:4: R0912: Too many branches (13/12) (too-many-branches)
+Weather Processing/weather_processor.py:137:18: R1714: Consider merging these comparisons with 'in' by using 'user_response not in ('c', 'r')'. Use a set instead if elements are hashable. (consider-using-in)
+Weather Processing/weather_processor.py:70:4: R0912: Too many branches (13/12) (too-many-branches)
 
 -----------------------------------
-Your code has been rated at 9.87/10
+Your code has been rated at 9.95/10
 
 ```
