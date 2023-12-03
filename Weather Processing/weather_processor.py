@@ -15,6 +15,7 @@ class WeatherProcessor:
         self.weather_db.initialize_db()
         self.weather_scraper = WeatherScraper()
         self.plot_ops = PlotOperations()
+        self.year_range = {"lower": None, "upper": None}
 
     def start_main(self):
         """The main menu."""
@@ -30,39 +31,64 @@ class WeatherProcessor:
         main_menu.set_prompt(">:")
         main_menu.open()
 
+    def validate_input(self, user_input, errors):
+        "rawrxd"
+        if user_input.isdigit() is True:
+            if self.is_in_range(user_input) is True:
+                return True
+            else:
+                errors.append("not in range.")
+        else:
+            errors.append("must be interger.")
+        return False
+
     def get_input(self, line_plot=False):
         """Get input for the graphs."""
 
+        # Input text
+        first_input_prompt = "Enter Starting Year ex 2002: "
         second_input_prompt = (
             "Enter End Year: " if line_plot is False else "Enter a month ex 02: "
         )
-        first_input_prompt = "Enter Starting Year ex 2002: "
-        lower_date_bound = self.weather_db.get_earliest_date()
-        last_date = self.weather_db.get_new_data()
-        (year, month) = last_date
 
-        upper_year_bound = year
-        print(lower_date_bound)
-        print(upper_year_bound)
-        start_year = input(first_input_prompt)
-        end_year = input(second_input_prompt)
-        while (
-            start_year is None
-            or start_year.isdigit() is False
-            and end_year is None
-            or end_year.isdigit() is False
-        ):
-            if (
-                start_year.isdigit()
-                and start_year < lower_date_bound
-                or start_year > upper_year_bound
-            ):
-                print("Invalid start year\n")
+        # Setup or refresh with the latest ranges
+        self.year_range["lower"] = self.weather_db.get_earliest_date()[0]
+        last_date = self.weather_db.get_new_data()
+        self.year_range["upper"] = last_date[0]
+
+        # error handling
+        input_errors = {"start": [], "end": []}
+        validated_inputs = {"start": False, "end": False}
+
+        start_year = None
+        end_year = None
+        in_input = True
+        while in_input:
+            if validated_inputs["start"] is False:
                 start_year = input(first_input_prompt)
-            if start_year.isdigit() is True:
+                validated_inputs["start"] = self.validate_input(
+                    start_year, input_errors["start"]
+                )
+
+            if validated_inputs["end"] is False:
                 end_year = input(second_input_prompt)
+                validated_inputs["end"] = self.validate_input(
+                    end_year, input_errors["end"]
+                )
+
+            if validated_inputs["start"] and validated_inputs["end"]:
+                in_input = False
             else:
-                start_year = input(first_input_prompt)
+                for key, errors in input_errors.items():
+                    # Make sure there are errors
+                    if len(errors) != 0:
+                        print(f"{key.capitalize()} year errors:")
+                        for i, error in enumerate(errors):
+                            print(f"  {i + 1}. {error}")
+
+                # Reset errors
+                input_errors["start"] = []
+                input_errors["end"] = []
 
         # Input correction
         if line_plot is False and start_year > end_year:
@@ -88,6 +114,19 @@ class WeatherProcessor:
             if len(end_year) < 2:
                 end_year = "0" + end_year
         return (start_year, end_year)
+
+    def is_in_range(self, year_input):
+        """Date in range"""
+        is_valid = False
+
+        lower, higher = int(self.year_range["lower"]), int(self.year_range["upper"])
+        if (
+            year_input.isdigit()
+            and int(year_input) > int(lower)
+            and int(year_input) < int(higher)
+        ):
+            is_valid = True
+        return is_valid
 
     def box_plot(self):
         """Take in the year inputs."""
