@@ -22,7 +22,8 @@ class PlotOperations:
 
         Description:
         - Plots a line graph representing daily average temperatures for a given year and month.
-        - Displays the line plot and requires user interaction to continue execution after plot display.
+        - Displays the line plot and requires user interaction to continue 
+        execution after plot display.
         """
         print("poof a graph!")
         print("Close graph to continue execution")
@@ -55,7 +56,8 @@ class PlotOperations:
         Description:
         - Generates a box plot representing the distribution of monthly temperatures
           for a specified range of years.
-        - Displays the box plot and requires user interaction to continue execution after plot display.
+        - Displays the box plot and requires user interaction to continue 
+        execution after plot display.
         """
         year_month_temperature_info = [month[1:] for month in graph_weather_data]
         mpl.rcParams["toolbar"] = "None"
