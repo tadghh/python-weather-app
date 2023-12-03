@@ -32,12 +32,12 @@ class WeatherProcessor:
 
     def get_input(self, line_plot=False):
         """Get input for the graphs."""
+
         second_input_prompt = (
             "Enter End Year: " if line_plot is False else "Enter a month ex 02: "
         )
         first_input_prompt = "Enter Starting Year ex 2002: "
-        start_year = None
-        end_year = None
+
         start_year = input(first_input_prompt)
         end_year = input(second_input_prompt)
         while (
@@ -46,10 +46,32 @@ class WeatherProcessor:
             and end_year is None
             or end_year.isdigit() is False
         ):
+            if start_year.isdigit() and start_year < 1840 or start_year > 3000:
+                print("Invalid start year\n")
+                start_year = input(first_input_prompt)
             if start_year.isdigit() is True:
                 end_year = input(second_input_prompt)
             else:
                 start_year = input(first_input_prompt)
+
+        # Input correction
+        if line_plot is False and start_year > end_year:
+            print(
+                "Start year is after end year.\nWould you like us to correct this or reset?"
+            )
+            user_response = input("Enter (c)orrect or (r)eset: ")
+
+            while user_response != "c" and user_response != "r":
+                print("Invalid input, try again.\n")
+                user_response = input("Enter (c)orrect or (r)eset: ")
+            if user_response == "c":
+                (start_year, end_year) = (end_year, start_year)
+            else:
+                # return up from the recursive call
+                # Once below function finish it will only return inside itself
+                # Still gotta direct it to return through originally method
+                # This can result in a buffer overflow if the user messed up their input enough
+                return self.get_input()
 
         # User was lazy and only entered one number, well help them
         if line_plot is True:
@@ -88,6 +110,9 @@ class WeatherProcessor:
 
         # Setup database
         self.weather_db.initialize_db()
+
+        # Reset DB
+        self.database_reset()
 
         # scrape weather
         current_weather = self.weather_scraper.scrape_weather()
