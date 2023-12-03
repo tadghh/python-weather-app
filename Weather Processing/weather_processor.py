@@ -4,12 +4,15 @@ from db_operations import DBOperations
 from scrape_weather import WeatherScraper
 from plot_operations import PlotOperations
 
-
 class WeatherProcessor:
     """The main class, handling interaction and general flow."""
 
     def __init__(self):
-        """Initializes the Weather Processor"""
+        """Initializes the Weather Processor.
+        
+        Initializes class attributes including weather database connection,
+        weather scraper, plot operations, year range, and latest dates.
+        """
         self.g = 12
         self.weather_db = DBOperations()
         self.weather_db.initialize_db()
@@ -19,7 +22,11 @@ class WeatherProcessor:
         self.latest_dates = self.database_check_ends()
 
     def start_main(self):
-        """The main menu."""
+        """Displays the main menu.
+
+        Provides a menu interface for plotting data, accessing database options, 
+        and exiting the application.
+        """
         main_menu = Menu(title="Main Menu")
         main_menu.set_options(
             [
@@ -33,7 +40,19 @@ class WeatherProcessor:
         main_menu.open()
 
     def validate_input(self, user_input, errors, can_month):
-        "Validate year date input making sure its withing range of the db"
+        """Validates year date input.
+
+        Validates the user input for year dates ensuring they are within the 
+        range of the database.
+
+        Parameters:
+        - user_input (str): User input for year dates.
+        - errors (list): List to append error messages if validation fails.
+        - can_month (bool): Flag to validate month input if True.
+
+        Returns:
+        - bool: True if input is valid, False otherwise.
+        """
         if user_input.isdigit() is True:
             user_input = int(user_input)
 
@@ -50,7 +69,17 @@ class WeatherProcessor:
         return False
 
     def get_input(self, line_plot=False):
-        """Get input for the graphs."""
+        """Gets input for the graphs.
+
+        Collects user input for generating graphs and validates it. 
+        Provides input prompts for start and end years or months.
+
+        Args:
+        - line_plot (bool): Flag to determine input requirements for line plot.
+
+        Returns:
+        - tuple: A tuple containing start and end years or months.
+        """
 
         # Input text
         first_input_prompt = "Enter Starting Year ex 2002: "
@@ -124,7 +153,14 @@ class WeatherProcessor:
         return (start_year, end_year)
 
     def is_in_range(self, year_input):
-        """Date in range"""
+        """Checks if the input year is within the database range.
+
+        Parameters:
+        - year_input (int): The year input to be validated.
+
+        Returns:
+        - bool: True if year is within range, False otherwise.
+        """
         is_valid = False
 
         lower, higher = int(self.year_range["lower"]), int(self.year_range["upper"])
@@ -133,18 +169,26 @@ class WeatherProcessor:
         return is_valid
 
     def box_plot(self):
-        """Take in the year inputs."""
+        """Generates a box plot.
+
+        Initiates the creation of a box plot for weather data based on user input.
+        """
         # the astrisk makes the tuple puke up its values in order regardless of the variable names.
         PlotOperations().create(*self.get_input())
 
     def line_plot(self):
-        """Take in the year inputs."""
+        """Generates a line plot.
+
+        Initiates the creation of a line plot for weather data based on user input.
+        """
         start_year, month = self.get_input(True)
         PlotOperations().create(start_year, month=month)
 
     def plot_data_menu(self):
-        """Handle menu plotting logic."""
+        """Handles menu options for plotting.
 
+        Provides menu options for box plot, line plot, and displaying latest dates.
+        """
         plot_menu = Menu(title="Plotting options")
         plot_menu.set_message("Select an item")
         plot_menu.set_prompt(">:")
@@ -171,13 +215,17 @@ class WeatherProcessor:
         plot_menu.open()
 
     def database_check_ends(self):
-        """agggg"""
+        """Retrieves and displays the latest available dates in the database.
+
+        Returns:
+        - tuple: A tuple containing latest start and end dates.
+        """
         print(self.weather_db.get_year_ends())
         self.latest_dates = self.weather_db.get_year_ends()
         return self.weather_db.get_year_ends()
 
     def database_fetch(self):
-        """Setup the database"""
+        """Fetches and saves weather data to the database."""
 
         # Setup database
         self.weather_db.initialize_db()
@@ -193,7 +241,7 @@ class WeatherProcessor:
         self.data_menu().open()
 
     def database_update(self):
-        """Updates the database, without overwriting"""
+        """Updates the database with current weather data."""
         # Check last date in database
         # Give the last data to weather scraper as the start_date
 
@@ -206,11 +254,19 @@ class WeatherProcessor:
         self.weather_db.save_data(current_weather)
 
     def database_reset(self, burn=False):
-        """empty db"""
+        """Resets the database by deleting weather data.
+
+        Parameters:
+        - burn (bool): If True, drops all tables in the database.
+
+        """
         self.weather_db.purge_data(burn)
 
     def data_menu(self):
-        """Handles database actions."""
+        """Handles database-related options.
+
+        Provides menu options for fetching, updating, or resetting database data.
+        """
 
         db_data_menu = Menu(title="Database options")
         db_data_menu.set_options(
@@ -226,7 +282,6 @@ class WeatherProcessor:
         db_data_menu.set_message("Select an item")
         db_data_menu.set_prompt(">:")
         db_data_menu.open()
-
 
 if __name__ == "__main__":
     weatherProcessor = WeatherProcessor()
