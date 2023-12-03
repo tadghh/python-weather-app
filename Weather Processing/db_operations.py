@@ -145,9 +145,16 @@ class DBOperations:
         """Gets earliest date in dataset."""
         earliest_date_query = """SELECT MIN(strftime('%Y-%m', sample_date)) AS
         earliest_year FROM weather"""
-        earliest_year = self.get_query_data(earliest_date_query)
+        earliest_year = self.get_query_data(earliest_date_query)[0][0]
+        if earliest_year is not None:
+            return earliest_year.split("-")
+        return None
 
-        return earliest_year[0][0].split("-")
+    def get_year_ends(self):
+        """ends"""
+        if self.get_new_data() is None and self.get_earliest_date() is None:
+            return None
+        return (self.get_new_data(), self.get_earliest_date())
 
     def get_new_data(self):
         """Get the most recent date.
@@ -155,9 +162,11 @@ class DBOperations:
         recent_date_query = (
             "SELECT MAX(strftime('%Y-%m', sample_date)) AS latest_date FROM weather"
         )
-        last_date_aval = self.get_query_data(recent_date_query)
-
-        return last_date_aval[0][0].split("-")
+        last_date_aval = self.get_query_data(recent_date_query)[0][0]
+        if last_date_aval is not None:
+            print(last_date_aval[0][0])
+            return last_date_aval.split("-")
+        return None
 
     def save_data(self, data_to_save):
         """

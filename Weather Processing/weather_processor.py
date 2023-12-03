@@ -16,6 +16,7 @@ class WeatherProcessor:
         self.weather_scraper = WeatherScraper()
         self.plot_ops = PlotOperations()
         self.year_range = {"lower": None, "upper": None}
+        self.latest_dates = 0
 
     def start_main(self):
         """The main menu."""
@@ -140,19 +141,38 @@ class WeatherProcessor:
 
     def plot_data_menu(self):
         """Handle menu plotting logic."""
-        # TODO: handle when there is no data
+
+        self.latest_dates = self.database_check_ends()
         plot_menu = Menu(title="Plotting options")
-        plot_menu.set_options(
-            [
-                ("Box plot", self.box_plot),
-                ("Line plot", self.line_plot),
-                ("Main menu", self.start_main),
-                ("Exit", exit),
-            ]
-        )
+
+        # Default options
+        options = [
+            ("Main menu", self.start_main),
+            ("Exit", exit),
+        ]
+
+        if self.latest_dates is not None:
+            options.append(("Box plot", self.box_plot))
+            options.append(("Line plot", self.line_plot))
+            options.append(
+                (
+                    f"""Latest dates: {self.latest_dates}""",
+                    (self.database_check_ends),
+                )
+            )
+        else:
+            options.append(("No data, UPDATE", self.database_fetch))
+
+        plot_menu.set_options(options)
         plot_menu.set_message("Select an item")
         plot_menu.set_prompt(">:")
         plot_menu.open()
+
+    def database_check_ends(self):
+        """agggg"""
+        print(self.weather_db.get_year_ends())
+        self.latest_dates = self.weather_db.get_year_ends()
+        return self.weather_db.get_year_ends()
 
     def database_fetch(self):
         """Setup the database"""
