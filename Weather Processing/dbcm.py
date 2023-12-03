@@ -6,7 +6,12 @@ class DBCM:
     """Class for enacting operations on SQLite database."""
 
     def __init__(self, database_name):
-        """Setup the context manager, taking a parameter for the name."""
+        """
+        Initialize the DBCM instance with the given database name.
+
+        Parameters:
+        - database_name (str): The name of the SQLite database.
+        """
         try:
             self.db_name = database_name
             self.conn = None
@@ -15,13 +20,30 @@ class DBCM:
             print("Error initializing DB: ", error)
 
     def __enter__(self):
-        """This runs after init and will return the DB cursor."""
+        """
+        Enter method for the context manager.
+        
+        Establishes a connection to the SQLite database and returns a cursor.
+
+        Returns:
+        - sqlite3.Cursor: The cursor object associated with the database connection.
+        """
         self.conn = sqlite3.connect(self.db_name)
         self.cursor = self.conn.cursor()
         return self.cursor
 
     def __exit__(self, exc_type, exc_value, traceback):
-        """Cleanup, closing the cursor and committing and changes, then closing the connection."""
+        """
+        Exit method for the context manager.
+
+        Cleans up by closing the cursor, committing any pending changes,
+        and then closing the connection to the database.
+
+        Parameters:
+        - exc_type: Exception type.
+        - exc_value: Exception value.
+        - traceback: Traceback information.
+        """
         if self.cursor:
             self.cursor.close()
         if self.conn:
