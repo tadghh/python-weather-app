@@ -4,12 +4,13 @@ from db_operations import DBOperations
 from scrape_weather import WeatherScraper
 from plot_operations import PlotOperations
 
+
 class WeatherProcessor:
     """The main class, handling interaction and general flow."""
 
     def __init__(self):
         """Initializes the Weather Processor.
-        
+
         Initializes class attributes including weather database connection,
         weather scraper, plot operations, year range, and latest dates.
         """
@@ -24,10 +25,12 @@ class WeatherProcessor:
     def start_main(self):
         """Displays the main menu.
 
-        Provides a menu interface for plotting data, accessing database options, 
+        Provides a menu interface for plotting data, accessing database options,
         and exiting the application.
         """
         main_menu = Menu(title="Main Menu")
+        main_menu.set_message("Select an item")
+        main_menu.set_prompt(">:")
         main_menu.set_options(
             [
                 ("Data Plotting", self.plot_data_menu),
@@ -35,14 +38,12 @@ class WeatherProcessor:
                 ("Exit", exit),
             ]
         )
-        main_menu.set_message("Select an item")
-        main_menu.set_prompt(">:")
         main_menu.open()
 
     def validate_input(self, user_input, errors, can_month):
         """Validates year date input.
 
-        Validates the user input for year dates ensuring they are within the 
+        Validates the user input for year dates ensuring they are within the
         range of the database.
 
         Parameters:
@@ -56,14 +57,12 @@ class WeatherProcessor:
         if user_input.isdigit() is True:
             user_input = int(user_input)
 
-            if can_month is True:
-                if user_input >= 1 and user_input <= 12:
-                    return True
+            if can_month == user_input >= 1 == user_input <= 12:
+                return True
 
             if self.is_in_range(user_input) is True:
                 return True
-            else:
-                errors.append("not in range.")
+            errors.append("not in range.")
         else:
             errors.append("must be integer.")
         return False
@@ -71,7 +70,7 @@ class WeatherProcessor:
     def get_input(self, line_plot=False):
         """Gets input for the graphs.
 
-        Collects user input for generating graphs and validates it. 
+        Collects user input for generating graphs and validates it.
         Provides input prompts for start and end years or months.
 
         Args:
@@ -147,7 +146,7 @@ class WeatherProcessor:
                 # This can result in a buffer overflow if the user messed up their input enough
                 return self.get_input()
 
-        # User was lazy and only entered one number, well help them
+        # User was lazy and only entered one number, we'll help them
         if line_plot is True and len(end_year) < 2:
             end_year = "0" + end_year
         return (start_year, end_year)
@@ -161,19 +160,20 @@ class WeatherProcessor:
         Returns:
         - bool: True if year is within range, False otherwise.
         """
-        is_valid = False
 
         lower, higher = int(self.year_range["lower"]), int(self.year_range["upper"])
-        if int(year_input) > int(lower) and int(year_input) < int(higher):
-            is_valid = True
-        return is_valid
+        if int(year_input) > lower and int(year_input) < higher:
+            return True
+        return False
 
     def box_plot(self):
         """Generates a box plot.
 
         Initiates the creation of a box plot for weather data based on user input.
         """
-        # the asterisk makes the tuple puke up its values in order regardless of the variable names.
+        # the asterisk makes the tuple puke up its contents regardless of the variable
+        # parameter names.  *tuple(y,x) => method(x,y) = result method(y,x)
+        # The example method above expects x as the first param
         PlotOperations().create(*self.get_input())
 
     def line_plot(self):
@@ -192,7 +192,7 @@ class WeatherProcessor:
         plot_menu = Menu(title="Plotting options")
         plot_menu.set_message("Select an item")
         plot_menu.set_prompt(">:")
-        # Default options
+
         options = []
 
         if self.latest_dates is not None:
@@ -207,6 +207,7 @@ class WeatherProcessor:
         else:
             options.append(("No data, UPDATE", self.database_fetch))
 
+        # Default options
         options.append(("Main menu", self.start_main))
         options.append(("Exit", exit))
 
@@ -220,8 +221,7 @@ class WeatherProcessor:
         Returns:
         - tuple: A tuple containing latest start and end dates.
         """
-        print(self.weather_db.get_year_ends())
-        self.latest_dates = self.weather_db.get_year_ends()
+
         return self.weather_db.get_year_ends()
 
     def database_fetch(self):
@@ -236,7 +236,7 @@ class WeatherProcessor:
         # scrape weather
         current_weather = self.weather_scraper.scrape_weather()
         self.weather_db.save_data(current_weather)
-
+        self.latest_dates = self.database_check_ends()
         # Open menu again
         self.data_menu().open()
 
@@ -252,6 +252,7 @@ class WeatherProcessor:
             start_year_override=year, start_month_override=month
         )
         self.weather_db.save_data(current_weather)
+        self.latest_dates = self.database_check_ends()
 
     def database_reset(self, burn=False):
         """Resets the database by deleting weather data.
@@ -282,6 +283,7 @@ class WeatherProcessor:
         db_data_menu.set_message("Select an item")
         db_data_menu.set_prompt(">:")
         db_data_menu.open()
+
 
 if __name__ == "__main__":
     weatherProcessor = WeatherProcessor()

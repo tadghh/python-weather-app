@@ -2,6 +2,7 @@
 
 import sqlite3
 
+
 class DBCM:
     """Class for enacting operations on SQLite database."""
 
@@ -22,7 +23,7 @@ class DBCM:
     def __enter__(self):
         """
         Enter method for the context manager.
-        
+
         Establishes a connection to the SQLite database and returns a cursor.
 
         Returns:

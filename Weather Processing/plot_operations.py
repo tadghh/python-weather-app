@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from db_operations import DBOperations
 
+
 class PlotOperations:
     """Plots data onto a graph, visualization"""
 
@@ -22,7 +23,7 @@ class PlotOperations:
 
         Description:
         - Plots a line graph representing daily average temperatures for a given year and month.
-        - Displays the line plot and requires user interaction to continue 
+        - Displays the line plot and requires user interaction to continue
         execution after plot display.
         """
         print("poof a graph!")
@@ -56,7 +57,7 @@ class PlotOperations:
         Description:
         - Generates a box plot representing the distribution of monthly temperatures
           for a specified range of years.
-        - Displays the box plot and requires user interaction to continue 
+        - Displays the box plot and requires user interaction to continue
         execution after plot display.
         """
         year_month_temperature_info = [month[1:] for month in graph_weather_data]
@@ -66,7 +67,7 @@ class PlotOperations:
         plt.tight_layout()
         plt.boxplot(
             year_month_temperature_info,
-            medianprops=dict(color="dodgerblue", linewidth=1.5),
+            medianprops={"color": "dodgerblue", "linewidth": 1.5},
         )
         plt.xlabel("Months")
         plt.ylabel("Temperature (Celsius)")

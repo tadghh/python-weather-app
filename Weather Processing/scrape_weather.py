@@ -10,6 +10,7 @@ import re
 from lxml.html import parse
 from tqdm import tqdm
 
+
 class WeatherScraper:
     """Scrapes environment Canada."""
 
@@ -42,7 +43,7 @@ class WeatherScraper:
         - dict: Weather data scraped from Environment Canada.
 
         Description:
-        - Scrapes weather data for each month from the earliest date or overridden 
+        - Scrapes weather data for each month from the earliest date or overridden
         start date to the current year.
         - Utilizes multi-threading for efficient scraping with a progress bar.
         """
@@ -119,12 +120,13 @@ class WeatherScraper:
         """
         Retrieve the earliest year and month for the current weather station.
 
+
         Returns:
         - dict or None: A dictionary with integers representing the earliest month and year.
                         Returns None if data retrieval fails.
 
         Description:
-        - Retrieves the earliest available year and month for the current weather 
+        - Retrieves the earliest available year and month for the current weather
         station from Environment Canada.
         """
 

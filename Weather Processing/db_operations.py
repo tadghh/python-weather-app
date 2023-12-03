@@ -3,6 +3,7 @@
 import sqlite3
 from dbcm import DBCM
 
+
 class DBOperations:
     """The DB operations class."""
 
@@ -74,23 +75,23 @@ class DBOperations:
         """
         Performs an SQL Query and retrieves data from the database.
 
-        Parameters: 
+        Parameters:
         - sql_query (str): SQL Query to execute in the database.
 
         Returns:
-        - list or None: Data fetched from the executed SQL query. 
+        - list or None: Data fetched from the executed SQL query.
         Returns None if an error occurs.
 
         Raises:
-        - sqlite3.OperationalError: If there are issues with the database operation, 
+        - sqlite3.OperationalError: If there are issues with the database operation,
         such as the table not existing or other operational errors.
 
         Description:
-        - Executes the provided SQL query on the database. If successful, 
+        - Executes the provided SQL query on the database. If successful,
         retrieves and returns the fetched data as a list of tuples.
         - If an OperationalError occurs, indicating potential issues like a missing table,
         it attempts to handle it by initializing the database and trying the query again.
-        - If the table 'weather' doesn't exist, it attempts to create it. 
+        - If the table 'weather' doesn't exist, it attempts to create it.
         If the table creation fails, None is returned.
         """
         try:
@@ -116,23 +117,23 @@ class DBOperations:
         range of years.
 
         Parameters:
-        - start_year (str or None): The starting year for fetching data. If None, the query 
+        - start_year (str or None): The starting year for fetching data. If None, the query
         fetches from the earliest available year.
-        - end_year (str or None): The ending year for fetching data. If None, the query 
+        - end_year (str or None): The ending year for fetching data. If None, the query
         fetches up to the latest available year.
 
         Returns:
-        - list or None: A list of tuples containing monthly average data (min, mean, max) 
-        within the specified year range. 
+        - list or None: A list of tuples containing monthly average data (min, mean, max)
+        within the specified year range.
         Returns None if an error occurs or no data is found.
 
         Raises:
         - ValueError: If start_year or end_year are not valid digits.
 
         Description:
-        - Constructs an SQL query to calculate monthly averages for minimum, mean, and maximum 
+        - Constructs an SQL query to calculate monthly averages for minimum, mean, and maximum
         temperatures.
-        - Filters the data based on the provided start_year and end_year, excluding records with 
+        - Filters the data based on the provided start_year and end_year, excluding records with
         missing or invalid temperature values ('M' or null).
         - Groups the calculated averages by month and orders the results by month.
         - Calls the 'get_query_data' method to execute the constructed SQL query and fetch the data
@@ -162,25 +163,25 @@ class DBOperations:
     # this function is used for the line chart
     def fetch_year_month_average(self, year=None, month=None):
         """
-        Fetches minimum, mean, and maximum averages for the specified year and month from the 
+        Fetches minimum, mean, and maximum averages for the specified year and month from the
         database.
 
         Parameters:
         - year (str or None): The year for which data is to be fetched. If None, data for all years
           is considered.
-        - month (str or None): The month for which data is to be fetched. If None, data for all 
+        - month (str or None): The month for which data is to be fetched. If None, data for all
         months is considered.
 
         Returns:
-        - list or None: A list of tuples containing daily average data for the specified year and 
-        month. 
+        - list or None: A list of tuples containing daily average data for the specified year and
+        month.
         Returns None if an error occurs or no data is found.
 
         Raises:
         - ValueError: If year or month are not valid digits.
 
         Description:
-        - Constructs an SQL query to calculate daily average temperatures for the specified year 
+        - Constructs an SQL query to calculate daily average temperatures for the specified year
         and month.
         - Filters the data based on the provided year and month.
         - Groups the calculated averages by day and orders the results by day.
@@ -212,7 +213,7 @@ class DBOperations:
 
         Description:
         - Constructs an SQL query to fetch the minimum date available in the 'sample_date' column.
-        - Calls the 'get_query_data' method to execute the constructed SQL query and fetch 
+        - Calls the 'get_query_data' method to execute the constructed SQL query and fetch
         the data from the database.
         - Parses the retrieved date string to extract the earliest year and month if available.
         """
@@ -252,7 +253,7 @@ class DBOperations:
 
         Description:
         - Constructs an SQL query to fetch the maximum date available in the 'sample_date' column.
-        - Calls the 'get_query_data' method to execute the constructed SQL query and fetch 
+        - Calls the 'get_query_data' method to execute the constructed SQL query and fetch
         the data from the database.
         - Parses the retrieved date string to extract the most recent year and month if available.
         """
@@ -278,12 +279,12 @@ class DBOperations:
 
         Description:
         - Attempts to save new data to the 'weather' table in the database.
-        - Loops through the provided 'data_to_save' dictionary, extracting date and 
+        - Loops through the provided 'data_to_save' dictionary, extracting date and
         temperature information.
-        - Inserts the extracted data into the 'weather' table if the sample_date 
+        - Inserts the extracted data into the 'weather' table if the sample_date
         doesn't already exist,
         using an 'INSERT OR IGNORE' SQL statement.
-        - If there's an OperationalError while saving the data, attempts to handle it 
+        - If there's an OperationalError while saving the data, attempts to handle it
         by initializing the database
         and re-saving the data.
         - If there's an IntegrityError due to conflicts with existing data during insertion,
