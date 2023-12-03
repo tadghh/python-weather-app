@@ -10,12 +10,11 @@ import re
 from lxml.html import parse
 from tqdm import tqdm
 
-
 class WeatherScraper:
     """Scrapes environment Canada."""
 
     def __init__(self):
-        """Instantiates the class and creates the ip found flag"""
+        """Instantiates the WeatherScraper class and initializes required attributes."""
         super().__init__()
 
         self.weather_station_id = 27174
@@ -32,8 +31,21 @@ class WeatherScraper:
         start_year_override=None,
         start_month_override=None,
     ):
-        """Returns the weather data."""
+        """
+        Scrapes weather data from Environment Canada.
 
+        Parameters:
+        - start_year_override (int): Starting year to override scraping from the earliest date.
+        - start_month_override (int): Starting month to override scraping from the earliest date.
+
+        Returns:
+        - dict: Weather data scraped from Environment Canada.
+
+        Description:
+        - Scrapes weather data for each month from the earliest date or overridden 
+        start date to the current year.
+        - Utilizes multi-threading for efficient scraping with a progress bar.
+        """
         month_and_year = self.get_earliest_date()
         start_year = start_year_override or month_and_year.get("Year")
         start_month = start_month_override or month_and_year.get("Month")
@@ -63,13 +75,14 @@ class WeatherScraper:
 
     def scrape_weather_thread(self, year, month):
         """
-        Thread function for scraping weather.
+        Thread function for scraping weather data for a specific year and month.
 
         Parameters:
-        - year: the year to be used for the search url.
-        - month: the month to be used for the search url.
-        - pbar: used for increase the state of the progress bar.
+        - year (int): The year for which weather data is to be scraped.
+        - month (int): The month for which weather data is to be scraped.
 
+        Description:
+        - Scrapes weather data for a specific year and month from Environment Canada.
         """
         try:
             parser = self.MyHTMLParser()
@@ -85,77 +98,15 @@ class WeatherScraper:
         except URLError as error:
             print("URL Error:", error)
 
-    # def print_scraped_data(self, scraped_data):
-    #     """
-    #     Prints the data stored within scraped_data in a formatted manner.
-
-    #     Parameters:
-    #     - scraped_data (dict): A dictionary containing the scraped data to be printed.
-
-    #     Returns:
-    #     None
-
-    #     Raises:
-    #     - AttributeError: If the input is not a dictionary and
-    #     does not have the 'items()' method.
-
-    #     The function prints the key-value pairs from the input dictionary
-    #     'scraped_data' in a formatted manner.
-    #     Each pair is printed as "'date': weather," within curly braces.
-    #     If 'scraped_data' is not a dictionary or
-    #     does not have the 'items()' method, an AttributeError is raised
-    #     and an error message is printed.
-    #     """
-    #     try:
-    #         print("{")
-    #         for date, weather in scraped_data.items():
-    #             print(f"    '{date}': {weather},")
-    #         print("}")
-    #     except AttributeError as error:
-    #         print(error)
-    #         print("Error: print_scraped_data - Does not have the 'items()' method.")
-
-    # def write_scraped_data(self, scraped_data):
-    #     """
-    #     Writes the scraped data to a text file, formatted to be used for testing with the database.
-
-    #     Parameters:
-    #     - scraped_data (dict): A dictionary containing the scraped data to be written to the file.
-
-    #     Returns:
-    #     None
-
-    #     Raises:
-    #     - PermissionError: If the current user lacks permission.
-
-    #     The function opens a file at the path './test_output.txt'
-    #     and writes the key-value pairs from the
-    #     input dictionary 'scraped_data' to the file
-    #     with each pair formatted as "key: value\n". The file
-    #     is encoded using UTF-8.
-    #     """
-    #     file_path = "./test_output.txt"
-    #     try:
-    #         with open(file_path, "w", encoding="UTF-8") as file:
-    #             # Loop through the dictionary items and write them to the file
-    #             for key, value in scraped_data.items():
-    #                 file.write(f'"{key}": {value},\n')
-    #     except PermissionError as error:
-    #         print(error)
-    #         print(
-    #             """Error: write_scraped_data -
-    #             Permission error. Check if you have the necessary write permissions."""
-    #         )
-
     def change_weather_station(self, new_station_id):
         """
-        Allows input to change what station is used.
+        Change the weather station for scraping data.
 
-        -Note: No idea how to handle error handling,
-        to be used for future features.
+        Parameters:
+        - new_station_id (int): The new weather station ID.
 
-        Input: An interger representing a station id.
-
+        Note:
+        - This method changes the weather station ID for scraping data.
         """
         self.weather_station_id = new_station_id
         self.url_sections = (
@@ -165,30 +116,32 @@ class WeatherScraper:
         )
 
     def get_earliest_date(self):
-        """Gets the earliest year and month for the current weather station.
+        """
+        Retrieve the earliest year and month for the current weather station.
 
-        Returns: A dict with intergers of the month, year
-            Type: dict<int>
-            None is returned otherwise
+        Returns:
+        - dict or None: A dictionary with integers representing the earliest month and year.
+                        Returns None if data retrieval fails.
 
+        Description:
+        - Retrieves the earliest available year and month for the current weather 
+        station from Environment Canada.
         """
 
         def extract_month_and_date(text):
-            """Extracts the month and year to a dict.
-
-            Returns: A dict with intergers of the month, year
-            Type: dict<int>
-
             """
+            Extracts the month and year from text.
 
-            # Underscore to shutup pylint.
-            _ = """
-            Regex used against the site title.
+            Parameters:
+            - text (str): Text containing the month and year information.
 
-            Groups are made by using parenthises.
+            Returns:
+            - dict or None: A dictionary with integers representing the month and year.
+                            Returns None if no pattern is found.
 
-            1st group:(month search string)
-            2nd group:(look for 4 digits)
+            Description:
+            - Uses regex to extract the month and year from the provided text.
+            - Parses the month name and converts it to its corresponding month number.
             """
             pattern = r"""(\b(?:January|February|March|April|May|June|July
             |August|September|October|November|December)\b) (\d{4})"""
@@ -216,8 +169,7 @@ class WeatherScraper:
         """The web scraper."""
 
         def __init__(self):
-            """Prepares the class to scrape data,
-            booleans are used to keep track of the current element"""
+            """Initialize the MyHTMLParser class and prepare for scraping."""
 
             super().__init__()
             # flag properties
@@ -238,7 +190,7 @@ class WeatherScraper:
             self.row_date = None
 
         def handle_starttag(self, tag, attrs):
-            """The tag to begin parsing at."""
+            """Handle start tags encountered during parsing."""
 
             if tag == "tbody":
                 self.table_bounds["start"] = True
@@ -268,8 +220,19 @@ class WeatherScraper:
                 self.row_status["header"] = False
 
         def handle_data(self, data):
-            """Look through the data of the current element."""
+            """
+            Handle the data encountered during HTML parsing.
 
+            Parameters:
+            - data (str): The data encountered during parsing.
+
+            Description:
+            - Processes the data encountered during parsing.
+            - Checks if the parser is in a data row (<td>) and the counter is less than 3.
+            - Handles temperature data (min, max, mean) and adds it to the daily
+              temperatures dictionary.
+            - Resets flags when the three columns (min, max, mean) are processed for a row.
+            """
             # If we're in a data-row (<td>) and our counter is less than 3.
             # Sum check to make sure we havent run off the table.
             if data != "Sum" and self.row_status["data"] is True:
@@ -295,19 +258,46 @@ class WeatherScraper:
                     self.reset_flags()
 
         def return_weather_dict(self):
-            """Returns the current dictionary."""
+            """
+            Return the scraped weather data.
+
+            Returns:
+            - dict: Weather data scraped from Environment Canada.
+
+            Description:
+            - Returns the weather data collected during parsing.
+            """
             return self.weather
 
         def reset_flags(self):
-            """Resets the boolean flags indicating we are at a new row in the table."""
-            # Reset all the row status flags
+            """
+            Reset the boolean flags indicating a new row in the table.
+
+            Description:
+            - Resets all the row status flags indicating the parser is at a new row in the table.
+            - Clears the daily temperatures dictionary and resets the column index counter.
+            """
             self.row_status.fromkeys("row", False)
 
             self.daily_temperatures = {}
             self.row_column_temperature_index = 0
 
         def convert_to_date(self, value):
-            """Attempts to parse the value as a date in the 'YYYY-MM-DD' format."""
+            """
+            Attempt to parse the value as a date in the 'YYYY-MM-DD' format.
+
+            Parameters:
+            - value (str): The value to be parsed as a date.
+
+            Returns:
+            - str or None: A string representing the parsed date in 'YYYY-MM-DD' format.
+                        Returns None if the value is not in the expected date format.
+
+            Description:
+            - Attempts to parse the provided value as a date in the 'Month Day, Year' format.
+            - Converts the parsed date to 'YYYY-MM-DD' format if successful.
+            - Returns the formatted date string or None if the value is not in the expected format.
+            """
             try:
                 # Parse the value as a date in the 'Month Day, Year' format
                 parsed_date = datetime.strptime(value, "%B %d, %Y")
@@ -319,7 +309,19 @@ class WeatherScraper:
                 return None
 
         def is_float(self, test_input):
-            """Indicates if the passed test_input is a float."""
+            """
+            Check if the passed test_input is a float.
+
+            Parameters:
+            - test_input (str): The input to be checked.
+
+            Returns:
+            - bool: True if the test_input can be converted to a float, False otherwise.
+
+            Description:
+            - Checks if the provided input can be converted to a float.
+            - Returns True if the conversion to float is successful, False otherwise.
+            """
             try:
                 float(test_input)
                 return True
