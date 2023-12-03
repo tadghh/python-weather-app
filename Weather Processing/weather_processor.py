@@ -16,7 +16,7 @@ class WeatherProcessor:
         self.weather_scraper = WeatherScraper()
         self.plot_ops = PlotOperations()
         self.year_range = {"lower": None, "upper": None}
-        self.latest_dates = 0
+        self.latest_dates = self.database_check_ends()
 
     def start_main(self):
         """The main menu."""
@@ -32,9 +32,15 @@ class WeatherProcessor:
         main_menu.set_prompt(">:")
         main_menu.open()
 
-    def validate_input(self, user_input, errors):
-        "rawrxd"
+    def validate_input(self, user_input, errors, can_month):
+        "Validate year date input making sure its withing range of the db"
         if user_input.isdigit() is True:
+            user_input = int(user_input)
+
+            if can_month is True:
+                if user_input >= 1 and user_input <= 12:
+                    return True
+
             if self.is_in_range(user_input) is True:
                 return True
             else:
@@ -68,16 +74,18 @@ class WeatherProcessor:
             if validated_inputs["start"] is False:
                 start_year = input(first_input_prompt)
                 validated_inputs["start"] = self.validate_input(
-                    start_year, input_errors["start"]
+                    start_year, input_errors["start"], can_month=False
                 )
 
             if validated_inputs["end"] is False:
                 end_year = input(second_input_prompt)
                 validated_inputs["end"] = self.validate_input(
-                    end_year, input_errors["end"]
+                    end_year, input_errors["end"], can_month=True
                 )
 
-            if validated_inputs["start"] and validated_inputs["end"]:
+            if (
+                validated_inputs["start"] and validated_inputs["end"]
+            ) or line_plot is False:
                 in_input = False
             else:
                 for key, errors in input_errors.items():
@@ -111,9 +119,8 @@ class WeatherProcessor:
                 return self.get_input()
 
         # User was lazy and only entered one number, well help them
-        if line_plot is True:
-            if len(end_year) < 2:
-                end_year = "0" + end_year
+        if line_plot is True and len(end_year) < 2:
+            end_year = "0" + end_year
         return (start_year, end_year)
 
     def is_in_range(self, year_input):
@@ -121,11 +128,7 @@ class WeatherProcessor:
         is_valid = False
 
         lower, higher = int(self.year_range["lower"]), int(self.year_range["upper"])
-        if (
-            year_input.isdigit()
-            and int(year_input) > int(lower)
-            and int(year_input) < int(higher)
-        ):
+        if int(year_input) > int(lower) and int(year_input) < int(higher):
             is_valid = True
         return is_valid
 
@@ -142,14 +145,11 @@ class WeatherProcessor:
     def plot_data_menu(self):
         """Handle menu plotting logic."""
 
-        self.latest_dates = self.database_check_ends()
         plot_menu = Menu(title="Plotting options")
-
+        plot_menu.set_message("Select an item")
+        plot_menu.set_prompt(">:")
         # Default options
-        options = [
-            ("Main menu", self.start_main),
-            ("Exit", exit),
-        ]
+        options = []
 
         if self.latest_dates is not None:
             options.append(("Box plot", self.box_plot))
@@ -163,9 +163,11 @@ class WeatherProcessor:
         else:
             options.append(("No data, UPDATE", self.database_fetch))
 
+        options.append(("Main menu", self.start_main))
+        options.append(("Exit", exit))
+
+        # Apply our array of tuple("option name", ACTION) options
         plot_menu.set_options(options)
-        plot_menu.set_message("Select an item")
-        plot_menu.set_prompt(">:")
         plot_menu.open()
 
     def database_check_ends(self):

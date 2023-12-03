@@ -9,7 +9,6 @@ import re
 
 from contextlib import closing
 from lxml.html import parse
-
 from tqdm import tqdm
 
 
@@ -104,9 +103,8 @@ class WeatherScraper:
         """Returns the weather data."""
 
         month_and_year = self.get_earliest_date()
-        print(month_and_year)
-        start_year = start_year_override or month_and_year.get("Year")
-        start_month = start_month_override or month_and_year.get("Month")
+        start_year = int(start_year_override) or month_and_year.get("Year")
+        start_month = int(start_month_override) or month_and_year.get("Month")
         end_year = datetime.now().year
 
         total_tasks = (end_year - start_year + 1) * 12
@@ -130,8 +128,6 @@ class WeatherScraper:
                     # results.append(result)
                     pbar.update(1)
 
-        # self.print_scraped_data(self.weather)
-        # self.write_scraped_data(self.weather)
         return self.weather
 
     def scrape_weather_thread(self, year, month):
