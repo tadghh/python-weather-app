@@ -279,7 +279,7 @@ class WeatherScraper:
             - Resets all the row status flags indicating the parser is at a new row in the table.
             - Clears the daily temperatures dictionary and resets the column index counter.
             """
-            self.row_status.fromkeys("row", False)
+            self.row_status = dict.fromkeys(self.row_status, False)
 
             self.daily_temperatures = {}
             self.row_column_temperature_index = 0
