@@ -24,14 +24,15 @@ class DBOperations:
         - sqlite3.DatabaseError: If there are issues with initializing the database
         connection or setting up the context manager.
         """
+        logging.info("\n\nCreated DB Operations, looking for weather_data.sqlite")
         try:
             self.db_name = "weather_data.sqlite"
             self.database_context = DBCM(self.db_name)
             self.conn = None
             self.cursor = None
         except sqlite3.DatabaseError as error:
-            print(error)
-            print("Error: __init__ initializing DB.")
+            logging.critical("Error with SQLite3 python module: %e\n\n", error)
+        logging.info("\n\nCreated DB Operations!")
 
     def initialize_db(self):
         """
@@ -49,6 +50,7 @@ class DBOperations:
         - If the table creation or index creation fails due to an OperationalError,
         it prints an error message indicating the failure to initialize the database.
         """
+        logging.info("\n\nTrying to initalize database.")
         try:
             with self.database_context as cursor:
                 cursor.execute(
@@ -62,14 +64,15 @@ class DBOperations:
                     )"""
                 )
 
+                logging.info("Creating sample_date index.")
+
                 # Make index on sample_date for faster access
                 cursor.execute(
                     "CREATE INDEX IF NOT EXISTS idx_sample_date ON weather (sample_date)"
                 )
 
         except sqlite3.OperationalError as error:
-            print(error)
-            print("Error: Failed to initialize database.")
+            logging.warning("Database Initalization Operational Error: %e", error)
 
     # this function can be passed any query, but validate the query before-hand.
     def get_query_data(self, sql_query):
@@ -102,15 +105,17 @@ class DBOperations:
         except sqlite3.OperationalError as error:
             # Table in db might not exist, value will be returned up from the recursive call
             try:
-                print(error)
-                print(
-                    "Error: get_query_data Table might not exist trying to initialize."
+                logging.warning(
+                    "get_query_data Table might not exist trying to initialize. %e",
+                    error,
                 )
+
                 self.initialize_db()
+                logging.info("Catch initalization of database, thats a good sign :)")
                 return self.get_query_data(sql_query)
-            except sqlite3.OperationalError as error_two:
-                print(error_two)
-                print("Error: get_query_data Table creation failed.")
+            except sqlite3.OperationalError as error_op:
+                logging.critical("Database Creation failed: %e", error_op)
+        logging.info("Get query returning none.")
         return None
 
     # this function is used for the box plot
@@ -142,6 +147,8 @@ class DBOperations:
         - Calls the 'get_query_data' method to execute the constructed SQL query and fetch the data
           from the database.
         """
+        logging.info("Get box plot data.")
+
         try:
             if start_year.isdigit() and end_year.isdigit():
                 sql_query = (
@@ -161,9 +168,15 @@ class DBOperations:
                 )
             else:
                 raise ValueError("start_year and end_year must both be digits.")
+            logging.info("Returning box plot data.")
             return self.get_query_data(sql_query)
         except ValueError as value_error:
-            print(value_error)
+            logging.warning(
+                "Failed getting the box plot data, {start_year} and {end_year} ValueError: %e",
+                value_error,
+            )
+
+        logging.info("Returning empty box plot data.")
         return None
 
     # this function is used for the line chart
@@ -194,6 +207,8 @@ class DBOperations:
         - Calls the 'get_query_data' method to execute the constructed SQL query and fetch the data
           from the database.
         """
+        logging.info("Get line plot data.")
+
         try:
             if year.isdigit() and month.isdigit():
                 sql_query = (
@@ -208,9 +223,15 @@ class DBOperations:
             else:
                 raise ValueError("year and month must both be digits.")
 
+            logging.info("Returning line plot data.")
             return self.get_query_data(sql_query)
-        except ValueError as error:
-            print(error)
+        except ValueError as value_error:
+            logging.warning(
+                "Failed getting the line plot data, {year} and {month} ValueError: %e",
+                value_error,
+            )
+
+        logging.info("Returning empty line plot data.")
         return None
 
     def get_earliest_date(self):
@@ -230,9 +251,16 @@ class DBOperations:
 
         earliest_date_query = """SELECT MIN(strftime('%Y-%m', sample_date)) AS
         earliest_year FROM weather"""
-        earliest_year = self.get_query_data(earliest_date_query)[0][0]
-        if earliest_year is not None:
-            return earliest_year.split("-")
+        try:
+            earliest_year = self.get_query_data(earliest_date_query)[0][0]
+            if earliest_year is None:
+                logging.info("Earliest year was None.")
+                raise ValueError(earliest_year)
+
+            if earliest_year is not None:
+                return earliest_year.split("-")
+        except ValueError as error:
+            logging.warning("Earliest year error %e", error)
         return None
 
     def get_year_ends(self):
@@ -250,9 +278,17 @@ class DBOperations:
         containing the newest and oldest data points.
         - If either new data or the earliest date is not available, it returns None.
         """
-        if self.get_new_data() is None and self.get_earliest_date() is None:
-            return None
-        return (self.get_new_data(), self.get_earliest_date())
+        try:
+            logging.info("Making sure year ranges arent None.")
+
+            if (self.get_new_data() is not None) == self.get_earliest_date():
+                return (self.get_new_data(), self.get_earliest_date())
+        except ValueError as error:
+            logging.warning(
+                "Ran into issue comparing the earliest and farthest year %e", error
+            )
+
+        return None
 
     # TODO:  rename
     def get_new_data(self):
@@ -272,10 +308,15 @@ class DBOperations:
         recent_date_query = (
             "SELECT MAX(strftime('%Y-%m', sample_date)) AS latest_date FROM weather"
         )
-        last_date_available = self.get_query_data(recent_date_query)[0][0]
-        if last_date_available is not None:
-            print(last_date_available[0][0])
-            return last_date_available.split("-")
+        try:
+            last_date_available = self.get_query_data(recent_date_query)[0][0]
+            if last_date_available is not None:
+                return last_date_available.split("-")
+        except ValueError as error:
+            logging.warning(
+                "Ran into issue getting the recent year in the database %e", error
+            )
+
         return None
 
     def save_data(self, data_to_save):
@@ -321,19 +362,23 @@ class DBOperations:
                     )
         except sqlite3.OperationalError as error:
             try:
-                print(error)
-                print(
-                    "Error: save_data saving data, making sure table exists. Will try to re-save."
+                logging.warning(
+                    """Error: save_data saving data, making sure table
+                    exists. Will try to re-save.  %e""",
+                    error,
                 )
                 self.initialize_db()
                 self.save_data(data_to_save)
 
             except sqlite3.OperationalError as error_two:
-                print(error_two)
-                print("Error: save_data Could'nt initialize or save to table.")
+                logging.critical(
+                    """Couldnt recover, couldnt save the data %e""",
+                    error_two,
+                )
         except sqlite3.IntegrityError as error:
-            print(error)
-            print("Error: save_data Integrity Error with the save_data function.")
+            logging.warning(
+                "save_data Integrity Error with the save_data function. %e", error
+            )
 
     def purge_data(self, burn=False):
         """
@@ -356,10 +401,10 @@ class DBOperations:
                 cursor.execute("DELETE FROM weather")
                 cursor.execute("DELETE FROM sqlite_sequence")
 
-                print("Data deleted from weather table.")
+                logging.info("Data deleted from weather table.")
 
                 if burn is True:
-                    print("Dropping any views, index's found in sqlite_master.")
+                    logging.info("Dropping any views, index's found in sqlite_master.")
 
                     cursor.execute("SELECT name FROM sqlite_master WHERE type='view'")
                     views = cursor.fetchall()
@@ -370,7 +415,8 @@ class DBOperations:
                     for index in indexes:
                         cursor.execute(f"DROP INDEX IF EXISTS {index[0]}")
         except sqlite3.OperationalError as error:
-            print(error)
-            print(
-                f"purge_data An error occurred while purging data. Burn state is {burn}."
+            logging.critical(
+                "purge_data An error occurred while purging data. Burn state is %e.  %e",
+                burn,
+                error,
             )
