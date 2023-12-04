@@ -14,7 +14,6 @@ class WeatherProcessor:
         Initializes class attributes including weather database connection,
         weather scraper, plot operations, year range, and latest dates.
         """
-        self.g = 12
         self.weather_db = DBOperations()
         self.weather_db.initialize_db()
         self.weather_scraper = WeatherScraper()
@@ -40,7 +39,7 @@ class WeatherProcessor:
         )
         main_menu.open()
 
-    def validate_input(self, user_input, errors, can_month):
+    def validate_input(self, user_input, errors, can_month=False):
         """Validates year date input.
 
         Validates the user input for year dates ensuring they are within the
@@ -57,7 +56,8 @@ class WeatherProcessor:
         if user_input.isdigit() is True:
             user_input = int(user_input)
 
-            if can_month == user_input >= 1 == user_input <= 12:
+            if can_month is True and ((user_input >= 1) == (user_input <= 12)):
+                print("asd")
                 return True
 
             if self.is_in_range(user_input) is True:
@@ -111,9 +111,7 @@ class WeatherProcessor:
                     end_year, input_errors["end"], can_month=True
                 )
 
-            if (
-                validated_inputs["start"] and validated_inputs["end"]
-            ) or line_plot is False:
+            if validated_inputs["start"] and validated_inputs["end"]:
                 in_input = False
             else:
                 for key, errors in input_errors.items():

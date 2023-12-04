@@ -35,7 +35,6 @@ class PlotOperations:
         mpl.rcParams["toolbar"] = "None"
         plt.style.use("dark_background")
         plt.figure(figsize=(10, 6))
-        plt.tight_layout()
 
         plt.grid()
         plt.plot(days, mean_temps, linestyle="-", color="coral")
@@ -43,6 +42,7 @@ class PlotOperations:
         plt.xlabel("Day of Month")
         plt.ylabel("Avg Daily Temp")
         plt.xticks(rotation=45)
+        plt.tight_layout()
         plt.show(block=True)
 
     def create_year_boxplot_graph(self, graph_weather_data, start_year, end_year):
@@ -64,7 +64,7 @@ class PlotOperations:
         mpl.rcParams["toolbar"] = "None"
         plt.style.use("dark_background")
         plt.figure(figsize=(10, 6))
-        plt.tight_layout()
+
         plt.boxplot(
             year_month_temperature_info,
             medianprops={"color": "dodgerblue", "linewidth": 1.5},
@@ -72,7 +72,7 @@ class PlotOperations:
         plt.xlabel("Months")
         plt.ylabel("Temperature (Celsius)")
         plt.title(f"Monthly Temperature Distribution for: {start_year} to {end_year}")
-
+        plt.tight_layout()
         plt.show(block=True)
 
     def create(self, start_year=None, end_year=None, month=None):
