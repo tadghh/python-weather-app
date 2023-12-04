@@ -197,22 +197,25 @@ class WeatherScraper:
             if tag == "tbody":
                 self.table_bounds["start"] = True
 
-            elif self.table_bounds["start"] is True and tag == "tr":
+            elif self.table_bounds["start"] == (tag == "tr"):
                 self.row_status["row"] = True
 
-            elif self.row_status["row"] is True and tag == "td":
+            elif self.row_status["row"] and tag == "td":
                 self.row_status["data"] = True
 
             # Find the table row header.
-            elif self.row_status["data"] is False and tag == "th":
+            elif not self.row_status["data"] and tag == "th":
                 # Any allows us to short circuit on the first occurrence of scope.
-                if any(attr == "scope" and "row" in value for attr, value in attrs):
-                    self.row_status["header"] = True
+                self.row_status["header"] = any(
+                    attr == "scope" and "row" in value for attr, value in attrs
+                )
 
             # If we're in the table row header.
-            elif self.row_status["header"] is True and tag == "abbr":
+            elif self.row_status["header"] and tag == "abbr":
                 # Check for title, break off when found.
-                title_attr = dict(attrs).get("title")
+                title_attr = next(
+                    (value for attr, value in attrs if attr == "title"), None
+                )
 
                 # Parse that rows date from the link attribute.
                 title_attr = self.convert_to_date(title_attr)
@@ -237,7 +240,7 @@ class WeatherScraper:
             """
             # If we're in a data-row (<td>) and our counter is less than 3.
             # Sum check to make sure we haven't run off the table.
-            if data != "Sum" and self.row_status["data"] is True:
+            if data != "Sum" and self.row_status["data"]:
                 if (
                     self.row_column_temperature_index < 3
                     and self.is_float(data)
@@ -279,7 +282,7 @@ class WeatherScraper:
             - Resets all the row status flags indicating the parser is at a new row in the table.
             - Clears the daily temperatures dictionary and resets the column index counter.
             """
-            self.row_status = dict.fromkeys(self.row_status, False)
+            self.row_status = {key: False for key in self.row_status}
 
             self.daily_temperatures = {}
             self.row_column_temperature_index = 0
@@ -301,11 +304,11 @@ class WeatherScraper:
             - Returns the formatted date string or None if the value is not in the expected format.
             """
             try:
-                # Parse the value as a date in the 'Month Day, Year' format
-                parsed_date = datetime.strptime(value, "%B %d, %Y")
+                # Parse the value as a date in the 'Month Day, Year' format and
+                # format it to 'YYYY-MM-DD'
                 # Convert the parsed date to 'YYYY-MM-DD' format
-                converted_date = parsed_date.strftime("%Y-%m-%d")
-                return converted_date
+
+                return datetime.strptime(value, "%B %d, %Y").strftime("%Y-%m-%d")
             except ValueError:
                 # Return None if the value is not in the expected date format
                 return None

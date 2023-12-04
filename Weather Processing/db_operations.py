@@ -243,6 +243,7 @@ class DBOperations:
             return None
         return (self.get_new_data(), self.get_earliest_date())
 
+    # TODO:  rename
     def get_new_data(self):
         """
         Retrieves the most recent date available in the dataset.
