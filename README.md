@@ -128,7 +128,7 @@ Our code quality is currently...
 Here are the linting recommendations
 ```python
 ************* Module weather_processor
-Weather Processing/weather_processor.py:137:18: R1714: Consider merging these comparisons with 'in' by using 'user_response not in ('c', 'r')'. Use a set instead if elements are hashable. (consider-using-in)
+Weather Processing/weather_processor.py:135:18: R1714: Consider merging these comparisons with 'in' by using 'user_response not in ('c', 'r')'. Use a set instead if elements are hashable. (consider-using-in)
 Weather Processing/weather_processor.py:70:4: R0912: Too many branches (13/12) (too-many-branches)
 
 -----------------------------------
