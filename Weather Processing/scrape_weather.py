@@ -9,6 +9,7 @@ from html.parser import HTMLParser
 import re
 from lxml.html import parse
 from tqdm import tqdm
+import logging
 
 
 class WeatherScraper:

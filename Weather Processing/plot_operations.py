@@ -3,6 +3,7 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from db_operations import DBOperations
+import logging
 
 
 class PlotOperations:

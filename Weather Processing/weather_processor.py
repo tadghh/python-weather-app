@@ -3,6 +3,9 @@ from menu import Menu
 from db_operations import DBOperations
 from scrape_weather import WeatherScraper
 from plot_operations import PlotOperations
+import logging
+
+logging.basicConfig(filename=r".\example.log", encoding="utf-8", level=logging.DEBUG)
 
 
 class WeatherProcessor:

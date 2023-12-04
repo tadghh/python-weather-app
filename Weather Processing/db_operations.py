@@ -2,6 +2,7 @@
 
 import sqlite3
 from dbcm import DBCM
+import logging
 
 
 class DBOperations:
@@ -102,12 +103,14 @@ class DBOperations:
             # Table in db might not exist, value will be returned up from the recursive call
             try:
                 print(error)
-                print("Error: fetch_data Table might not exist trying to initialize.")
+                print(
+                    "Error: get_query_data Table might not exist trying to initialize."
+                )
                 self.initialize_db()
                 return self.get_query_data(sql_query)
             except sqlite3.OperationalError as error_two:
                 print(error_two)
-                print("Error: fetch_data Table creation failed.")
+                print("Error: get_query_data Table creation failed.")
         return None
 
     # this function is used for the box plot
@@ -139,26 +142,29 @@ class DBOperations:
         - Calls the 'get_query_data' method to execute the constructed SQL query and fetch the data
           from the database.
         """
-        if start_year.isdigit() and end_year.isdigit():
-            sql_query = (
-                "SELECT strftime('%m', sample_date) AS month, "
-                "AVG(min_temp) AS avg_min_temp, "
-                "AVG(max_temp) AS avg_max_temp, "
-                "AVG(avg_temp) AS avg_mean_temp "
-                "FROM weather "
-                f"WHERE strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}' "
-                "AND NOT ( "
-                "(min_temp LIKE '%M%' OR min_temp IS null) "
-                "AND (max_temp LIKE '%M%' OR max_temp IS null) "
-                "AND (avg_temp LIKE '%M%' OR avg_temp IS null) "
-                ") "
-                "GROUP BY month "
-                "ORDER BY month; "
-            )
-        else:
-            raise ValueError("start_year and end_year must both be digits.")
-
-        return self.get_query_data(sql_query)
+        try:
+            if start_year.isdigit() and end_year.isdigit():
+                sql_query = (
+                    """SELECT strftime('%m', sample_date) AS month,
+                    AVG(min_temp) AS avg_min_temp,
+                    AVG(max_temp) AS avg_max_temp,
+                    AVG(avg_temp) AS avg_mean_temp
+                    FROM weather """
+                    f"WHERE strftime('%Y', sample_date) BETWEEN '{start_year}' AND '{end_year}' "
+                    """AND NOT (
+                    (min_temp LIKE '%M%' OR min_temp IS null)
+                    AND (max_temp LIKE '%M%' OR max_temp IS null)
+                    AND (avg_temp LIKE '%M%' OR avg_temp IS null)
+                    )
+                    GROUP BY month
+                    ORDER BY month """
+                )
+            else:
+                raise ValueError("start_year and end_year must both be digits.")
+            return self.get_query_data(sql_query)
+        except ValueError as value_error:
+            print(value_error)
+        return None
 
     # this function is used for the line chart
     def fetch_year_month_average(self, year=None, month=None):
@@ -188,20 +194,24 @@ class DBOperations:
         - Calls the 'get_query_data' method to execute the constructed SQL query and fetch the data
           from the database.
         """
-        if year.isdigit() and month.isdigit():
-            sql_query = (
-                "SELECT strftime('%Y-%m-%d', sample_date) AS day,  "
-                "AVG(avg_temp) AS mean_daily_temp "
-                "FROM weather "
-                f"WHERE strftime('%Y', sample_date) = '{year}' "
-                f"AND strftime('%m', sample_date) = '{month}' "
-                "GROUP BY day "
-                "ORDER BY day; "
-            )
-        else:
-            raise ValueError("year and month must both be digits.")
+        try:
+            if year.isdigit() and month.isdigit():
+                sql_query = (
+                    "SELECT strftime('%Y-%m-%d', sample_date) AS day,  "
+                    "AVG(avg_temp) AS mean_daily_temp "
+                    "FROM weather "
+                    f"WHERE strftime('%Y', sample_date) = '{year}' "
+                    f"AND strftime('%m', sample_date) = '{month}' "
+                    "GROUP BY day "
+                    "ORDER BY day; "
+                )
+            else:
+                raise ValueError("year and month must both be digits.")
 
-        return self.get_query_data(sql_query)
+            return self.get_query_data(sql_query)
+        except ValueError as error:
+            print(error)
+        return None
 
     def get_earliest_date(self):
         """
@@ -217,6 +227,7 @@ class DBOperations:
         the data from the database.
         - Parses the retrieved date string to extract the earliest year and month if available.
         """
+
         earliest_date_query = """SELECT MIN(strftime('%Y-%m', sample_date)) AS
         earliest_year FROM weather"""
         earliest_year = self.get_query_data(earliest_date_query)[0][0]

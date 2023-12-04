@@ -1,0 +1,18 @@
+DEBUG:matplotlib:matplotlib data path: C:\Python312\Lib\site-packages\matplotlib\mpl-data
+DEBUG:matplotlib:CONFIGDIR=C:\Users\tadghh\.matplotlib
+DEBUG:matplotlib:interactive is False
+DEBUG:matplotlib:platform is win32
+DEBUG:matplotlib:CACHEDIR=C:\Users\tadghh\.matplotlib
+DEBUG:matplotlib.font_manager:Using fontManager instance from C:\Users\tadghh\.matplotlib\fontlist-v330.json
+INFO:root:Created DB Content manager.
+INFO:root:Closed DB cursor.
+INFO:root:Commited to DB and closed connection.
+INFO:root:Created DB Content manager.
+INFO:root:Closed DB cursor.
+INFO:root:Commited to DB and closed connection.
+INFO:root:Closed DB cursor.
+INFO:root:Commited to DB and closed connection.
+INFO:root:Closed DB cursor.
+INFO:root:Commited to DB and closed connection.
+INFO:root:Closed DB cursor.
+INFO:root:Commited to DB and closed connection.
