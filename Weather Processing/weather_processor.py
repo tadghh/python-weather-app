@@ -55,7 +55,16 @@ class WeatherProcessor:
         year_range = self.scraping_actor.update_range()
         options = []
         if year_range["lower"] is None and year_range["upper"] is None:
-            options.append(("No data, UPDATE", self.scraping_actor.database_fetch))
+            options.append(
+                (
+                    "No data, UPDATE",
+                    lambda: (
+                        self.scraping_actor.database_fetch(),
+                        plot_menu.close(),
+                        self.plot_data_menu(),
+                    ),
+                )
+            )
         else:
             options.append(("Box plot", self.box_plot))
             options.append(("Line plot", self.line_plot))
