@@ -127,10 +127,4 @@ Our code quality is currently...
 
 Here are the linting recommendations
 ```python
-************* Module dbcm
-Weather Processing/dbcm.py:23:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-
------------------------------------
-Your code has been rated at 9.98/10
-
 ```
