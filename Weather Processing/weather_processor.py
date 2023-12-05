@@ -4,7 +4,7 @@ import logging
 from menu import Menu
 
 from plot_operations import PlotOperations
-from scraping_actor import ScrapingActor
+from actor import ScrapingActor
 
 logging.basicConfig(filename=r".\example.log", encoding="utf-8", level=logging.DEBUG)
 
@@ -49,19 +49,19 @@ class WeatherProcessor:
         plot_menu = Menu(title="Plotting options")
         plot_menu.set_message("Select an item")
         plot_menu.set_prompt(">:")
-
+        year_range = self.scraping_actor.update_range()
         options = []
-        if self.latest_dates is not None:
+        if year_range["lower"] is None and year_range["upper"] is None:
+            options.append(("No data, UPDATE", self.scraping_actor.database_fetch))
+        else:
             options.append(("Box plot", self.box_plot))
             options.append(("Line plot", self.line_plot))
             options.append(
                 (
-                    f"""Latest dates: {self.latest_dates}""",
+                    f"""Latest dates: {year_range}""",
                     (self.data_menu),
                 )
             )
-        else:
-            options.append(("No data, UPDATE", self.scraping_actor.database_fetch))
 
         # Default options
         options.append(("Main menu", lambda: (plot_menu.close(), self.start_main())))
@@ -76,14 +76,14 @@ class WeatherProcessor:
 
         Provides menu options for fetching, updating, or resetting database data.
         """
-        (database_fetch, database_update, empty_database) = self.scraping_actor
+        actor = self.scraping_actor
         db_data_menu = Menu(title="Database options")
         db_data_menu.set_options(
             [
-                ("Fetch data", database_fetch),
-                ("Update current data", database_update),
-                ("Reset data", empty_database),
-                ("Reset hard", lambda: empty_database(burn=True)),
+                ("Fetch data", actor.database_fetch),
+                ("Update current data", actor.database_update),
+                ("Reset data", actor.empty_database),
+                ("Reset hard", lambda: actor.empty_database(burn=True)),
                 ("Main menu", lambda: (self.start_main(), db_data_menu.close())),
                 ("Exit", exit),
             ]
@@ -96,7 +96,7 @@ class WeatherProcessor:
     #   HELPER METHODS below
     #
 
-    def validate_input(self, user_input, errors, can_month=False):
+    def validate_input(self, user_input, errors, year_range, can_month=False):
         """Validates year date input.
 
         Validates the user input for year dates ensuring they are within the
@@ -117,7 +117,7 @@ class WeatherProcessor:
                 if can_month is True and ((user_input >= 1) == (user_input <= 12)):
                     return True
 
-                if self.is_in_range(user_input) is True:
+                if self.is_in_range(user_input, year_range) is True:
                     return True
                 errors.append("not in range.")
             else:
@@ -149,7 +149,7 @@ class WeatherProcessor:
 
         input_errors = {"start_year": [], "end_year": []}
         validated_inputs = {"start_year": False, "end_year": False}
-
+        year_range = self.scraping_actor.update_range()
         start_year = None
         end_year = None
         in_input = True
@@ -158,13 +158,19 @@ class WeatherProcessor:
             if validated_inputs["start_year"] is False:
                 start_year = input(first_input_prompt)
                 validated_inputs["start_year"] = self.validate_input(
-                    start_year, input_errors["start_year"], can_month=False
+                    start_year,
+                    input_errors["start_year"],
+                    year_range,
+                    can_month=False,
                 )
 
             if validated_inputs["end_year"] is False:
                 end_year = input(second_input_prompt)
                 validated_inputs["end_year"] = self.validate_input(
-                    end_year, input_errors["end_year"], can_month=True
+                    end_year,
+                    input_errors["end_year"],
+                    year_range,
+                    can_month=True,
                 )
 
             if validated_inputs["start_year"] and validated_inputs["end_year"]:
@@ -174,7 +180,8 @@ class WeatherProcessor:
                     # Make sure there are errors
                     logging.info("User had erranous inputs.")
                     if len(errors) != 0:
-                        print(f"{key.capitalize()} year errors:")
+                        print(f"{key.capitalize()} errors:")
+                        logging.info(" %s errors:", key.capitalize())
                         for i, error in enumerate(errors):
                             print(f"  {i + 1}. {error}")
 
@@ -214,13 +221,13 @@ class WeatherProcessor:
             if is_line_plot is True and len(end_year) < 2:
                 return (start_year, "0" + end_year)
         except ValueError as error:
-            logging.log(
-                "Plot Checking: One of the user inputs was not the correct type. %e",
+            logging.warning(
+                "Plot Checking: One of the user inputs was not the correct type. %s",
                 error,
             )
         return (start_year, end_year)
 
-    def is_in_range(self, year_input):
+    def is_in_range(self, year_input, year_range):
         """Checks if the input year is within the database range.
 
         Parameters:
@@ -231,16 +238,17 @@ class WeatherProcessor:
         """
         try:
             int_year_input = int(year_input)
-            year_range = self.scraping_actor.update_range()
 
             lower, higher = int(year_range["lower"]), int(year_range["upper"])
-            if int_year_input >= lower == (int_year_input <= higher):
+
+            if lower <= int_year_input <= higher:
                 return True
         except ValueError as error:
             logging.log(
-                "Value error when checking the year against the upper and lower bounds %e",
+                "Value error when checking the year against the upper and lower bounds %s",
                 error,
             )
+            print("val eeerrr")
         return False
 
     def box_plot(self):

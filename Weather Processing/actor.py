@@ -36,11 +36,9 @@ class ScrapingActor:
         """Updates the year range"""
         latest_dates = self.weather_db.get_year_ends()
 
-        lower_year = latest_dates[0]
-        upper_year = latest_dates[1]
         return {
-            "lower": None if lower_year is None else lower_year[0],
-            "upper": None if upper_year is None else upper_year[0],
+            "lower": None if latest_dates is None else latest_dates[0],
+            "upper": None if latest_dates is None else latest_dates[1],
         }
 
     def database_update(self):

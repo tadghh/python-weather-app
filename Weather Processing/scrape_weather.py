@@ -3,13 +3,13 @@
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.request import urlopen
-from urllib.error import URLError
+from urllib.error import URLError, HTTPError
 from contextlib import closing
 from html.parser import HTMLParser
 import re
+import logging
 from lxml.html import parse
 from tqdm import tqdm
-import logging
 
 
 class WeatherScraper:
@@ -48,32 +48,40 @@ class WeatherScraper:
         start date to the current year.
         - Utilizes multi-threading for efficient scraping with a progress bar.
         """
-        month_and_year = self.get_earliest_date()
-        start_year = start_year_override or month_and_year.get("Year")
-        start_month = start_month_override or month_and_year.get("Month")
-        start_year, start_month = (int(start_year), int(start_month))
-        end_year = datetime.now().year
+        try:
+            month_and_year = self.get_earliest_date()
+            start_year = start_year_override or month_and_year.get("Year")
+            start_month = start_month_override or month_and_year.get("Month")
+            start_year, start_month = (int(start_year), int(start_month))
+            end_year = datetime.now().year
 
-        total_tasks = (end_year - start_year + 1) * 12
+            total_tasks = (end_year - start_year + 1) * 12
 
-        # tqdm is used to provide a progress bad in the console.
-        with tqdm(
-            total=total_tasks, desc="Scraping: ", smoothing=0.1, miniters=1
-        ) as progress_bar:
-            with ThreadPoolExecutor() as executor:
-                # An array for all our threads of months for all years.
-                futures = [
-                    # Tells the thread what method to run and provides the parameters for it.
-                    executor.submit(self.scrape_weather_thread, year, month)
-                    for year in range(start_year, end_year + 1)
-                    for month in range(start_month if year == start_year else 1, 13)
-                ]
+            # tqdm is used to provide a progress bad in the console.
+            with tqdm(
+                total=total_tasks, desc="Scraping: ", smoothing=0.1, miniters=1
+            ) as progress_bar:
+                with ThreadPoolExecutor() as executor:
+                    # An array for all our threads of months for all years.
+                    futures = [
+                        # Tells the thread what method to run and provides the parameters for it.
+                        executor.submit(self.scrape_weather_thread, year, month)
+                        for year in range(start_year, end_year + 1)
+                        for month in range(start_month if year == start_year else 1, 13)
+                    ]
 
-                # Gets threads as they complete, 30 seconds total runtime.
-                for _ in as_completed(futures):
-                    progress_bar.update(1)
+                    # Gets threads as they complete, 30 seconds total runtime.
+                    for _ in as_completed(futures):
+                        progress_bar.update(1)
 
-        return self.weather
+            return self.weather
+        except URLError as error:
+            logging.critical("URL or connection error occured %s", error)
+            logging.warning(
+                "There was an issue grabbing the start date from the website title %s",
+                error,
+            )
+        return None
 
     def scrape_weather_thread(self, year, month):
         """
@@ -97,6 +105,12 @@ class WeatherScraper:
 
                 # Update our master dictionary with the newly returned data
                 self.weather.update(parser.return_weather_dict())
+        except HTTPError as e:
+            logging.warning(
+                "We had issues scraping from the following url %e and the following error %e",
+                url,
+                e,
+            )
         except URLError as error:
             logging.warning(
                 "We had issues scraping from the following url %e and the following error %e",
@@ -166,17 +180,11 @@ class WeatherScraper:
 
             return None
 
-        try:
-            with urlopen(self.url_sections[0] + self.url_sections[1] + "1840") as page:
-                p = parse(page)
-        except URLError as error:
-            logging.warning(
-                "There was an issue grabbing the start date from the website title %e",
-                error,
-            )
+        with urlopen(self.url_sections[0] + self.url_sections[1] + "1840") as page:
+            p = parse(page)
+        return extract_month_and_date((p.find(".//title").text))
 
         # A None value can bubble up from this method
-        return extract_month_and_date((p.find(".//title").text))
 
     class MyHTMLParser(HTMLParser):
         """The web scraper."""
