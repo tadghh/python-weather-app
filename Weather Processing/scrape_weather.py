@@ -98,18 +98,25 @@ class WeatherScraper:
                 # Update our master dictionary with the newly returned data
                 self.weather.update(parser.return_weather_dict())
         except URLError as error:
-            print("URL Error:", error)
+            logging.warning(
+                "We had issues scraping from the following url %e and the following error %e",
+                url,
+                error,
+            )
 
     def change_weather_station(self, new_station_id):
         """
         Change the weather station for scraping data.
 
         Parameters:
-        - new_station_id (int): The new weather station ID.
+        - new_station_id (string): The new weather station ID.
 
         Note:
         - This method changes the weather station ID for scraping data.
         """
+        if new_station_id.isdigit() is False:
+            raise TypeError
+
         self.weather_station_id = new_station_id
         self.url_sections = (
             "https://climate.weather.gc.ca/climate_data",
@@ -163,7 +170,10 @@ class WeatherScraper:
             with urlopen(self.url_sections[0] + self.url_sections[1] + "1840") as page:
                 p = parse(page)
         except URLError as error:
-            print("URL Error:", error)
+            logging.warning(
+                "There was an issue grabbing the start date from the website title %e",
+                error,
+            )
 
         # A None value can bubble up from this method
         return extract_month_and_date((p.find(".//title").text))

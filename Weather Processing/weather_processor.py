@@ -22,8 +22,15 @@ class WeatherProcessor:
         self.weather_db.initialize_db()
         self.weather_scraper = WeatherScraper()
         self.plot_ops = PlotOperations()
+
         self.latest_dates = self.database_check_ends()
-        self.year_range = {"lower": 0, "upper": 0}
+
+        lower_year = self.latest_dates
+        upper_year = self.latest_dates
+        self.year_range = {
+            "lower": None if lower_year is None else lower_year[0],
+            "upper": None if upper_year is None else upper_year[0],
+        }
 
     def start_main(self):
         """Displays the main menu.
@@ -37,11 +44,77 @@ class WeatherProcessor:
         main_menu.set_options(
             [
                 ("Weather Data Plotting", self.plot_data_menu),
-                ("Database Options", self.data_menu),
+                ("Database Options", lambda: (self.data_menu(), main_menu.close())),
                 ("Exit", exit),
             ]
         )
         main_menu.open()
+
+    def plot_data_menu(self):
+        """Handles menu options for plotting.
+
+        Provides menu options for box plot, line plot, and displaying latest dates.
+        """
+        plot_menu = Menu(title="Plotting options")
+        plot_menu.set_message("Select an item")
+        plot_menu.set_prompt(">:")
+
+        options = []
+        if self.latest_dates is not None:
+            options.append(("Box plot", self.box_plot))
+            options.append(("Line plot", self.line_plot))
+            options.append(
+                (
+                    f"""Latest dates: {self.latest_dates}""",
+                    (self.data_menu),
+                )
+            )
+        else:
+            options.append(("No data, UPDATE", self.database_fetch))
+
+        # Default options
+        options.append(("Main menu", lambda: (plot_menu.close(), self.start_main())))
+        options.append(("Exit", exit))
+
+        # Apply our array of tuple("option name", ACTION) options
+        plot_menu.set_options(options)
+        plot_menu.open()
+
+    def data_menu(self):
+        """Handles database-related options.
+
+        Provides menu options for fetching, updating, or resetting database data.
+        """
+
+        db_data_menu = Menu(title="Database options")
+        db_data_menu.set_options(
+            [
+                ("Fetch data", self.database_fetch),
+                ("Update current data", self.database_update),
+                ("Reset data", self.database_reset),
+                ("Reset hard", lambda: self.database_reset(burn=True)),
+                ("Main menu", lambda: (self.start_main(), db_data_menu.close())),
+                ("Exit", exit),
+            ]
+        )
+        db_data_menu.set_message("Select an item")
+        db_data_menu.set_prompt(">:")
+        db_data_menu.open()
+
+    #
+    #   HELPER METHODS below
+    #
+
+    def update_range(self):
+        """Updates the year range"""
+        self.latest_dates = self.database_check_ends()
+
+        lower_year = self.latest_dates
+        upper_year = self.latest_dates
+        self.year_range = {
+            "lower": None if lower_year is None else lower_year[0],
+            "upper": None if upper_year is None else upper_year[0],
+        }
 
     def validate_input(self, user_input, errors, can_month=False):
         """Validates year date input.
@@ -205,37 +278,6 @@ class WeatherProcessor:
         start_year, month = self.get_input(True)
         PlotOperations().create(start_year, month=month)
 
-    def plot_data_menu(self):
-        """Handles menu options for plotting.
-
-        Provides menu options for box plot, line plot, and displaying latest dates.
-        """
-        plot_menu = Menu(title="Plotting options")
-        plot_menu.set_message("Select an item")
-        plot_menu.set_prompt(">:")
-
-        options = []
-        print(self.latest_dates)
-        if self.latest_dates is not None:
-            options.append(("Box plot", self.box_plot))
-            options.append(("Line plot", self.line_plot))
-            options.append(
-                (
-                    f"""Latest dates: {self.latest_dates}""",
-                    (self.database_check_ends),
-                )
-            )
-        else:
-            options.append(("No data, UPDATE", self.database_fetch))
-
-        # Default options
-        options.append(("Main menu", self.start_main))
-        options.append(("Exit", exit))
-
-        # Apply our array of tuple("option name", ACTION) options
-        plot_menu.set_options(options)
-        plot_menu.open()
-
     def database_check_ends(self):
         """Retrieves and displays the latest available dates in the database.
 
@@ -257,26 +299,27 @@ class WeatherProcessor:
         # scrape weather
         current_weather = self.weather_scraper.scrape_weather()
         self.weather_db.save_data(current_weather)
-        self.latest_dates = self.database_check_ends()
-        print(self.latest_dates)
-        self.year_range = {"lower": self.latest_dates[0], "upper": self.latest_dates[1]}
-
-        # Open menu again
+        self.update_range()
 
     def database_update(self):
         """Updates the database with current weather data."""
         # Check last date in database
         # Give the last data to weather scraper as the start_date
+        try:
+            last_date = self.weather_db.get_new_data()
 
-        last_date = self.weather_db.get_new_data()
-
-        (year, month) = last_date
-        current_weather = self.weather_scraper.scrape_weather(
-            start_year_override=year, start_month_override=month
-        )
-        self.weather_db.save_data(current_weather)
-        self.latest_dates = self.database_check_ends()
-        self.year_range = {"lower": self.latest_dates[0], "upper": self.latest_dates[1]}
+            (year, month) = last_date
+            current_weather = self.weather_scraper.scrape_weather(
+                start_year_override=year, start_month_override=month
+            )
+            self.weather_db.save_data(current_weather)
+            self.update_range()
+        except TypeError as error:
+            logging.warning(
+                "Tried to update without a database/any data. Fetching all data. %e",
+                error,
+            )
+            self.database_fetch()
 
     def database_reset(self, burn=False):
         """Resets the database by deleting weather data.
@@ -286,27 +329,6 @@ class WeatherProcessor:
 
         """
         self.weather_db.purge_data(burn)
-
-    def data_menu(self):
-        """Handles database-related options.
-
-        Provides menu options for fetching, updating, or resetting database data.
-        """
-
-        db_data_menu = Menu(title="Database options")
-        db_data_menu.set_options(
-            [
-                ("Fetch data", self.database_fetch),
-                ("Update current data", self.database_update),
-                ("Reset data", self.database_reset),
-                ("Reset hard", lambda: self.database_reset(burn=True)),
-                ("Main menu", self.start_main),
-                ("Exit", exit),
-            ]
-        )
-        db_data_menu.set_message("Select an item")
-        db_data_menu.set_prompt(">:")
-        db_data_menu.open()
 
 
 if __name__ == "__main__":

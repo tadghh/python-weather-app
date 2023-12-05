@@ -255,11 +255,11 @@ class DBOperations:
         earliest_year = self.get_query_data(earliest_date_query)[0][0]
         if earliest_year is None:
             logging.info("Earliest year was None.")
-            raise ValueError(earliest_year)
+            return None
 
         if earliest_year is not None:
             return earliest_year.split("-")
-        raise ValueError
+        return None
 
     def get_year_ends(self):
         """
@@ -280,12 +280,16 @@ class DBOperations:
             logging.info("Making sure year ranges arent None.")
             newest_year = self.get_new_data()
             oldest_year = self.get_earliest_date()
+            if oldest_year is not None and newest_year is not None:
+                return (oldest_year[0], newest_year[0])
 
-            return (oldest_year[0], newest_year[0])
         except ValueError as error:
             logging.warning(
                 "Ran into issue comparing the earliest and farthest year %e", error
             )
+        logging.info(
+            "The year ends returned None, do we have a database or is the data we are saving bad?"
+        )
         return None
 
     # TODO:  rename
@@ -310,7 +314,7 @@ class DBOperations:
         if last_date_available is not None:
             return last_date_available.split("-")
 
-        raise ValueError
+        return None
 
     def save_data(self, data_to_save):
         """
@@ -353,6 +357,10 @@ class DBOperations:
                     )""",
                         (date, location, min_temp, max_temp, avg_temp, date),
                     )
+        except AttributeError:
+            logging.warning(
+                """Save data had no "items".""",
+            )
         except sqlite3.OperationalError as error:
             try:
                 logging.warning(
