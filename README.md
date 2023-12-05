@@ -131,14 +131,13 @@ Here are the linting recommendations
 Weather Processing/dbcm.py:23:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
 ************* Module scrape_weather
 Weather Processing/scrape_weather.py:12:0: C0411: standard import "import logging" should be placed before "from lxml.html import parse" (wrong-import-order)
-Weather Processing/scrape_weather.py:12:0: W0611: Unused import logging (unused-import)
 ************* Module plot_operations
 Weather Processing/plot_operations.py:6:0: C0411: standard import "import logging" should be placed before "import matplotlib.pyplot as plt" (wrong-import-order)
 ************* Module db_operations
-Weather Processing/db_operations.py:291:5: W0511: TODO:  rename (fixme)
+Weather Processing/db_operations.py:295:5: W0511: TODO:  rename (fixme)
 Weather Processing/db_operations.py:5:0: C0411: standard import "import logging" should be placed before "from dbcm import DBCM" (wrong-import-order)
 
 -----------------------------------
-Your code has been rated at 9.87/10
+Your code has been rated at 9.89/10
 
 ```
