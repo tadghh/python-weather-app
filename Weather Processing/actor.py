@@ -47,7 +47,7 @@ class ScrapingActor:
         # Check last date in database
         # Give the last data to weather scraper as the start_date
         try:
-            last_date = self.weather_db.get_new_data()
+            last_date = self.weather_db.get_latest_date()
             year = None
             month = None
             if last_date is not None:

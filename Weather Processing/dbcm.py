@@ -18,7 +18,7 @@ class DBCM:
         self.db_name = database_name
         self.conn = None
         self.cursor = None
-        logging.info(r"\n\nCreated DB Content manager.")
+        logging.info("Created DB Content manager.")
 
     def __enter__(self):
         """
@@ -56,8 +56,8 @@ class DBCM:
         """
         if self.cursor:
             self.cursor.close()
-            logging.info("Closed DB cursor.\n\n")
+            logging.info("Closed DB cursor.")
         if self.conn:
             self.conn.commit()
             self.conn.close()
-            logging.info("Commited to DB and closed connection.\n\n")
+            logging.info("Commited to DB and closed connection.")

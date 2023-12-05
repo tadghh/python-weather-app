@@ -123,7 +123,7 @@ class WeatherProcessor:
             else:
                 errors.append("must be integer.")
         except ValueError as error:
-            logging.warning("Value error when validating input %e", error)
+            logging.warning("Value error when validating input %s", error)
         return False
 
     def get_input(self, line_plot=False):

@@ -1,8 +1,8 @@
 """Handles all database operations."""
 
 import sqlite3
-from dbcm import DBCM
 import logging
+from dbcm import DBCM
 
 
 class DBOperations:
@@ -271,14 +271,14 @@ class DBOperations:
 
         Description:
         - Checks for the availability of new data and the earliest date in the dataset using
-        the 'get_new_data' and 'get_earliest_date' methods.
+        the 'get_latest_date' and 'get_earliest_date' methods.
         - If both new data and the earliest date are available, it returns a tuple
         containing the newest and oldest data points.
         - If either new data or the earliest date is not available, it returns None.
         """
         try:
             logging.info("Making sure year ranges arent None.")
-            newest_year = self.get_new_data()
+            newest_year = self.get_latest_date()
             oldest_year = self.get_earliest_date()
             if oldest_year is not None and newest_year is not None:
                 return (oldest_year[0], newest_year[0])
@@ -292,8 +292,7 @@ class DBOperations:
         )
         return None
 
-    # TODO:  rename
-    def get_new_data(self):
+    def get_latest_date(self):
         """
         Retrieves the most recent date available in the dataset.
 

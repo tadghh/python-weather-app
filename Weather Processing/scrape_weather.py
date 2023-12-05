@@ -107,13 +107,13 @@ class WeatherScraper:
                 self.weather.update(parser.return_weather_dict())
         except HTTPError as e:
             logging.warning(
-                "We had issues scraping from the following url %e and the following error %e",
+                "We had issues scraping from the following url %s and the following error %s",
                 url,
                 e,
             )
         except URLError as error:
             logging.warning(
-                "We had issues scraping from the following url %e and the following error %e",
+                "We had issues scraping from the following url %s and the following error %s",
                 url,
                 error,
             )
@@ -183,8 +183,6 @@ class WeatherScraper:
         with urlopen(self.url_sections[0] + self.url_sections[1] + "1840") as page:
             p = parse(page)
         return extract_month_and_date((p.find(".//title").text))
-
-        # A None value can bubble up from this method
 
     class MyHTMLParser(HTMLParser):
         """The web scraper."""

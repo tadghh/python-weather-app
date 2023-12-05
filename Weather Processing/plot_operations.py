@@ -1,9 +1,9 @@
 """Plotting data on a graph/ graph creation."""
+import logging
 
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from db_operations import DBOperations
-import logging
 
 
 class PlotOperations:
@@ -141,5 +141,5 @@ class PlotOperations:
             logging.info(r"\n\nNothing special, defaulting to box plot db call.")
             return self.db.fetch_monthly_averages(start_year, end_year)
         except ValueError as error:
-            logging.warning(r"\n\nValue error before calling database %e", error)
+            logging.warning(r"\n\nValue error before calling database %s", error)
         return None
