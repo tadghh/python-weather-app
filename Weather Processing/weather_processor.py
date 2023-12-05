@@ -91,8 +91,8 @@ class WeatherProcessor:
             [
                 ("Fetch data", self.database_fetch),
                 ("Update current data", self.database_update),
-                ("Reset data", self.database_reset),
-                ("Reset hard", lambda: self.database_reset(burn=True)),
+                ("Reset data", self.weather_db.purge_data),
+                ("Reset hard", lambda: self.weather_db.purge_data(burn=True)),
                 ("Main menu", lambda: (self.start_main(), db_data_menu.close())),
                 ("Exit", exit),
             ]
@@ -294,7 +294,7 @@ class WeatherProcessor:
         self.weather_db.initialize_db()
 
         # Reset DB
-        self.database_reset()
+        self.weather_db.purge_data()
 
         # scrape weather
         current_weather = self.weather_scraper.scrape_weather()
@@ -320,15 +320,6 @@ class WeatherProcessor:
                 error,
             )
             self.database_fetch()
-
-    def database_reset(self, burn=False):
-        """Resets the database by deleting weather data.
-
-        Parameters:
-        - burn (bool): If True, drops all tables in the database.
-
-        """
-        self.weather_db.purge_data(burn)
 
 
 if __name__ == "__main__":
