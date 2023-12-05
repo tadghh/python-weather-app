@@ -5,7 +5,7 @@ __pycache__/
 #Dont include log files found anywhere in the project
 **/*.log
 
-.venv/
+
 .vscode/
-/Weather Processing/build
+/build
 /Weather Processing/dist
