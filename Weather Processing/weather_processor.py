@@ -2,9 +2,9 @@
 import logging
 
 from menu import Menu
-from db_operations import DBOperations
-from scrape_weather import WeatherScraper
+
 from plot_operations import PlotOperations
+from scraping_actor import ScrapingActor
 
 logging.basicConfig(filename=r".\example.log", encoding="utf-8", level=logging.DEBUG)
 
@@ -18,19 +18,10 @@ class WeatherProcessor:
         Initializes class attributes including weather database connection,
         weather scraper, plot operations, year range, and latest dates.
         """
-        self.weather_db = DBOperations()
-        self.weather_db.initialize_db()
-        self.weather_scraper = WeatherScraper()
+
         self.plot_ops = PlotOperations()
-
-        self.latest_dates = self.database_check_ends()
-
-        lower_year = self.latest_dates
-        upper_year = self.latest_dates
-        self.year_range = {
-            "lower": None if lower_year is None else lower_year[0],
-            "upper": None if upper_year is None else upper_year[0],
-        }
+        self.scraping_actor = ScrapingActor()
+        self.latest_dates = self.scraping_actor.update_range()
 
     def start_main(self):
         """Displays the main menu.
@@ -70,7 +61,7 @@ class WeatherProcessor:
                 )
             )
         else:
-            options.append(("No data, UPDATE", self.database_fetch))
+            options.append(("No data, UPDATE", self.scraping_actor.database_fetch))
 
         # Default options
         options.append(("Main menu", lambda: (plot_menu.close(), self.start_main())))
@@ -85,14 +76,14 @@ class WeatherProcessor:
 
         Provides menu options for fetching, updating, or resetting database data.
         """
-
+        (database_fetch, database_update, empty_database) = self.scraping_actor
         db_data_menu = Menu(title="Database options")
         db_data_menu.set_options(
             [
-                ("Fetch data", self.database_fetch),
-                ("Update current data", self.database_update),
-                ("Reset data", self.weather_db.purge_data),
-                ("Reset hard", lambda: self.weather_db.purge_data(burn=True)),
+                ("Fetch data", database_fetch),
+                ("Update current data", database_update),
+                ("Reset data", empty_database),
+                ("Reset hard", lambda: empty_database(burn=True)),
                 ("Main menu", lambda: (self.start_main(), db_data_menu.close())),
                 ("Exit", exit),
             ]
@@ -104,17 +95,6 @@ class WeatherProcessor:
     #
     #   HELPER METHODS below
     #
-
-    def update_range(self):
-        """Updates the year range"""
-        self.latest_dates = self.database_check_ends()
-
-        lower_year = self.latest_dates
-        upper_year = self.latest_dates
-        self.year_range = {
-            "lower": None if lower_year is None else lower_year[0],
-            "upper": None if upper_year is None else upper_year[0],
-        }
 
     def validate_input(self, user_input, errors, can_month=False):
         """Validates year date input.
@@ -250,8 +230,11 @@ class WeatherProcessor:
         - bool: True if year is within range, False otherwise.
         """
         try:
-            lower, higher = int(self.year_range["lower"]), int(self.year_range["upper"])
-            if int(year_input) > lower and int(year_input) < higher:
+            int_year_input = int(year_input)
+            year_range = self.scraping_actor.update_range()
+
+            lower, higher = int(year_range["lower"]), int(year_range["upper"])
+            if int_year_input >= lower == (int_year_input <= higher):
                 return True
         except ValueError as error:
             logging.log(
@@ -277,49 +260,6 @@ class WeatherProcessor:
         """
         start_year, month = self.get_input(True)
         PlotOperations().create(start_year, month=month)
-
-    def database_check_ends(self):
-        """Retrieves and displays the latest available dates in the database.
-
-        Returns:
-        - tuple: A tuple containing latest start and end dates.
-        """
-
-        return self.weather_db.get_year_ends()
-
-    def database_fetch(self):
-        """Fetches and saves weather data to the database."""
-
-        # Setup database
-        self.weather_db.initialize_db()
-
-        # Reset DB
-        self.weather_db.purge_data()
-
-        # scrape weather
-        current_weather = self.weather_scraper.scrape_weather()
-        self.weather_db.save_data(current_weather)
-        self.update_range()
-
-    def database_update(self):
-        """Updates the database with current weather data."""
-        # Check last date in database
-        # Give the last data to weather scraper as the start_date
-        try:
-            last_date = self.weather_db.get_new_data()
-
-            (year, month) = last_date
-            current_weather = self.weather_scraper.scrape_weather(
-                start_year_override=year, start_month_override=month
-            )
-            self.weather_db.save_data(current_weather)
-            self.update_range()
-        except TypeError as error:
-            logging.warning(
-                "Tried to update without a database/any data. Fetching all data. %e",
-                error,
-            )
-            self.database_fetch()
 
 
 if __name__ == "__main__":
