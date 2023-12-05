@@ -1,8 +1,8 @@
 """Plotting data on a graph/ graph creation."""
 import logging
-
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.pyplot as plt
+
 from db_operations import DBOperations
 
 

@@ -1,12 +1,15 @@
 """Main program."""
 import logging
+import sys
 
 from menu import Menu
 
 from plot_operations import PlotOperations
 from actor import ScrapingActor
 
-logging.basicConfig(filename=r".\example.log", encoding="utf-8", level=logging.DEBUG)
+logging.basicConfig(
+    filename=r".\weather_scraper_logfile.log", encoding="utf-8", level=logging.DEBUG
+)
 
 
 class WeatherProcessor:
@@ -36,7 +39,7 @@ class WeatherProcessor:
             [
                 ("Weather Data Plotting", self.plot_data_menu),
                 ("Database Options", lambda: (self.data_menu(), main_menu.close())),
-                ("Exit", exit),
+                ("Exit", lambda: sys.exit(0)),
             ]
         )
         main_menu.open()
@@ -65,7 +68,7 @@ class WeatherProcessor:
 
         # Default options
         options.append(("Main menu", lambda: (plot_menu.close(), self.start_main())))
-        options.append(("Exit", exit))
+        options.append(("Exit", lambda: sys.exit(0)))
 
         # Apply our array of tuple("option name", ACTION) options
         plot_menu.set_options(options)
@@ -85,7 +88,7 @@ class WeatherProcessor:
                 ("Reset data", actor.empty_database),
                 ("Reset hard", lambda: actor.empty_database(burn=True)),
                 ("Main menu", lambda: (self.start_main(), db_data_menu.close())),
-                ("Exit", exit),
+                ("Exit", lambda: sys.exit(0)),
             ]
         )
         db_data_menu.set_message("Select an item")
