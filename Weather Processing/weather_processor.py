@@ -1,9 +1,10 @@
 """Main program."""
+import logging
+
 from menu import Menu
 from db_operations import DBOperations
 from scrape_weather import WeatherScraper
 from plot_operations import PlotOperations
-import logging
 
 logging.basicConfig(filename=r".\example.log", encoding="utf-8", level=logging.DEBUG)
 
@@ -21,8 +22,8 @@ class WeatherProcessor:
         self.weather_db.initialize_db()
         self.weather_scraper = WeatherScraper()
         self.plot_ops = PlotOperations()
-        self.year_range = {"lower": None, "upper": None}
         self.latest_dates = self.database_check_ends()
+        self.year_range = {"lower": 0, "upper": 0}
 
     def start_main(self):
         """Displays the main menu.
@@ -35,8 +36,8 @@ class WeatherProcessor:
         main_menu.set_prompt(">:")
         main_menu.set_options(
             [
-                ("Data Plotting", self.plot_data_menu),
-                ("Database options", self.data_menu),
+                ("Weather Data Plotting", self.plot_data_menu),
+                ("Database Options", self.data_menu),
                 ("Exit", exit),
             ]
         )
@@ -56,18 +57,20 @@ class WeatherProcessor:
         Returns:
         - bool: True if input is valid, False otherwise.
         """
-        if user_input.isdigit() is True:
-            user_input = int(user_input)
+        try:
+            if user_input.isdigit() is True:
+                user_input = int(user_input)
 
-            if can_month is True and ((user_input >= 1) == (user_input <= 12)):
-                print("asd")
-                return True
+                if can_month is True and ((user_input >= 1) == (user_input <= 12)):
+                    return True
 
-            if self.is_in_range(user_input) is True:
-                return True
-            errors.append("not in range.")
-        else:
-            errors.append("must be integer.")
+                if self.is_in_range(user_input) is True:
+                    return True
+                errors.append("not in range.")
+            else:
+                errors.append("must be integer.")
+        except ValueError as error:
+            logging.warning("Value error when validating input %e", error)
         return False
 
     def get_input(self, line_plot=False):
@@ -86,70 +89,82 @@ class WeatherProcessor:
         # Input text
         first_input_prompt = "Enter Starting Year ex 2002: "
         second_input_prompt = (
-            "Enter End Year: " if line_plot is False else "Enter a month ex 02: "
+            "Enter End Year ex 2005: "
+            if line_plot is False
+            else "Enter a month ex 02: "
         )
 
-        # Setup or refresh with the latest ranges
-        self.year_range["lower"] = self.weather_db.get_earliest_date()[0]
-        last_date = self.weather_db.get_new_data()
-        self.year_range["upper"] = last_date[0]
-
-        # error handling
-        input_errors = {"start": [], "end": []}
-        validated_inputs = {"start": False, "end": False}
+        input_errors = {"start_year": [], "end_year": []}
+        validated_inputs = {"start_year": False, "end_year": False}
 
         start_year = None
         end_year = None
         in_input = True
+
         while in_input:
-            if validated_inputs["start"] is False:
+            if validated_inputs["start_year"] is False:
                 start_year = input(first_input_prompt)
-                validated_inputs["start"] = self.validate_input(
-                    start_year, input_errors["start"], can_month=False
+                validated_inputs["start_year"] = self.validate_input(
+                    start_year, input_errors["start_year"], can_month=False
                 )
 
-            if validated_inputs["end"] is False:
+            if validated_inputs["end_year"] is False:
                 end_year = input(second_input_prompt)
-                validated_inputs["end"] = self.validate_input(
-                    end_year, input_errors["end"], can_month=True
+                validated_inputs["end_year"] = self.validate_input(
+                    end_year, input_errors["end_year"], can_month=True
                 )
 
-            if validated_inputs["start"] and validated_inputs["end"]:
+            if validated_inputs["start_year"] and validated_inputs["end_year"]:
                 in_input = False
             else:
                 for key, errors in input_errors.items():
                     # Make sure there are errors
+                    logging.info("User had erranous inputs.")
                     if len(errors) != 0:
                         print(f"{key.capitalize()} year errors:")
                         for i, error in enumerate(errors):
                             print(f"  {i + 1}. {error}")
 
                 # Reset errors
-                input_errors["start"] = []
-                input_errors["end"] = []
+                input_errors["start_year"] = []
+                input_errors["end_year"] = []
 
         # Input correction
-        if line_plot is False and start_year > end_year:
-            print(
-                "Start year is after end year.\nWould you like us to correct this or reset?"
-            )
-            user_response = input("Enter (c)correct or (r)reset: ")
+        return self.plot_checks(start_year, end_year, line_plot)
 
-            while user_response != "c" and user_response != "r":
-                print("Invalid input, try again.\n")
-                user_response = input("Enter (c)correct or (r)reset: ")
-            if user_response == "c":
-                (start_year, end_year) = (end_year, start_year)
-            else:
+    def plot_checks(self, start_year, end_year, is_line_plot):
+        """Some simple error checking and convience for the user."""
+        logging.info("Doing final input checks.")
+        try:
+            if is_line_plot is False and start_year > end_year:
+                print(
+                    "Start year is after end year.\nWould you like us to correct this or reset?"
+                )
+                user_response = input("Enter (c)orrect or (r)eset: ")
+
+                while user_response not in ("c", "r"):
+                    print("Invalid input, try again.\n")
+                    logging.info("User failed to enter 'c' or 'r'")
+                    user_response = input("Enter (c)correct or (r)reset: ")
+
+                if user_response == "c":
+                    return (end_year, start_year)
+
                 # return up from the recursive call
                 # Once below function finish it will only return inside itself
                 # Still gotta direct it to return through originally method
-                # This can result in a buffer overflow if the user messed up their input enough
+                # This can result in a buffer overflow if the user made # enough incorrect attempts,
+                # QA doesnt have the attention span for this
                 return self.get_input()
 
-        # User was lazy and only entered one number, we'll help them
-        if line_plot is True and len(end_year) < 2:
-            end_year = "0" + end_year
+            # User was lazy and only entered one number, we'll help them
+            if is_line_plot is True and len(end_year) < 2:
+                return (start_year, "0" + end_year)
+        except ValueError as error:
+            logging.log(
+                "Plot Checking: One of the user inputs was not the correct type. %e",
+                error,
+            )
         return (start_year, end_year)
 
     def is_in_range(self, year_input):
@@ -161,10 +176,15 @@ class WeatherProcessor:
         Returns:
         - bool: True if year is within range, False otherwise.
         """
-
-        lower, higher = int(self.year_range["lower"]), int(self.year_range["upper"])
-        if int(year_input) > lower and int(year_input) < higher:
-            return True
+        try:
+            lower, higher = int(self.year_range["lower"]), int(self.year_range["upper"])
+            if int(year_input) > lower and int(year_input) < higher:
+                return True
+        except ValueError as error:
+            logging.log(
+                "Value error when checking the year against the upper and lower bounds %e",
+                error,
+            )
         return False
 
     def box_plot(self):
@@ -195,7 +215,7 @@ class WeatherProcessor:
         plot_menu.set_prompt(">:")
 
         options = []
-
+        print(self.latest_dates)
         if self.latest_dates is not None:
             options.append(("Box plot", self.box_plot))
             options.append(("Line plot", self.line_plot))
@@ -238,8 +258,10 @@ class WeatherProcessor:
         current_weather = self.weather_scraper.scrape_weather()
         self.weather_db.save_data(current_weather)
         self.latest_dates = self.database_check_ends()
+        print(self.latest_dates)
+        self.year_range = {"lower": self.latest_dates[0], "upper": self.latest_dates[1]}
+
         # Open menu again
-        self.data_menu().open()
 
     def database_update(self):
         """Updates the database with current weather data."""
@@ -254,6 +276,7 @@ class WeatherProcessor:
         )
         self.weather_db.save_data(current_weather)
         self.latest_dates = self.database_check_ends()
+        self.year_range = {"lower": self.latest_dates[0], "upper": self.latest_dates[1]}
 
     def database_reset(self, burn=False):
         """Resets the database by deleting weather data.

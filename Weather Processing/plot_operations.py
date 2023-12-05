@@ -27,8 +27,11 @@ class PlotOperations:
         - Displays the line plot and requires user interaction to continue
         execution after plot display.
         """
-        print("poof a graph!")
-        print("Close graph to continue execution")
+        if year is None or month is None:
+            raise ValueError("Year or month was NoneType.")
+        if year.isdigit() is False and month.isdigit() is False:
+            raise ValueError("Year or month was not a digit.")
+
         days = [row[0] for row in graph_weather_data]
         mean_temps = [row[1] for row in graph_weather_data]
 
@@ -55,12 +58,19 @@ class PlotOperations:
         - start_year (str): The starting year of the data range.
         - end_year (str): The ending year of the data range.
 
+        -Exceptions
+            ValueError if one of the ranges are a NoneType
         Description:
         - Generates a box plot representing the distribution of monthly temperatures
           for a specified range of years.
         - Displays the box plot and requires user interaction to continue
         execution after plot display.
         """
+        if start_year is None or end_year is None:
+            raise ValueError("One of the year ranges was a NoneType.")
+        if start_year.isdigit() is False and end_year.isdigit() is False:
+            raise ValueError("One of the ranges was not and integar")
+
         year_month_temperature_info = [month[1:] for month in graph_weather_data]
         mpl.rcParams["toolbar"] = "None"
         plt.style.use("dark_background")
@@ -89,17 +99,23 @@ class PlotOperations:
         - Fetches weather data based on provided parameters and generates a graph.
         - If a specific month is provided, creates a line plot; otherwise, creates a box plot.
         """
-        weather_data = self.fetch_data(start_year, end_year, month)
-        if month is not None and month.isdigit() is True:
-            self.create_line_plot(
-                graph_weather_data=weather_data, year=start_year, month=month
-            )
-        else:
-            self.create_year_boxplot_graph(
-                graph_weather_data=weather_data,
-                start_year=start_year,
-                end_year=end_year,
-            )
+        try:
+            weather_data = self.fetch_data(start_year, end_year, month)
+
+            if month:
+                logging.info(r"\n\nMaking line plot.")
+                self.create_line_plot(
+                    graph_weather_data=weather_data, year=start_year, month=month
+                )
+            else:
+                logging.info(r"\n\nMaking box plot.")
+                self.create_year_boxplot_graph(
+                    graph_weather_data=weather_data,
+                    start_year=start_year,
+                    end_year=end_year,
+                )
+        except ValueError as error:
+            logging.info(r"\n\Value Error when calling graphs. %e", error)
 
     def fetch_data(self, start_year=None, end_year=None, month=None):
         """
@@ -118,6 +134,12 @@ class PlotOperations:
         - If a specific month is provided, retrieves year-month-based data;
           otherwise, retrieves monthly averages within the given year range.
         """
-        if month is not None and month.isdigit() is True:
-            return self.db.fetch_year_month_average(start_year, month)
-        return self.db.fetch_monthly_averages(start_year, end_year)
+        try:
+            if month is not None and month.isdigit() is True:
+                logging.info(r"\n\Made line plot request to db.")
+                return self.db.fetch_year_month_average(start_year, month)
+            logging.info(r"\n\nNothing special, defaulting to box plot db call.")
+            return self.db.fetch_monthly_averages(start_year, end_year)
+        except ValueError as error:
+            logging.warning(r"\n\nValue error before calling database %e", error)
+        return None

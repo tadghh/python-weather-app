@@ -16,3 +16,593 @@ INFO:root:Closed DB cursor.
 INFO:root:Commited to DB and closed connection.
 INFO:root:Closed DB cursor.
 INFO:root:Commited to DB and closed connection.
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Earliest year was None.
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Earliest year was None.
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Data deleted from weather table.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Data deleted from weather table.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Data deleted from weather table.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Data deleted from weather table.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Data deleted from weather table.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Data deleted from weather table.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Created DB Operations, looking for weather_data.sqlite
+INFO:root:\n\nCreated DB Content manager.
+INFO:root:
+
+Created DB Operations!
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Data deleted from weather table.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:
+
+Trying to initalize database.
+INFO:root:Creating sample_date index.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Data deleted from weather table.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Making sure year ranges arent None.
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+
+INFO:root:Closed DB cursor.
+
+
+INFO:root:Commited to DB and closed connection.
+
+

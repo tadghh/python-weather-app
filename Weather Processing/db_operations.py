@@ -251,17 +251,15 @@ class DBOperations:
 
         earliest_date_query = """SELECT MIN(strftime('%Y-%m', sample_date)) AS
         earliest_year FROM weather"""
-        try:
-            earliest_year = self.get_query_data(earliest_date_query)[0][0]
-            if earliest_year is None:
-                logging.info("Earliest year was None.")
-                raise ValueError(earliest_year)
 
-            if earliest_year is not None:
-                return earliest_year.split("-")
-        except ValueError as error:
-            logging.warning("Earliest year error %e", error)
-        return None
+        earliest_year = self.get_query_data(earliest_date_query)[0][0]
+        if earliest_year is None:
+            logging.info("Earliest year was None.")
+            raise ValueError(earliest_year)
+
+        if earliest_year is not None:
+            return earliest_year.split("-")
+        raise ValueError
 
     def get_year_ends(self):
         """
@@ -280,14 +278,14 @@ class DBOperations:
         """
         try:
             logging.info("Making sure year ranges arent None.")
+            newest_year = self.get_new_data()
+            oldest_year = self.get_earliest_date()
 
-            if (self.get_new_data() is not None) == self.get_earliest_date():
-                return (self.get_new_data(), self.get_earliest_date())
+            return (oldest_year[0], newest_year[0])
         except ValueError as error:
             logging.warning(
                 "Ran into issue comparing the earliest and farthest year %e", error
             )
-
         return None
 
     # TODO:  rename
@@ -308,16 +306,11 @@ class DBOperations:
         recent_date_query = (
             "SELECT MAX(strftime('%Y-%m', sample_date)) AS latest_date FROM weather"
         )
-        try:
-            last_date_available = self.get_query_data(recent_date_query)[0][0]
-            if last_date_available is not None:
-                return last_date_available.split("-")
-        except ValueError as error:
-            logging.warning(
-                "Ran into issue getting the recent year in the database %e", error
-            )
+        last_date_available = self.get_query_data(recent_date_query)[0][0]
+        if last_date_available is not None:
+            return last_date_available.split("-")
 
-        return None
+        raise ValueError
 
     def save_data(self, data_to_save):
         """
