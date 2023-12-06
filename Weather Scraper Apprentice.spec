@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['D:\\RRC\\Term 5\\ADEV-3005 Python\\Project\\Weather Processing\\weather_processor.py'],
+    ['Weather Processing\\weather_processor.py'],
     pathex=['.\\\\.venv\\\\Lib\\\\site-packages'],
     binaries=[],
     datas=[],

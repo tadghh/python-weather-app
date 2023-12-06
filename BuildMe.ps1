@@ -1,1 +1,1 @@
-& python -OO -m PyInstaller --upx-dir=".\Build Files\upx" --paths=".\\.venv\\Lib\\site-packages"  --i=".\\Build Files\\icons\\icon.ico" --onefile $PWD\'Weather Processing'\weather_processor.py --name="Weather Scraper Apprentice"
+& python -O -m PyInstaller --clean --paths=".\\.venv\\Lib\\site-packages"  --i=".\\Build Files\\icons\\icon.ico" --onefile '.\\Weather Processing\\weather_processor.py ' --name="Weather Scraper Apprentice"
