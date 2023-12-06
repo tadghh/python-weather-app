@@ -161,7 +161,5 @@ Our code quality is currently...
 [![Pylint](https://github.com/tadghh/PythonWeatherApp/actions/workflows/pylint.yml/badge.svg?branch=main&event=push)](https://github.com/tadghh/PythonWeatherApp/actions/workflows/pylint.yml)
 
 Here are the linting recommendations
-
 ```python
-
 ```
