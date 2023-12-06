@@ -1,5 +1,6 @@
 # requirements.txt
 
+altgraph==0.17.4
 colorama==0.4.6
 contourpy==1.2.0
 cycler==0.12.1
@@ -11,9 +12,15 @@ matplotlib==3.8.2
 Menu==3.2.2
 numpy==1.26.2
 packaging==23.2
+pefile==2023.2.7
 Pillow==10.1.0
+pyinstaller==6.2.0
+pyinstaller-hooks-contrib==2023.10
 pyparsing==3.1.1
 python-dateutil==2.8.2
+pywin32-ctypes==0.2.2
+setuptools==69.0.2
 six==1.16.0
 tqdm==4.66.1
 webencodings==0.5.1
+wxPython==4.2.1
