@@ -8,7 +8,7 @@
 
 - Start a venv with the Activate.ps1 in /.env/Scripts/Activate.ps1
 
-  - This creates and enviroment that will prevent errors or conflits
+  - This creates an enviroment that will prevent errors or conflits
 
 - Run BuildMe.ps1
 
