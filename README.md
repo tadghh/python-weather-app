@@ -162,4 +162,8 @@ Our code quality is currently...
 
 Here are the linting recommendations
 ```python
+
+------------------------------------
+Your code has been rated at 10.00/10
+
 ```
