@@ -1,5 +1,7 @@
 """Scrapes the weather from environment canada """
+# Tadgh Henry, Cole Cianflone, Karan Brar
 
+# Karan brar - Documenation
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.request import urlopen
@@ -57,6 +59,7 @@ class WeatherScraper:
 
             total_tasks = (end_year - start_year + 1) * 12
 
+            # Tadgh Henry - Multithreading
             # tqdm is used to provide a progress bad in the console.
             with tqdm(
                 total=total_tasks, desc="Scraping: ", smoothing=0.1, miniters=1
@@ -83,6 +86,7 @@ class WeatherScraper:
             )
         return None
 
+    # Tadgh Henry
     def scrape_weather_thread(self, year, month):
         """
         Thread function for scraping weather data for a specific year and month.
@@ -118,6 +122,7 @@ class WeatherScraper:
                 error,
             )
 
+    # Tadgh Henry
     def change_weather_station(self, new_station_id):
         """
         Change the weather station for scraping data.
@@ -138,6 +143,7 @@ class WeatherScraper:
             "&Month=",
         )
 
+    # Tadgh Henry
     def get_earliest_date(self):
         """
         Retrieve the earliest year and month for the current weather station.
@@ -184,6 +190,7 @@ class WeatherScraper:
             p = parse(page)
         return extract_month_and_date((p.find(".//title").text))
 
+    # Whole Group
     class MyHTMLParser(HTMLParser):
         """The web scraper."""
 

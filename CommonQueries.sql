@@ -1,3 +1,5 @@
+-- Made by Cole Cianflone
+
 -- Get all data
 SELECT * FROM weather ORDER BY sample_date ASC
 
@@ -60,8 +62,8 @@ WHERE
         AND (avg_temp LIKE '%M%' OR avg_temp IS null)
     );
 
--- Gets the mean daily temps of a particular month and year for all days of that month	
-SELECT strftime('%Y-%m-%d', sample_date) AS day, 
+-- Gets the mean daily temps of a particular month and year for all days of that month
+SELECT strftime('%Y-%m-%d', sample_date) AS day,
 AVG(avg_temp) AS mean_daily_temp
 FROM weather
 WHERE strftime('%Y', sample_date) = '1996'

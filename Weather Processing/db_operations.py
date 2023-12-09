@@ -1,5 +1,7 @@
 """Handles all database operations."""
+# Tadgh Henry, Cole Cianflone
 
+# Cole Cianflone also created our documentation
 import sqlite3
 import logging
 from dbcm import DBCM
@@ -8,6 +10,7 @@ from dbcm import DBCM
 class DBOperations:
     """The DB operations class."""
 
+    # Tadgh Henry
     def __init__(self):
         """
         Initialize the database connection and setup the context manager.
@@ -34,6 +37,7 @@ class DBOperations:
             logging.critical("Error with SQLite3 python module: %e\n\n", error)
         logging.info("\n\nCreated DB Operations!")
 
+    # Tadgh Henry
     def initialize_db(self):
         """
         Initialize the database by creating necessary tables and indexes if they don't exist.
@@ -73,6 +77,8 @@ class DBOperations:
 
         except sqlite3.OperationalError as error:
             logging.warning("Database Initalization Operational Error: %e", error)
+
+    # Tadgh Henry
 
     # this function can be passed any query, but validate the query before-hand.
     def get_query_data(self, sql_query):
@@ -118,6 +124,7 @@ class DBOperations:
         logging.info("Get query returning none.")
         return None
 
+    # Cole Cianflone
     # this function is used for the box plot
     def fetch_monthly_averages(self, start_year=None, end_year=None):
         """
@@ -179,6 +186,7 @@ class DBOperations:
         logging.info("Returning empty box plot data.")
         return None
 
+    # Tadgh Henry
     # this function is used for the line chart
     def fetch_year_month_average(self, year=None, month=None):
         """
@@ -234,6 +242,7 @@ class DBOperations:
         logging.info("Returning empty line plot data.")
         return None
 
+    # Tadgh Henry
     def get_earliest_date(self):
         """
         Retrieves the earliest date available in the dataset.
@@ -261,6 +270,7 @@ class DBOperations:
             return earliest_year.split("-")
         return None
 
+    # Tadgh Henry
     def get_year_ends(self):
         """
         Retrieves information about the newest and oldest data points in the dataset.
@@ -292,6 +302,7 @@ class DBOperations:
         )
         return None
 
+    # Tadgh Henry
     def get_latest_date(self):
         """
         Retrieves the most recent date available in the dataset.
@@ -315,6 +326,7 @@ class DBOperations:
 
         return None
 
+    # Cole Cianflone, Fixed by Tadgh
     def save_data(self, data_to_save):
         """
         Save new (non-duplicate) data to the database.
@@ -380,6 +392,7 @@ class DBOperations:
                 "save_data Integrity Error with the save_data function. %e", error
             )
 
+    # Tadgh
     def purge_data(self, burn=False):
         """
         Remove all data from the 'weather' table, or drop all tables in the database.

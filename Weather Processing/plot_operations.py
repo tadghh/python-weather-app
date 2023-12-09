@@ -1,4 +1,6 @@
 """Plotting data on a graph/ graph creation."""
+# Lead by Cole Cianflone, Transitioned to Tadgh and Karan
+
 import logging
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -13,6 +15,7 @@ class PlotOperations:
         """Initialize PlotOperations with a database operations object."""
         self.db = DBOperations()
 
+    # Tadgh Henry
     def create_line_plot(self, graph_weather_data, year, month):
         """
         Create a line plot to visualize daily average temperatures for a specific year and month.
@@ -49,6 +52,7 @@ class PlotOperations:
         plt.tight_layout()
         plt.show(block=True)
 
+    # Cole Cianflone
     def create_year_boxplot_graph(self, graph_weather_data, start_year, end_year):
         """
         Create a box plot to visualize monthly temperature distributions for a range of years.
@@ -86,6 +90,7 @@ class PlotOperations:
         plt.tight_layout()
         plt.show(block=True)
 
+    # Cole Cianflone, Tadgh Henry
     def create(self, start_year=None, end_year=None, month=None):
         """
         Create a graph based on the provided parameters.
@@ -117,6 +122,7 @@ class PlotOperations:
         except ValueError as error:
             logging.info(r"\n\Value Error when calling graphs. %e", error)
 
+    # Tadgh Henry
     def fetch_data(self, start_year=None, end_year=None, month=None):
         """
         Fetch weather data based on provided parameters.

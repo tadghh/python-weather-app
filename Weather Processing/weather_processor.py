@@ -1,4 +1,8 @@
 """Main program."""
+# Tadgh Henry
+
+# Cole Cianflone - Documentation
+# Karan Brar - Testing
 import logging
 import sys
 

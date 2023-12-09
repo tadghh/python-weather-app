@@ -1,4 +1,5 @@
 """Common actions between weather scraper and the database"""
+# Tadgh Henry, I made this all
 
 import logging
 from db_operations import DBOperations
