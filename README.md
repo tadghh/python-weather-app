@@ -1,7 +1,8 @@
 <div align="center">
-# Weather Scraper Apprentice
 
 <img src="./Build%20Files/icons/icon.png">
+
+# Weather Scraper Apprentice
 
 A Python application that scapes historical weather data from Enviroment Canada. This was the final submission for my college's Python course.
 
