@@ -27,11 +27,25 @@ powershell -ExecutionPolicy Bypass -File .\BuildMe.ps1
 
 > ⚠️ The following script will prompt you to temporarily bypass powershell's execution policy
 
-After running _BuildMe.ps1_ a dist folder will be created that contains the built CLI program.
-
-_Optional_
+> _BuildMe.ps1_ Is responsible for the creation of the applications executable file
 
 > The [Inno Script.iss](./Inno%20Script.iss) file can be used with [Inno Setup](https://jrsoftware.org/isdl.php#stable) to create an installer
+
+After running the above commands you will find the application built inside the **dist directory** of the downloaded **python-weather-app** repository.
+
+### Libraries used
+
+- pylint
+- contourpy
+- kiwisolver
+- lxml
+- matplotlib
+- numpy
+- Pillow
+- pyinstaller
+- pyinstaller-hooks-contrib
+- Menu
+- tqdm
 
 ## Features
 
@@ -49,28 +63,15 @@ _Optional_
   - Line graph, used to show the temperature across of a specific month and year
 - Error logging, to assist trouble shooting
 
-## Libraries
-
-- pylint
-- contourpy
-- kiwisolver
-- lxml
-- matplotlib
-- numpy
-- Pillow
-- pyinstaller
-- pyinstaller-hooks-contrib
-- Menu
-- tqdm
-
 ## Code quality
 
-<p align="center">
+<div align="center">
+
 Our code quality is currently...
 
 [![Pylint](https://github.com/tadghh/python-weather-app/actions/workflows/pylint.yml/badge.svg?branch=main&event=push)](https://github.com/tadghh/python-weather-app/actions/workflows/pylint.yml)
 
-</p>
+</div>
 
 Here are the linting recommendations
 
