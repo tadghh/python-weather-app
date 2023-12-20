@@ -1,15 +1,17 @@
+<div align="center">
 # Weather Scraper Apprentice
 
-<p align="center">
-  <img src="./Build%20Files/icons/icon.png">
-</p>
+<img src="./Build%20Files/icons/icon.png">
+
+A Python application that scapes historical weather data from Enviroment Canada. This was the final submission for my college's Python course.
+
+</div>
 
 ## Building
 
 - Install Python 3.12
 - Create a virtual environment
 - Run BuildMe.ps1
-  - Temporarily bypass the execution policy
 
 ### Download and Build
 
@@ -21,6 +23,8 @@ venv\Scripts\activate
 pip install -r '.\Weather Processing\requirements.txt'
 powershell -ExecutionPolicy Bypass -File .\BuildMe.ps1
 ```
+
+> ⚠️ The following script will prompt you to temporarily bypass powershell's execution policy
 
 After running _BuildMe.ps1_ a dist folder will be created that contains the built CLI program.
 
@@ -60,9 +64,12 @@ _Optional_
 
 ## Code quality
 
+<p align="center">
 Our code quality is currently...
 
 [![Pylint](https://github.com/tadghh/python-weather-app/actions/workflows/pylint.yml/badge.svg?branch=main&event=push)](https://github.com/tadghh/python-weather-app/actions/workflows/pylint.yml)
+
+</p>
 
 Here are the linting recommendations
 
