@@ -1,41 +1,50 @@
 # Weather Scraper Apprentice
 
 ![Application Icon](./Build%20Files/icons/icon.png)
+
 ## Building
+
 - Install Python 3.12
 - Create a virtual environment
 - Run BuildMe.ps1
-	- Temporarily bypass the execution policy
+  - Temporarily bypass the execution policy
+
 ### Download and Build
+
 ```
 git clone git@github.com:tadghh/PythonWeatherApp.git
 cd .\PythonWeatherApp\
-python -m venv venv 
+python -m venv venv
 venv\Scripts\activate
 pip install -r '.\Weather Processing\requirements.txt'
 powershell -ExecutionPolicy Bypass -File .\BuildMe.ps1
 
 ```
 
-After running *BuildMe.ps1* a dist folder will be created that contains the built CLI program.
+After running _BuildMe.ps1_ a dist folder will be created that contains the built CLI program.
 
-Optional
-> To create an installer use the spec file with Inno Setup
+_Optional_
+
+> The [Inno Script.iss](./Inno%20Script.iss) file can be used with [Inno Setup](https://jrsoftware.org/isdl.php#stable) to create an installer
 
 ## Features
+
 - PEP8 Compliant
-- Multithreading
-  - Can scrape weather data from 1996 to 2023 in 30 seconds
+- Multithreaded data scraping
+  - 27 years worth of tempertaure data can be processed, saved and formatted in under 30 seconds
 - Uses SQLite to store weather info
-	- Added an index to quickly update data with distinct data
+  - Index used to quickly update with distinct data
 - Error handling
 - UX focused menu
+  - If the range of years was put in backwards a prompt appears offering to swap the dates
+  - Explanations for incorrect input
 - Data visualization
-	- Box plot that can show average temperatures for each month across a range of years
-	- Line graph, this allows you to see the temperature of a specific month and year
-- Error logging 
+  - Box plot that displays the min, avg, max temperatures for each month across a range of years
+  - Line graph, used to show the temperature across of a specific month and year
+- Error logging, to assist trouble shooting
 
-## Libraries 
+## Libraries
+
 - pylint
 - contourpy
 - kiwisolver
@@ -47,13 +56,15 @@ Optional
 - pyinstaller-hooks-contrib
 - Menu
 - tqdm
+
 ## Code quality
 
 Our code quality is currently...
 
-[![Pylint](https://github.com/tadghh/PythonWeatherApp/actions/workflows/pylint.yml/badge.svg?branch=main&event=push)](https://github.com/tadghh/PythonWeatherApp/actions/workflows/pylint.yml)
+[![Pylint](https://github.com/tadghh/python-weather-app/actions/workflows/pylint.yml/badge.svg?branch=main&event=push)](https://github.com/tadghh/python-weather-app/actions/workflows/pylint.yml)
 
 Here are the linting recommendations
+
 ```python
 
 ------------------------------------
