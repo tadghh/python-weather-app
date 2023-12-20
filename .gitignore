@@ -8,4 +8,9 @@ __pycache__/
 
 .vscode/
 /build
-/Weather Processing/dist
+/*/dist
+/dist
+/.venv
+.obsidian
+/Weather Processing/weather_data.sqlite
+Weather Processing/weather_data.sqlite
