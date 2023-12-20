@@ -16,6 +16,14 @@ A Python application that scapes historical weather data from Enviroment Canada.
 
 ### Download and Build
 
+> ⚠️ The following script will prompt you to temporarily bypass powershell's execution policy
+
+> _BuildMe.ps1_ Is responsible for the creation of the applications executable file
+
+> The [Inno Script.iss](./Inno%20Script.iss) file can be used with [Inno Setup](https://jrsoftware.org/isdl.php#stable) to create an installer
+
+> ⚠️ The below command is designed for windows
+
 ```
 git clone git@github.com:tadghh/PythonWeatherApp.git
 cd .\PythonWeatherApp\
@@ -24,14 +32,8 @@ venv\Scripts\activate
 pip install -r '.\Weather Processing\requirements.txt'
 powershell -ExecutionPolicy Bypass -File .\BuildMe.ps1
 ```
-
-> ⚠️ The following script will prompt you to temporarily bypass powershell's execution policy
-
-> _BuildMe.ps1_ Is responsible for the creation of the applications executable file
-
-> The [Inno Script.iss](./Inno%20Script.iss) file can be used with [Inno Setup](https://jrsoftware.org/isdl.php#stable) to create an installer
-
-After running the above commands you will find the application built inside the **dist directory** of the downloaded **python-weather-app** repository.
+### Build output location
+After running the above commands you will find an executable file inside the **dist directory** of the downloaded **python-weather-app** repository.
 
 ### Libraries used
 
