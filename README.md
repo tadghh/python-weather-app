@@ -1,6 +1,8 @@
 # Weather Scraper Apprentice
 
-![Application Icon](./Build%20Files/icons/icon.png)
+<p align="center">
+  <img src="./Build%20Files/icons/icon.png">
+</p>
 
 ## Building
 
@@ -18,7 +20,6 @@ python -m venv venv
 venv\Scripts\activate
 pip install -r '.\Weather Processing\requirements.txt'
 powershell -ExecutionPolicy Bypass -File .\BuildMe.ps1
-
 ```
 
 After running _BuildMe.ps1_ a dist folder will be created that contains the built CLI program.
