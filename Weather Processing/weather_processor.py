@@ -28,7 +28,10 @@ class WeatherProcessor:
 
         self.plot_ops = PlotOperations()
         self.scraping_actor = ScrapingActor()
-        self.latest_dates = self.scraping_actor.update_range()
+        self.latest_dates = None
+
+        self.latest_dates_string = None
+        self.update_range_info()
 
     def start_main(self):
         """Displays the main menu.
@@ -53,12 +56,13 @@ class WeatherProcessor:
 
         Provides menu options for box plot, line plot, and displaying latest dates.
         """
+        self.update_range_info()
         plot_menu = Menu(title="Plotting options")
         plot_menu.set_message("Select an item")
         plot_menu.set_prompt(">:")
-        year_range = self.scraping_actor.update_range()
+
         options = []
-        if year_range["lower"] is None and year_range["upper"] is None:
+        if self.latest_dates["lower"] is None and self.latest_dates["upper"] is None:
             options.append(
                 (
                     "No data, UPDATE",
@@ -74,7 +78,7 @@ class WeatherProcessor:
             options.append(("Line plot", self.line_plot))
             options.append(
                 (
-                    f"""Latest dates: {year_range}""",
+                    f"""Latest dates: {self.latest_dates_string}""",
                     (self.data_menu),
                 )
             )
@@ -99,7 +103,10 @@ class WeatherProcessor:
                 ("Fetch data", actor.database_fetch),
                 ("Update current data", actor.database_update),
                 ("Reset data", actor.empty_database),
-                ("Reset hard", lambda: actor.empty_database(burn=True)),
+                (
+                    "Reset hard (Drop all tables, indexs)",
+                    lambda: actor.empty_database(burn=True),
+                ),
                 ("Main menu", lambda: (self.start_main(), db_data_menu.close())),
                 ("Exit", lambda: sys.exit(0)),
             ]
@@ -135,12 +142,20 @@ class WeatherProcessor:
 
                 if self.is_in_range(user_input, year_range) is True:
                     return True
-                errors.append("not in range.")
+
+                errors.append(f"not in range. {self.latest_dates_string}")
             else:
                 errors.append("must be integer.")
         except ValueError as error:
             logging.warning("Value error when validating input %s", error)
         return False
+
+    def update_range_info(self):
+        "Updates the year range and along with the string."
+        self.latest_dates = self.scraping_actor.update_range()
+        self.latest_dates_string = (
+            f"{self.latest_dates['lower']} - {self.latest_dates['upper']}"
+        )
 
     def get_input(self, line_plot=False):
         """Gets input for the graphs.
@@ -154,18 +169,21 @@ class WeatherProcessor:
         Returns:
         - tuple: A tuple containing start and end years or months.
         """
-
+        self.update_range_info()
         # Input text
-        first_input_prompt = "Enter Starting Year ex 2002: "
+        first_input_prompt = "Enter Starting year ex 2002: "
         second_input_prompt = (
-            "Enter End Year ex 2005: "
+            "Enter End year ex 2005: "
             if line_plot is False
             else "Enter a month ex 02: "
         )
-
-        input_errors = {"start_year": [], "end_year": []}
-        validated_inputs = {"start_year": False, "end_year": False}
-        year_range = self.scraping_actor.update_range()
+        second_input_type = "end_year" if line_plot is False else "month"
+        input_errors = {"start_year": [], second_input_type: []}
+        validated_inputs = {
+            "start_year": False,
+            second_input_type: False,
+        }
+        year_range = self.latest_dates
         start_year = None
         end_year = None
         in_input = True
@@ -177,33 +195,32 @@ class WeatherProcessor:
                     start_year,
                     input_errors["start_year"],
                     year_range,
-                    can_month=False,
                 )
 
-            if validated_inputs["end_year"] is False:
+            if validated_inputs[second_input_type] is False:
                 end_year = input(second_input_prompt)
-                validated_inputs["end_year"] = self.validate_input(
+                validated_inputs[second_input_type] = self.validate_input(
                     end_year,
-                    input_errors["end_year"],
+                    input_errors[second_input_type],
                     year_range,
-                    can_month=True,
+                    can_month=line_plot,
                 )
 
-            if validated_inputs["start_year"] and validated_inputs["end_year"]:
+            if validated_inputs["start_year"] and validated_inputs[second_input_type]:
                 in_input = False
             else:
                 for key, errors in input_errors.items():
                     # Make sure there are errors
-                    logging.info("User had erranous inputs.")
                     if len(errors) != 0:
-                        print(f"{key.capitalize()} errors:")
-                        logging.info(" %s errors:", key.capitalize())
-                        for i, error in enumerate(errors):
-                            print(f"  {i + 1}. {error}")
+                        logging.info("User had erranous inputs.")
+                        print(f"{key.replace("_", " ").capitalize()} error(s)")
+                        logging.info(" %s errors:", key)
+                        for error in enumerate(errors):
+                            print(f"{error[1]}")
 
                 # Reset errors
                 input_errors["start_year"] = []
-                input_errors["end_year"] = []
+                input_errors[second_input_type] = []
 
         # Input correction
         return self.plot_checks(start_year, end_year, line_plot)
