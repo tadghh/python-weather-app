@@ -8,6 +8,13 @@ A Python application that scapes historical weather data from Enviroment Canada.
 
 </div>
 
+## Preview
+<div align="center">
+
+<img src="https://github.com/tadghh/python-weather-app/assets/47073445/a64d54c7-f636-4568-bc18-4d69bd14eab8"/>
+
+</div>
+
 ## Building
 
 - Install Python 3.12
