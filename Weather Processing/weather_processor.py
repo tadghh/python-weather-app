@@ -164,9 +164,9 @@ class WeatherProcessor:
         self.range_min_key = latest_dates_keys[0]
         self.range_max_key = latest_dates_keys[1]
 
-        first_string = f"{self.latest_dates[self.range_min_key]}"
-        second_string = f"{self.latest_dates[self.range_max_key]}"
-        self.latest_dates_string = f"{first_string} - {second_string}"
+        first_dict_value = f"{self.latest_dates[self.range_min_key]}"
+        second_dict_value = f"{self.latest_dates[self.range_max_key]}"
+        self.latest_dates_string = f"{first_dict_value} - {second_dict_value}"
 
     def get_input(self, line_plot=False):
         """Gets input for the graphs.
