@@ -84,10 +84,8 @@ Our code quality is currently...
 
 Here are the linting recommendations
 ```python
-************* Module weather_processor
-Weather Processing/weather_processor.py:229:47: E0001: Parsing failed: 'f-string: unmatched '(' (<unknown>, line 229)' (syntax-error)
 
------------------------------------
-Your code has been rated at 9.86/10
+------------------------------------
+Your code has been rated at 10.00/10
 
 ```
