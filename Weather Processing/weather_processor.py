@@ -157,7 +157,9 @@ class WeatherProcessor:
         return False
 
     def update_range_info(self):
-        "Updates the year range and along with the string."
+        """Updates the year range.
+        Along with the string representing the upper
+        and lower bounds of the historic weather dataset."""
         self.latest_dates = self.scraping_actor.update_range()
 
         latest_dates_keys = list(self.latest_dates.keys())
