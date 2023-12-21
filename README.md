@@ -8,6 +8,13 @@ A Python application that scapes historical weather data from Enviroment Canada.
 
 </div>
 
+## Preview
+<div align="center">
+
+<img src="https://github.com/tadghh/python-weather-app/assets/47073445/a64d54c7-f636-4568-bc18-4d69bd14eab8"/>
+
+</div>
+
 ## Building
 
 - Install Python 3.12
@@ -78,7 +85,7 @@ Our code quality is currently...
 Here are the linting recommendations
 ```python
 ************* Module weather_processor
-Weather Processing/weather_processor.py:216:47: E0001: Parsing failed: 'f-string: unmatched '(' (<unknown>, line 216)' (syntax-error)
+Weather Processing/weather_processor.py:229:47: E0001: Parsing failed: 'f-string: unmatched '(' (<unknown>, line 229)' (syntax-error)
 
 -----------------------------------
 Your code has been rated at 9.86/10
