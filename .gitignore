@@ -13,4 +13,4 @@ __pycache__/
 /.venv
 .obsidian
 /Weather Processing/weather_data.sqlite
-Weather Processing/weather_data.sqlite
+/Output

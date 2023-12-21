@@ -2,9 +2,9 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Weather Scraper Apprentice"
-#define MyAppVersion "1.0"
-#define MyAppPublisher "Fughetaboutit"
-#define MyAppURL "https://github.com/tadghh/PythonWeatherApp"
+#define MyAppVersion "1.2"
+#define MyAppPublisher "tadghh"
+#define MyAppURL "https://github.com/tadghh/python-weather-app"
 #define MyAppExeName "Weather Scraper Apprentice.exe"
 
 ; Allows us to get the current directory of the this setup file
