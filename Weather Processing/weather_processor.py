@@ -30,6 +30,9 @@ class WeatherProcessor:
         self.scraping_actor = ScrapingActor()
         self.latest_dates = None
 
+        # Support for alternative measures of time?
+        self.range_max_key = None
+        self.range_min_key = None
         self.latest_dates_string = None
         self.update_range_info()
 
@@ -62,7 +65,10 @@ class WeatherProcessor:
         plot_menu.set_prompt(">:")
 
         options = []
-        if self.latest_dates["lower"] is None and self.latest_dates["upper"] is None:
+        if (
+            self.latest_dates[self.range_min_key] is None
+            and self.latest_dates[self.range_max_key] is None
+        ):
             options.append(
                 (
                     "No data, UPDATE",
@@ -153,9 +159,14 @@ class WeatherProcessor:
     def update_range_info(self):
         "Updates the year range and along with the string."
         self.latest_dates = self.scraping_actor.update_range()
-        self.latest_dates_string = (
-            f"{self.latest_dates['lower']} - {self.latest_dates['upper']}"
-        )
+
+        latest_dates_keys = list(self.latest_dates.keys())
+        self.range_min_key = latest_dates_keys[0]
+        self.range_max_key = latest_dates_keys[1]
+
+        first_string = f"{self.latest_dates[self.range_min_key]}"
+        second_string = f"{self.latest_dates[self.range_max_key]}"
+        self.latest_dates_string = f"{first_string} - {second_string}"
 
     def get_input(self, line_plot=False):
         """Gets input for the graphs.
@@ -177,10 +188,12 @@ class WeatherProcessor:
             if line_plot is False
             else "Enter a month ex 02: "
         )
-        second_input_type = "end_year" if line_plot is False else "month"
-        input_errors = {"start_year": [], second_input_type: []}
+        start_key = self.range_min_key
+
+        second_input_type = self.range_max_key if line_plot is False else "month"
+        input_errors = {start_key: [], second_input_type: []}
         validated_inputs = {
-            "start_year": False,
+            start_key: False,
             second_input_type: False,
         }
         year_range = self.latest_dates
@@ -189,11 +202,11 @@ class WeatherProcessor:
         in_input = True
 
         while in_input:
-            if validated_inputs["start_year"] is False:
+            if validated_inputs[start_key] is False:
                 start_year = input(first_input_prompt)
-                validated_inputs["start_year"] = self.validate_input(
+                validated_inputs[start_key] = self.validate_input(
                     start_year,
-                    input_errors["start_year"],
+                    input_errors[start_key],
                     year_range,
                 )
 
@@ -206,7 +219,7 @@ class WeatherProcessor:
                     can_month=line_plot,
                 )
 
-            if validated_inputs["start_year"] and validated_inputs[second_input_type]:
+            if validated_inputs[start_key] and validated_inputs[second_input_type]:
                 in_input = False
             else:
                 for key, errors in input_errors.items():
@@ -219,7 +232,7 @@ class WeatherProcessor:
                             print(f"{error[1]}")
 
                 # Reset errors
-                input_errors["start_year"] = []
+                input_errors[start_key] = []
                 input_errors[second_input_type] = []
 
         # Input correction
